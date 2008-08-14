@@ -1,0 +1,3 @@
+doc		Add general documentation here
+lib		Library integrating scripts source code
+scripts		Source code containing basic functions (one function per script)
