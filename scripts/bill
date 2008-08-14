@@ -1,0 +1,81 @@
+#! /bin/bash
+# vim: tabstop=4 shiftwidth=4 expandtab
+#
+#++
+#   ==============
+#   Wrapper script
+#   ==============
+#   :Author: Adrián Pérez <aperez@igalia.com>
+#   :Copyright: Igalia S.L., 2008
+#   :License: GPL v2
+#   :Abstract: Wrapper which launches the bash_ shell adding the Bill
+#       built-in functions.
+#--
+set -e
+
+libdir=/usr/lib/bill
+if [ ! -d "$libdir" ]
+then
+    pushd "$(dirname "$0")/../lib" > /dev/null
+    libdir=$(pwd)
+    popd > /dev/null
+fi
+
+if [ "$BILLPATH" ]
+then
+    BILLPATH="$libdir:$BILLPATH"
+else
+    BILLPATH="$libdir"
+fi
+unset libdir
+export BILLPATH
+
+
+#++ use module1 [ module2 [ module3 [ ... moduleN ] ] ]
+#
+#   Loads one or more modules from the library search path, which is itself
+#   taken from the ``$BILLPATH`` environment variable. If a module is not
+#   found, execution will be aborted and an informative message will be
+#   printed to standard error.
+#--
+use ()
+{
+    local old_IFS=$IFS
+    local found=false
+
+    IFS=':'
+    while [ "$1" ]
+    do
+        for path in $BILLPATH
+        do
+            if [ -r "$path/$1.bsh" ]
+            then
+                source "$path/$1.bsh"
+                found=true
+                break
+            fi
+        done
+
+        # Sanity check :)
+        if ! $found
+        then
+            ( echo "Could not find module '$1', the module search path is"
+              echo "  $BILLPATH"
+            ) 1>&2
+            exit 1
+        fi
+        shift
+    done
+    IFS=$old_IFS
+}
+
+use bill/__builtin__
+
+if [ "$1" ]
+then
+    source "$1"
+else
+    use bill/repl
+    bill.repl.run
+fi
+

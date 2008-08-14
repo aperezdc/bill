@@ -1,0 +1,8 @@
+#! /usr/bin/bill
+
+use hello
+
+hello "Linus"
+hello "Richard"
+hello
+
