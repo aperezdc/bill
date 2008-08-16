@@ -69,13 +69,13 @@ use ()
     IFS=$old_IFS
 }
 
-use bill/__builtin__
+use bill/builtins
 
 if [ "$1" ]
 then
     source "$1"
 else
     use bill/repl
-    bill.repl.run
+    bill_repl_run
 fi
 
