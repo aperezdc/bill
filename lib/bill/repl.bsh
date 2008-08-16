@@ -1,4 +1,4 @@
-# vim: filetype=sh expandtab tabstop=4 shiftwidth=4
+#!bill
 
 bill_repl_run ()
 {
