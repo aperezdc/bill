@@ -74,7 +74,9 @@ use bill/builtins
 
 if [ "$1" ]
 then
-    source "$1"
+    SCRIPT=$1
+    shift
+    source "$SCRIPT"
 else
     use bill/repl
     bill_repl_run
