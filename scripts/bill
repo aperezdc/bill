@@ -31,12 +31,17 @@ unset libdir
 export BILLPATH
 
 
-#++ use module1 [ module2 [ module3 [ ... moduleN ] ] ]
+#++ use module
 #
-#   Loads one or more modules from the library search path, which is itself
+#   Loads one module from the library search path, which is itself
 #   taken from the ``$BILLPATH`` environment variable. If a module is not
 #   found, execution will be aborted and an informative message will be
 #   printed to standard error.
+#
+#   Note that this is a stripped down version used only in this script for
+#   performing bootstrap, once the `bill/builtins <bill/builtins.html>`_
+#   module gets loaded a more complete version of the function will be
+#   available.
 #--
 use ()
 {
@@ -44,28 +49,24 @@ use ()
     local found=false
 
     IFS=':'
-    while [ "$1" ]
+    for path in $BILLPATH
     do
-        for path in $BILLPATH
-        do
-            if [ -r "$path/$1.bsh" ]
-            then
-                source "$path/$1.bsh"
-                found=true
-                break
-            fi
-        done
-
-        # Sanity check :)
-        if ! $found
+        if [ -r "$path/$1.bsh" ]
         then
-            ( echo "Could not find module '$1', the module search path is"
-              echo "  $BILLPATH"
-            ) 1>&2
-            exit 1
+            source "$path/$1.bsh"
+            found=true
+            break
         fi
-        shift
     done
+
+    # Sanity check :)
+    if ! $found
+    then
+        ( echo "Could not find module '$1', the module search path is"
+          echo "  $BILLPATH"
+        ) 1>&2
+        exit 1
+    fi
     IFS=$old_IFS
 }
 
