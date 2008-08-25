@@ -1,0 +1,84 @@
+#! /usr/bin/bill
+set -e
+
+need sort uniq grep sed \
+    || die "One of the required external commands was not found"
+
+# The builtins module is always seen :)
+declare -a seen_modules
+
+module_seen ()
+{
+    local name
+    for name in "${seen_modules[@]}"
+    do
+        [[ $1 = $name ]] && return 0
+    done
+    return 1
+}
+
+
+find_module ()
+{
+    # TODO Some of this code is duplicated from bill/builtins/use, maybe it
+    # should be factored out.
+
+    local old_IFS=$IFS
+    IFS=':'
+
+    local path
+    for path in $BILLPATH
+    do
+        if [ -r "$path/$1.bsh" ]
+        then
+            echo "$path/$1.bsh"
+            break
+        fi
+    done
+
+    IFS=$old_IFS
+}
+
+
+scan_module_names ()
+{
+    cat "$@" \
+        | grep -v '#.*use' \
+        | sed  -e '/use[ \t]\+[A-Za-z0-9_/]/s:.*use[ \t]\+\([A-Za-z0-9_/]\+\).*:\1:p' \
+               -e 'd'
+}
+
+
+scan ()
+{
+    local name
+    for name in $(scan_module_names "$1")
+    do
+        module_seen "$name" && continue
+
+        local modulefile=$(find_module "$name")
+        [ "$modulefile" ] || die "Module '$name' not found"
+
+        seen_modules=( "${seen_modules[@]}" "$name" )
+        scan "$modulefile"
+    done
+}
+
+builtinsfile=$(find_module bill/builtins)
+[ "$builtinsfile" ] || die "Module 'bill/builtins' not found"
+
+[ "$1" ] || die "Input file was not specified"
+scan "$1"
+
+echo '#! /bin/bash'
+cat "$builtinsfile"
+for module in "${seen_modules[@]}"
+do
+    echo
+    echo "__bill_module__${module//\//__} () {"
+    cat "$(find_module "$module")"
+    echo "}"
+    echo
+done
+cat "$1"
+

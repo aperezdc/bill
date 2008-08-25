@@ -1,0 +1,17 @@
+========================
+ Deploying Bill scripts
+========================
+
+:Author: Adrián Pérez <aperez@igalia.com>
+:Abstract: Explains how to produce standalone shell scripts which do not
+    need the Bill runtime to be installed in order to work. The only
+    requirement will be a recent enough installation of Bash.
+
+
+Use the ``unbill`` script to produce a standalone version of a script::
+
+    $ ./scripts/bill/bill scripts/unbill myscript > myscript-standalone
+
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+
