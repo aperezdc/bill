@@ -12,8 +12,8 @@ EOF
 
 for path in $(find "$1" -name '*.bsh')
 do
-    name=${name%.bsh}
-    name=${path#$1/}
+    name=${path%.bsh}
+    name=${name#$1/}
 
     abstract=$(sed -e '/:[aA]bstract:/s,.*:[aA]bstract:[ \t]*,,p' -e d "$path")
 
