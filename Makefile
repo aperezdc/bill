@@ -6,13 +6,17 @@
 all_txt_docs    := $(wildcard doc/*.txt)
 all_bsh_modules := $(shell find lib -name '*.bsh')
 all_html_pages  := $(patsubst %.bsh,doc/%.html,$(all_bsh_modules)) \
-                   $(patsubst %.txt,%.html,$(all_txt_docs))
+                   $(patsubst %.txt,%.html,$(all_txt_docs)) \
+                   doc/module-index.html
 
 doc: $(all_html_pages)
 
 doc/%.html: %.bsh
 	mkdir -p $(dir $@)
 	awk -f scripts/docextract.awk $< | $(rst2html) - $@
+
+doc/module-index.html: $(all_bsh_modules)
+	./scripts/bill scripts/gen-module-index lib | $(rst2html) - $@
 
 %.html: %.txt
 	$(rst2html) $< $@

@@ -1,0 +1,16 @@
+====================
+ Bill documentation
+====================
+
+Manual
+------
+
+#. `Deploying Bill scripts <deploy.html>`__
+
+Reference
+---------
+
+* `Module index <module-index.html>`__
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+

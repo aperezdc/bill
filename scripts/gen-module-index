@@ -1,0 +1,29 @@
+#! /usr/bin/env bill
+
+[ "$1" ] || die "Module path missing"
+
+cat <<EOF
+============
+Module Index
+============
+
+EOF
+
+
+for path in $(find "$1" -name '*.bsh')
+do
+    name=${name%.bsh}
+    name=${path#$1/}
+
+    abstract=$(sed -e '/:[aA]bstract:/s,.*:[aA]bstract:[ \t]*,,p' -e d "$path")
+
+    echo "\`$name <${path%.bsh}.html>\`__"
+    if [ "$abstract" ]
+    then
+        echo "  $abstract"
+    else
+        echo "  *No description available.*"
+    fi
+done
+echo
+
