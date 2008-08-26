@@ -21,7 +21,7 @@ BILL_VERSION='0.1'
 #--
 warn ()
 {
-    echo -- "$@" 1>&2
+    echo "$@" 1>&2
 }
 
 
