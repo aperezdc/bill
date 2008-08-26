@@ -1,0 +1,8 @@
+Package: bill
+Version: ${BILL_VERSION}-1
+Priority: optional
+Architecture: all
+Depends: bash \( >= 2.05-1 \)
+Maintainer: Adrian Perez <aperez@igalia.com>
+Description: Bash Improved Leveraging Library.
+ Library of modules to do shell programming using GNU bash.

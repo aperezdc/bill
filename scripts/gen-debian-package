@@ -1,0 +1,96 @@
+#! /usr/bin/env bill
+
+use text/template
+
+need fakeroot || die "Command 'fakeroot' not found (apt-get install fakeroot)"
+need dpkg-deb || die "Command 'dpkg-deb' not found (Not a Debian system?)"
+need bash     || die "Command 'bash' not found (Definitely you WILL need it)"
+
+
+bash_path=$(which bash)
+deb_name="bill-${BILL_VERSION}-1"
+bash_scripts=( bill )
+bill_scripts=( unbill )
+
+
+make_clean ()
+{
+    if [ -d "$deb_name" ]
+    then
+        echo "Cleaning up $deb_name..."
+        rm -rf "$deb_name"
+    fi
+}
+
+
+copy_files ()
+{
+    echo -n "Creating target '$deb_name' [ "
+    mkdir -p "$deb_name/DEBIAN"
+    mkdir -p "$deb_name/usr/bin"
+    mkdir -p "$deb_name/usr/lib/bill"
+    echo -n "dirs "
+
+    local name
+    for name in "${bash_scripts[@]}" ; do
+        cp "scripts/$name" "$deb_name/usr/bin"
+        chmod +x "$deb_name/usr/bin/$name"
+    done
+    for name in "${bill_scripts[@]}" ; do
+        cp "scripts/$name" "$deb_name/usr/bin"
+        chmod +x "$deb_name/usr/bin/$name"
+    done
+    echo -n "scripts "
+
+    cp -R lib/* "$deb_name/usr/lib/bill/"
+    echo "lib ]"
+}
+
+
+adjust_shebang ()
+{
+    local name
+
+    echo "Setting interpreter '$bash_path'..."
+    for name in "${bash_scripts[@]}"
+    do
+        sed -i -e "1s,.*,#! $bash_path," "$deb_name/usr/bin/$name"
+        echo "  $deb_name/usr/bin/$name"
+    done
+
+    echo "Setting interpreter '/usr/bin/bill'..."
+    for name in "${bill_scripts[@]}"
+    do
+        sed -i -e "1s,.*,#! /usr/bin/bill," "$deb_name/usr/bin/$name"
+        echo "  $deb_name/usr/bin/$name"
+    done
+
+    echo "Adjusting interpreter for modules..."
+    for name in $(find "$deb_name/usr/lib/bill" -name '*.bsh')
+    do
+        sed -i -e '1s,.*,#! /usr/bin/bill,' "$name"
+        echo "  $name"
+    done
+}
+
+
+add_control_files ()
+{
+    var_version=$BILL_VERSION \
+        template_expand < debian/control.in > "$deb_name/DEBIAN/control"
+}
+
+
+make_deb ()
+{
+    fakeroot dpkg-deb --build "$deb_name"
+}
+
+
+make_clean
+copy_files
+adjust_shebang
+add_control_files
+make_deb
+make_clean
+
