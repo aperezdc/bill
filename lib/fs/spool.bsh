@@ -6,10 +6,10 @@
 #   :Author: Adrián Pérez <aperez@igalia.com>
 #   :Copyright: 2008 Igalia S.L.
 #   :License: GPL v2
-#   :Abstract: Provides mechanism for having a directory with files or
-#       subdirectories inside it which can be created, listed and removed.
-#       All the operations are done at the filesystem level and atomicity
-#       is guaranteed by using renames.
+#   :Abstract: Provides mechanism for having a directory with spooled items.
+#       Items may be files or subdirectories which can be created, listed and
+#       removed. All the operations are done at the filesystem level and
+#       atomicity is guaranteed by using renames.
 #
 #   .. contents::
 #

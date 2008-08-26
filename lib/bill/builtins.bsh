@@ -1,4 +1,4 @@
-#!bill
+#! /usr/bin/env bill
 #++
 #   ==============
 #   BILL built-ins
@@ -6,8 +6,8 @@
 #   :Author: Adrián Pérez <aperez@igalia.com>
 #   :Copyright: Igalia S.L. 2008
 #   :License: GPL v2
-#   :Abstract: Provides functions of common usage in shell code, this module
-#       is always imported by the Bill interpreter at startup.
+#   :Abstract: Provides functions of common usage in shell code.
+#       This module is always imported by the Bill interpreter at startup.
 #
 #   .. contents::
 #--

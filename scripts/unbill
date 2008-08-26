@@ -1,10 +1,8 @@
-#! /usr/bin/bill
-set -e
+#! /usr/bin/env bill
 
 need sort uniq grep sed \
     || die "One of the required external commands was not found"
 
-# The builtins module is always seen :)
 declare -a seen_modules
 
 module_seen ()

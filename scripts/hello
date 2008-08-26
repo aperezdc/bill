@@ -1,4 +1,4 @@
-#! /usr/bin/bill
+#! /usr/bin/env bill
 
 use hello
 
