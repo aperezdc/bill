@@ -50,12 +50,6 @@
 #--
 
 
-die () {
-    echo "${1:-Execution aborted}" 1>&2
-    exit 1
-}
-
-
 template_IFS='
 '
 
