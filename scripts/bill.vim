@@ -30,7 +30,7 @@ function <sid>CLoad()
 		syn cluster  shCommentGroup    contains=shTodo,@Spell
 		syn keyword  shTodo            contained TODO XXX FIXME
 		syn match    shComment "#.*$"  contains=@shCommentGroup
-		syn keyword  shStatement       use need warn die
+		syn keyword  shStatement       use need warn die main
 
 	endif
 endfunction
