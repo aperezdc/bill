@@ -12,6 +12,8 @@
 #   .. contents::
 #--
 
+BILL_VERSION='0.1'
+
 
 #++ warn message
 #
@@ -143,4 +145,5 @@ main ()
 {
     [ "$__bill_use__" ] || "$@"
 }
+
 
