@@ -88,7 +88,9 @@ use ()
     then
         # The module is an inline piece of preloaded code. All defs are
         # inside the function, so we just execute the function.
+        __bill_use__=true
         $funcname
+        unset __bill_use__
     else
         local old_IFS=$IFS
         local found=false
@@ -98,7 +100,9 @@ use ()
         do
             if [ -r "$path/$1.bsh" ]
             then
+                __bill_use__=true
                 source "$path/$1.bsh"
+                unset __bill_use__
                 found=true
                 break
             fi
@@ -122,4 +126,21 @@ use ()
     bill_loaded_modules=( "${bill_loaded_modules[@]}" "$1" )
 }
 
+
+#++ main
+#
+#   Checks whether a module is running as a standalone script and runs the
+#   supplied function with a set of arguments. This allows modules both being
+#   imported and for acting as a script. For example::
+#
+#       foo () {
+#           echo "I am foo"
+#       }
+#
+#       main foo
+#--
+main ()
+{
+    [ "$__bill_use__" ] || "$@"
+}
 
