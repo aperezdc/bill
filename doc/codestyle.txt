@@ -1,0 +1,18 @@
+=======================
+ Code style guidelines
+=======================
+
+:Author: Adrian Perez <aperez@igalia.com>
+:License: GPL v2
+:Abstract: Provides general guidelines on how to write and organize shell
+    code in general and when using the Bill library in particular.
+
+.. contents::
+
+
+.. admonition:: To-do
+
+   Finish writing this document.
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+
