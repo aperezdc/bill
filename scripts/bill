@@ -76,11 +76,13 @@ if [ "$1" ]
 then
     SCRIPT=$1
     shift
+    BILLPATH="$(dirname "$SCRIPT"):$BILLPATH"
     source "$SCRIPT"
 else
     unset PROMPT_COMMAND
     PS1='\[\033[1;1m\](bill)\[\033[0;0m\] '
     PS2='\[\033[1;1m\]  ...)\[\033[0;0m\] '
+    BILLPATH="$(pwd):$BILLPATH"
 
     # XXX This crude hack works because we are exporting built-in functions
     #      using "declare -xf" AND as we do not redirect stdin/stdout for
