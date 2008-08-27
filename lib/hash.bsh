@@ -1,0 +1,169 @@
+#! /usr/bin/env bill
+#++
+#   =========
+#   Hash maps
+#   =========
+#
+#   :Author: Adrián Pérez <aperez@igalia.com>
+#   :Copyright: Igalia S.L., 2008
+#   :License: GPL v2
+#   :Abstract: Provides a hash-like data structure for use in shell code.
+#
+#   .. contents::
+#
+#   Introduction
+#   ============
+#   This module adds functions to manage pseudo hash tables using arrays. It
+#   it not as efficient as a proper hash table implementation, but that
+#   would be difficult to do in shell code and this suffices for a vast
+#   amount of cases where performance is not critical.
+#
+#   An array containing paired items is considered to be a hash map, like the
+#   following example::
+#
+#       myhash=(
+#           "key1"    "value1"
+#           "key2"    "value2"
+#           # ...
+#       )
+#
+#
+#   Obviously enough, a hash map must contain an even number of elements.
+#
+#   .. warning:: This hash map implementation is neither CPU and memory
+#      efficient. Each algorithm has *O(n)* complexity. This is *not*
+#      considered to be an error.
+#
+#
+#   Functions
+#   =========
+#--
+
+
+#++ hash_get hashmap key
+#
+#   Obtains the value associated with a particular key. The exit status is
+#   non-zero if the specified key does not exist.
+#--
+hash_get ()
+{
+    # Calculate the lenght of the map
+    local hash_len="$(hash_size "$1")"
+    local hash_key="$2"
+
+    # Loop over map keys.
+    for (( i = 0; i < $hash_len ; i += 2 ))
+    do
+        # Check if we founded specified key. In this case print value into
+        # stdout and return true.
+        if [ "$(hash_item "$1" "$i")" = "$hash_key" ]
+        then
+            echo "$(hash_item "$1" "$((i+1))")"
+            return 0
+        fi
+    done
+
+    # If loop ends, then no key is found.
+    return 1
+}
+
+
+#++ hash_key hashmap value
+#
+#   Finds the first key which has the given value associated. Exits status
+#   is non-zero if the item is not found.
+#--
+hash_key ()
+{
+    local hash_len="$(hash_size "$1")"
+    local hash_val="$2"
+
+    # Loop over map keys.
+    for (( i = 1; i < $hash_len; i += 2 ))
+    do
+        if [ "$(hash_item "$1" "$i")" = "$hash_val" ]
+        then
+            echo "$(hash_item "$1" "$((i-1))")"
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+#++ hash_keys hashmap
+#
+#   Gets a list of all the keys in a hash map. Exit status is non-zero if
+#   the hash map is empty.
+#--
+hash_keys ()
+{
+    local hash_len="$(hash_size "$1")"
+    local list_out=
+
+    for (( i = 0; i < $hash_len; i += 2 ))
+    do
+        list_out="${list_out:+${list_out}${IFS:0}}$(hash_item "$1" "$i")"
+    done
+
+    # Finally print result in stdout if list_out contains something.
+    # If no result, then condition fails, and return value is automatically
+    # setted to *false*.
+    [ "$list_out" ] && echo "$list_out"
+}
+
+
+#++ hash_size hashmap
+#
+#   Calculates the number of elements present in a hash map.
+#--
+hash_size ()
+{
+    local size="$( eval "echo \${#${1}[@]}" )"
+    echo "$size"
+}
+
+
+# Function:    hash_item <map> <index>
+# Purpose:    return the item in *index* position of the *map*
+# Input:    *map* is a hash map;
+#+            *index* is a number to indexate the array
+# Output:    the value in *index* position
+# Return:    always *true*
+
+#++ hash_item hashmap index
+#
+#   Returns item at the given position of the map. Usually you do not need
+#   to use this function, as it will be used internally by the rest of the
+#   functions of the module. It could be useful to build additional features
+#   in other modules.
+#--
+hash_item ()
+{
+    eval "echo \${$1[$2]}"
+}
+
+
+#++ hash_values hashmap
+#
+#   Obtains a list of all the values in a hash map. Exit status is non-zero
+#   if the hash map is empty.
+#--
+hash_values ()
+{
+    local hash_len="$(hash_size "$1")"
+    local list_out=
+
+    for (( i = 1; i < $hash_len; i += 2 ))
+    do
+        # Concatenate current value into ``list_out`` variable.
+        list_out="${list_out:+${list_out}${IFS:0}}$(hash_item "$1" "$i")"
+    done
+
+    # Finally print result in ``stdout`` if ``list_out`` contains something.
+    # If no result, then condition fails, and return value is automatically
+    # setted to *false*.
+    [ "$list_out" ] && echo "$list_out"
+}
+
+
