@@ -25,7 +25,7 @@ find_module ()
     IFS=':'
 
     local path
-    for path in $BILLPATH
+    for path in .:$BILLPATH
     do
         if [ -r "$path/$1.bsh" ]
         then
