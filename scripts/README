@@ -1,0 +1,26 @@
+bill
+    The Bill "interpreter", capable of setting up a suitable environment for
+    running scripts. It may also act as interactive interpreter.
+
+unbill
+    Assembles modules and a script into something with can be run standalone
+    without needing an installed copy of Bill.
+
+example-hello
+    Example script which uses the "hello" module.
+
+bill.vim
+    Vim plugin which adds filetype detection and extra syntax highlighting
+    rules for Bill scripts. Copy it to ~/.vim/plugin (or the like.)
+
+gen-debian-package
+    Creates a Debian package out of a Bill source tree. Must be run from the
+    top of of the tree.
+
+docextract.awk
+    Simplistic AWK script which extracts documentation comments from shell
+    code. It assumes output will be reStructuredText.
+
+gen-module-index
+    Generates a reStructuredText with a list of modules and a one-line
+    description taken from the "Abstract" field of the module documentation

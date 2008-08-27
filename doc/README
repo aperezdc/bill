@@ -1,0 +1,3 @@
+Documentation is in reStructuredText format and can be converted to a number
+of formats. Running "make" in the top-level source directory will dump HTML
+documentation here.

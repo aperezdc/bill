@@ -1,3 +1,19 @@
-doc		Add general documentation here
-lib		Library integrating scripts source code
-scripts		Source code containing basic functions (one function per script)
+===========
+Bill README
+===========
+
+This is the Bash Improved/Igalia Leveraging Library, a set of scripts which
+build on the GNU Bash shell to provide reusable code modules. The source
+distribution contains the following:
+
+doc
+    General documentation here
+
+lib
+    Library integrating scripts source code
+
+scripts
+    Source code containing basic functions (one function per script)
+
+debian
+    Template files used for creating Debian packages of Bill.
