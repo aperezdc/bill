@@ -141,7 +141,7 @@ template_expand_cgi ()
         done
     fi
 
-    template "$@"
+    template_expand "$@"
 }
 
 
