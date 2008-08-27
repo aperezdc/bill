@@ -56,7 +56,7 @@ form_multipart_handle ()
     local marker=$(head -1 "$1/pack")
 
     # Split up parts in components
-    csplit "$1/pack" -q -z -f "$1/raw/" "/^$marker/" '{*}'
+    csplit -q -z -f "$1/raw/" "$1/pack" "/^$marker/" '{*}'
 
     for name in "$1/raw"/*
     do
