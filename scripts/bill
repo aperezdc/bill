@@ -83,7 +83,14 @@ else
     PS1='\[\033[1;1m\](bill)\[\033[0;0m\] '
     PS2='\[\033[1;1m\]  ...)\[\033[0;0m\] '
 
-    export BILLPATH PS1 PS2
+    # XXX This crude hack works because we are exporting built-in functions
+    #      using "declare -xf" AND as we do not redirect stdin/stdout for
+    #      the new shell, it will start as an interactive one. As it will
+    #      get a real terminal, it will start in interactive mode with the
+    #      desired settings.
+    #
+    export BILL_VERSION BILLPATH PS1 PS2
+    exec < /dev/tty &> /dev/tty
     exec bash --noprofile --norc
 fi
 
