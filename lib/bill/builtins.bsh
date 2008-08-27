@@ -12,7 +12,7 @@
 #   .. contents::
 #--
 
-BILL_VERSION='0.1'
+export BILL_VERSION='0.1'
 
 
 #++ warn message
@@ -58,7 +58,7 @@ need ()
 
 
 
-declare -a bill_loaded_modules=( bill/builtins )
+declare -ax bill_loaded_modules=( bill/builtins )
 
 #++ use module
 #
@@ -90,9 +90,7 @@ use ()
     then
         # The module is an inline piece of preloaded code. All defs are
         # inside the function, so we just execute the function.
-        __bill_use__=true
-        $funcname
-        unset __bill_use__
+        __bill_use__=true $funcname
     else
         local old_IFS=$IFS
         local found=false
@@ -102,9 +100,7 @@ use ()
         do
             if [ -r "$path/$1.bsh" ]
             then
-                __bill_use__=true
-                source "$path/$1.bsh"
-                unset __bill_use__
+                __bill_use__=true source "$path/$1.bsh"
                 found=true
                 break
             fi
@@ -147,3 +143,4 @@ main ()
 }
 
 
+declare -xf use die warn need main

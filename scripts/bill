@@ -71,7 +71,6 @@ use ()
 }
 
 use bill/builtins
-declare -xf use die warn need main
 
 if [ "$1" ]
 then
