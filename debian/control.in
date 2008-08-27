@@ -1,5 +1,5 @@
 Package: bill
-Version: ${version}-1
+Version: ${version}
 Priority: optional
 Architecture: all
 Depends: bash ( >= 2.05-1 ), coreutils ( >= 5.97-5.3 )

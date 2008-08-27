@@ -8,7 +8,8 @@ need bash     || die "Command 'bash' not found (Definitely you WILL need it)"
 
 
 bash_path=$(which bash)
-deb_name="bill-${BILL_VERSION}-1"
+deb_version="${BILL_VERSION}-${1:-1}"
+deb_name="bill-${deb_version}"
 bash_scripts=( bill )
 bill_scripts=( unbill )
 
@@ -76,7 +77,7 @@ adjust_shebang ()
 
 add_control_files ()
 {
-    var_version=$BILL_VERSION \
+    var_version=$deb_version \
         template_expand < debian/control.in > "$deb_name/DEBIAN/control"
 }
 
