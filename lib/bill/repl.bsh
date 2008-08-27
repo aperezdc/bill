@@ -1,8 +1,0 @@
-#! /usr/bin/env bill
-
-bill_repl_run ()
-{
-   echo "Yet unimplemented, sorry" 1>&2
-   exit 1
-}
-

@@ -71,6 +71,7 @@ use ()
 }
 
 use bill/builtins
+declare -xf use die warn need main
 
 if [ "$1" ]
 then
@@ -78,7 +79,11 @@ then
     shift
     source "$SCRIPT"
 else
-    use bill/repl
-    bill_repl_run
+    unset PROMPT_COMMAND
+    PS1='\[\033[1;1m\](bill)\[\033[0;0m\] '
+    PS2='\[\033[1;1m\]  ...)\[\033[0;0m\] '
+
+    export BILLPATH PS1 PS2
+    exec bash --noprofile --norc
 fi
 
