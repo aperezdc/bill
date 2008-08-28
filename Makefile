@@ -29,7 +29,11 @@ rst2html := $(shell type -P \
 	docutils-rst2html \
 	rst2html.py \
 	rst2html \
-| head -1)
+| head -1) --stylesheet-path=doc/docutils.css
+
+
+clean:
+	$(RM) $(all_html_pages)
 
 # vim:ft=make
 #
