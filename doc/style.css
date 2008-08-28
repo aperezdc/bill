@@ -1,0 +1,82 @@
+
+body {
+	font-family: "Trebuchet MS", sans-serif;
+	font-size: 12px;
+	margin: 1em 4em;
+}
+
+.title {
+	background:#dedfe0;
+	border:1px solid #0052A3;
+	margin-left:-1em;
+	padding-left:0.5em;
+	color:#0052A3;
+}
+
+#contents {
+	color:#0052A3;
+	border-bottom:1px dotted #0052A3;
+	font-size:x-large;
+}
+
+.section h1 {
+	color:#0052A3;
+	border-bottom:1px dotted #0052A3;
+}
+
+h2 {
+	color:#0052A3;
+}
+
+pre {
+	background:#efffaf;
+	border:1px solid #cd8;
+	border-left:4px solid #cd8;
+	padding:0.5em;
+}
+
+th {
+	text-align:left;
+	background:transparent;
+	padding-right:1em;
+}
+
+td tr { background:transparent; }
+
+table {
+	margin-left:1em;
+	background:#dedfe0;
+	padding:0.5em;
+ -moz-border-radius:10px;
+}
+
+.system-messages {
+  color: 1px solid red;
+}
+
+.system-messages h1 {
+  border-bottom: 1px dotted red;
+}
+
+.system-messages h1 a {
+  color: 1px dotted red;
+}
+
+.system-message {
+  border: 1px solid red;
+  background: #fcc;
+ -moz-border-radius:10px;
+  margin: 1em;
+  padding: 1em;
+}
+
+a { text-decoration:none; }
+
+.reference { color: #0052a3; }
+
+.reference:hover { border-bottom:1px dotted #0052a3; }
+
+dt { font-weight:bold; }
+
+dd { font-style:italic; }
+
