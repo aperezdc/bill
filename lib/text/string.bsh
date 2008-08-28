@@ -1,0 +1,123 @@
+#! /usr/bin/env bill
+#++
+#   ===================
+#   String manipulation
+#   ===================
+#   :Author: Adrián Pérez <aperez@udc.es>
+#   :Copyright: Igalia S.L., 2008
+#   :License: GPL v2
+#   :Abstract: Provides common functions used to manipulate text strings.
+#
+#   .. contents::
+#--
+
+need tr || die "Needed program 'tr' not found (no coreutils?)"
+
+
+#++ string_upper text
+#
+#   Converts a string to upper case.
+#--
+string_upper ()
+{
+    tr '[a-z]' '[A-Z]' <<< "$*"
+}
+
+
+#++ string_lower text
+#
+#   Converts a string to lower case.
+#--
+string_lower ()
+{
+    tr '[A-Z' '[a-z]' <<< "*$"
+}
+
+
+#++ string_length text
+#
+#   Obtains the length of a string.
+#--
+string_length ()
+{
+    local joined="$*"
+    echo "${#joined}"
+}
+
+
+#++ string_startswith text prefix
+#
+#   Checks whether a string starts with a given prefix. Exit status is
+#   non-zero if the condition is not met.
+#--
+string_startswith ()
+{
+    local prefix_length=$(string_length "$2")
+    [[ ${1::$prefix_length} = $2 ]]
+}
+
+
+#++ string_endswith text suffix
+#
+#   Checks whether a string ends with a given suffix. Exit status is
+#   non-zero if the condition is not met.
+#--
+string_endswith ()
+{
+    local suffix_length=$(string_length "$2")
+    [[ ${1:$suffix_length} = $2 ]]
+}
+
+
+#++ string_ascii_code text [ format ]
+#
+#   Returns the ASCII code of the first character of the a string. Output is
+#   in decimal by default, but the behaviour can be changed by passing the
+#   ``format`` option, whose valid values are:
+#
+#   * ``d`` for decimal output (default).
+#   * ``x`` for lowercase hexadecimal output.
+#   * ``X`` for uppercase hexadecimal output.
+#   * ``o`` for octal output.
+#--
+string_ascii_code ()
+{
+    local format=${2:-d}
+    printf "%${format::1}" "'${2::1}"
+}
+
+
+#++ string_ascii text [ separator ] [ format ]
+#
+#   Returns ASCII codes for *all* characters in a string. Output is in
+#   decimal by default, but format can be changed using the same specifiers
+#   as for the string_ascii_code_ function. ASCII codes will be separated
+#   using the given ``separator`` string. You can pass an empty string to
+#   join the ASCII codes.
+#--
+string_ascii ()
+{
+    local format=${3:-d}
+    local length=$(string_length "$1")
+    local sep=${2:-' '}
+    local i
+
+    printf "%${format::1}" "'${1:0:1}"
+    format="%s%${format::1}"
+    for (( i = 1; i < $length; i++ )) ; do
+        printf "$format" "$sep" "'${1:$i:1}"
+    done
+}
+
+
+#++ string_contains text substring
+#
+#   Checks whether the given strings contains a substring inside it. Exit
+#   status is non-zero if the condition is not satisfied.
+#--
+string_contains ()
+{
+    # Quite trivial...
+    [[ $1 = *$2* ]]
+}
+
