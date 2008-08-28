@@ -1,0 +1,153 @@
+#! /usr/bin/env bill
+#++
+#   =============================
+#   Handling of terminal consoles
+#   =============================
+#   :Author: Adrián Pérez <aperez@igalia.com>
+#   :License: GPL v2
+#   :Copyright: Igalia S.L., 2008
+#   :Abstract: Handles settings of standard Unix terminal console devices.
+#       Provides support for nicer handling of features like ECMA-48 (ANSI)
+#       color codes.
+#
+#   .. contents::
+#
+#--
+
+#++
+#   ECMA-48 graphics rendition
+#   ==========================
+#   Support for using ECMA-48 escape sequences (also known as ANSI color
+#   escapes) is provided by using tty_color_fg_, tty_color_bg_ and other
+#   related functions.
+#
+#   Typical usage
+#   -------------
+#   There are some usage patterns which you may want to know prior to start
+#   using the module. The most important one follows the *avoid doing the
+#   same operation twice* motto: calling tty_color_fg_ and tty_color_bg_ is
+#   not cheap in terms of efficiency, but their result can be saved for
+#   later use. So instead of::
+#
+#       echo "$(tty_color_fg red) This is RED $(tty_color_fg reset)"
+#       echo "$(tty_color_fg red) This one too... $(tty_color_fg reset)"
+#
+#   it is better to save results in variables and reuse the values::
+#
+#       red=$(tty_color_fg red)
+#       reset=$(tty_color_fg reset)
+#       echo "$red This is RED $reset"
+#       echo "$red This one too... $reset"
+#
+#   This way your scripts will run faster and your code will be cleaner.
+#--
+
+#++
+#   Functions
+#   =========
+#--
+
+use data/hash
+
+__tty_color_fg=(
+    reset       0
+    bold        1
+    half        2
+    blink       5
+    reverse     7
+    normal     22
+    no-blink   25
+    no-reverse 27
+
+    black      30
+    red        31
+    green      32
+    brown      33
+    blue       34
+    magenta    35
+    cyan       36
+    white      37
+)
+
+__tty_color_bg=(
+    reset       0
+    bold        1
+    half        2
+    blink       5
+    reverse     7
+    no-blink   25
+    no-reverse 27
+
+    black      40
+    red        41
+    green      42
+    brown      43
+    blue       44
+    magenta    45
+    cyan       46
+    white      47
+
+    default    49
+)
+
+__tty_color_alias=(
+    yellow  brown
+    fucsia  magenta
+    pink    magenta
+    teal    cyan
+    aqua    cyan
+    silver  white
+)
+
+
+#++ tty_color_alias colorname
+#
+#   Obtains the real color for a given color name, resolving aliases as
+#   needed.
+#
+#   .. note:: In the current implementation only **one** level of
+#      indirection is resolved. That should be enough for all cases.
+#--
+tty_color_alias ()
+{
+    local name=$(hash_get __tty_color_alias "$1")
+    [ "$name" ] || name=$1
+    echo "$name"
+}
+
+
+#++ tty_color_fg attribute1 [ attribute2 [ ... attributeN ] ]
+#
+#   Obtains the ECMA-48 escape sequence needed to apply a determinate
+#   graphics rendition in the foreground. The escape sequence will apply
+#   *all* the given attributes. See `typical usage`_ above for tips on
+#   how to use this function.
+#--
+tty_color_fg ()
+{
+    while [ "$1" ]
+    do
+        local attr=$(hash_get __tty_color_fg "$(tty_color_alias "$1")")
+        [ "$attr" ] && echo -n $'\e['"${attr}m"
+        shift
+    done
+}
+
+
+#++ tty_color_bg attribute1 [ attribute2 [ ... attributeN ] ]
+#
+#   Obtains the ECMA-48 escape sequence needed to apply a determinate
+#   graphics rendition in the background. The escape sequence will apply
+#   *all* the given attributes. See `typical usage`_ above for tips on
+#   how to use this function.
+#--
+tty_color_bg ()
+{
+    while [ "$1" ]
+    do
+        local attr=$(hash_get __tty_color_bg "$(tty_color_alias "$1")")
+        [ "$attr" ] && echo -n $'\e['"${attr}m"
+        shift
+    done
+}
+
