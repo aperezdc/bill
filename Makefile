@@ -29,7 +29,7 @@ rst2html := $(shell type -P \
 	docutils-rst2html \
 	rst2html.py \
 	rst2html \
-| head -1) --stylesheet-path=doc/style.css
+| head -1) --link-stylesheet --stylesheet-path=doc/main.css
 
 
 clean:
