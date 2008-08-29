@@ -1,9 +1,29 @@
-====================
- Bill documentation
-====================
+======
+ BILL
+======
+------------------------------------
+The Bash Improved Leveraging Library
+------------------------------------
 
-Manual
-------
+:Author: Adrián Pérez <aperez@igalia.com>
+:Copyright: Igalia S.L., 2008
+:License: `GPL v2 <http://opensource.org/licenses/gpl-2.0.php>`__
+:Abstract: Bill builds a module system, interactive interpreter and provides
+    a “standard library” to be used in shell code. The main goal is making
+    easier to write shell scripts and provide a framework for reusable code.
+    Tools for documenting, unit-testing and deploying shell code.
+
+.. contents::
+
+
+Download
+========
+
+Documentation
+=============
+
+Manuals
+-------
 
 #. `Deploying Bill scripts <deploy.html>`__
 #. `Code style guidelines <codestyle.html>`__
@@ -13,5 +33,6 @@ Reference
 
 #. `Module index <module-index.html>`__
 
-.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4 spell spelllang=en
 

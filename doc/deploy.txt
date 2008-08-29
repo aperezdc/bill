@@ -7,6 +7,11 @@
     need the Bill runtime to be installed in order to work. The only
     requirement will be a recent enough installation of Bash.
 
+.. contents::
+
+
+Quickstart
+==========
 
 Use the ``unbill`` script to produce a standalone version of a script::
 

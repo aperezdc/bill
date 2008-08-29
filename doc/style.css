@@ -228,6 +228,7 @@ h1 {
 	background: #ddd url(img/whiteshade.png) 0 0 repeat-x;
 	padding: 0.05em 0.2em;
 	border-bottom: 1px solid #bbb;
+	clear: both;
 }
 
 h1.title {
@@ -542,7 +543,54 @@ table.docinfo {
 	-webkit-border-radius: 7px;
 }
 
+div.abstract, div.contents {
+	margin: 2em 0;
+	padding: 0;
+	border: 1px solid #ccc;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+}
+
+div.abstract {
+	float: right;
+	width: 48%;
+	text-align: left;
+}
+
+div.contents {
+	float: left;
+	width: 48%;
+}
+
+div.abstract p.topic-title, div.contents p.topic-title {
+	background: #fafafa;
+	margin: 0;
+	padding: 0.1em 0.5em;
+	font-weight: bold;
+	border-bottom: 1px solid #ccc;
+
+	border-top-left-radius: 7px;
+	-moz-border-radius-topleft: 4px;
+	-webkit-border-radius-top-left: 7px;
+	border-top-right-radius: 7px;
+	-moz-border-radius-topright: 4px;
+	-webkit-border-radius-top-right: 7px;
+}
+
+
 table.docinfo th.docinfo-name {
 	text-align: right;
 }
 
+h2.subtitle {
+	font-family: "ParkAvenue", "Rechtman", fantasy;
+	font-size: 28px;
+	color: #bbb;
+	float: right;
+	text-align: right;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	margin-right: 1em;
+}
