@@ -5,11 +5,12 @@ use text/template
 need fakeroot || die "Command 'fakeroot' not found (apt-get install fakeroot)"
 need dpkg-deb || die "Command 'dpkg-deb' not found (Not a Debian system?)"
 need bash     || die "Command 'bash' not found (Definitely you WILL need it)"
+need gzip     || die "Command 'gzip' not found (You want it, man, yeah!)"
 
 
 bash_path=$(which bash)
 deb_version="${BILL_VERSION}-${1:-1}"
-deb_name="bill-${deb_version}"
+deb_name="bill_${deb_version}_all"
 bash_scripts=( bill )
 bill_scripts=( unbill )
 
@@ -33,6 +34,11 @@ copy_files ()
     echo -n "dirs "
 
     local name
+    local gzip_files=(
+        changelog.Debian
+        README
+    )
+
     for name in "${bash_scripts[@]}" ; do
         cp "scripts/$name" "$deb_name/usr/bin"
         chmod +x "$deb_name/usr/bin/$name"
@@ -44,7 +50,17 @@ copy_files ()
     echo -n "scripts "
 
     cp -R lib/* "$deb_name/usr/lib/bill/"
-    echo "lib ]"
+    echo -n "lib "
+
+    mkdir -p "$deb_name/usr/share/doc/bill"
+    cp -R examples doc/* "$deb_name/usr/share/doc/bill"
+    cp README "$deb_name/usr/share/doc/bill"
+    cp debian/changelog "$deb_name/usr/share/doc/bill/changelog.Debian"
+    for name in "${gzip_files[@]}" ; do
+        gzip --best "$deb_name/usr/share/doc/bill/$name"
+    done
+    gzip --best "$deb_name/usr/share/doc/bill"/*.txt
+    echo "doc ]"
 }
 
 

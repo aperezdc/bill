@@ -47,8 +47,8 @@ Packages for the latest release (0.1) are available here:
   `bill-0.1.tar.gz <bill-0.1.tar.gz>`__ /
   `bill-0.1.tar.bz2 <bill-0.1.tar.bz2>`__
 
-* Debian_ package:
-  `bill-0.1-1.deb <bill-0.1-1.deb>`__
+* Debian_ package (all platforms):
+  `bill_0.1-1_all.deb <bill_0.1-1_all.deb>`__
 
 The code can also be from the GIT_ repository::
 

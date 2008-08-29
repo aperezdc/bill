@@ -10,6 +10,7 @@ all_html_pages  := $(patsubst %.bsh,doc/%.html,$(all_bsh_modules)) \
                    $(patsubst %.txt,%.html,$(all_txt_docs)) \
                    doc/module-index.html
 
+
 doc: $(all_html_pages)
 
 doc/%.html: %.bsh
@@ -35,6 +36,11 @@ rst2html := $(shell type -P \
 
 clean:
 	$(RM) $(all_html_pages)
+
+deb: doc
+	./scripts/bill scripts/gen-debian-package
+
+.PHONY: deb
 
 # vim:ft=make
 #
