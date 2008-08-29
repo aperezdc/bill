@@ -6,32 +6,67 @@ The Bash Improved Leveraging Library
 ------------------------------------
 
 :Author: Adrián Pérez <aperez@igalia.com>
-:Copyright: Igalia S.L., 2008
+:Version: `0.1 <#get-billed>`__
 :License: `GPL v2 <http://opensource.org/licenses/gpl-2.0.php>`__
-:Abstract: Bill builds a module system, interactive interpreter and provides
-    a “standard library” to be used in shell code. The main goal is making
-    easier to write shell scripts and provide a framework for reusable code.
-    Tools for documenting, unit-testing and deploying shell code.
+:Abstract: Bill builds a module system on top of the GNU Bash_ shell,
+    providing a *customized interactive interpreter* a *standard module
+    library* to be used in shell code. The main goal is making easier to
+    write shell scripts and provide a framework for reusing them.
+    Tools for documenting, unit-testing and deploying shell code are
+    available as well.
+
+.. _bash: http://www.gnu.org/software/bash
+.. _debian: http://debian.org
+.. _git: http://git.or.cz
 
 .. contents::
 
 
-Download
+Features
 ========
+
+As a quick summary, Bill brings to you:
+
+* Module system for shell code.
+* Standard `library <module-index.html>`__ (batteries included!)
+* Creation of `standalone <deploy.html>`__ scripts.
+* Tools for documentation_ generation.
+
+Last, but not least Bill also has the following:
+
+* Catchy name.
+* “Stolen” `logo <http://xbill.org>`__.
+
+
+Get Billed!
+===========
+
+Packages for the latest release (0.1) are available here:
+
+* Source code:
+  `bill-0.1.tar.gz <bill-0.1.tar.gz>`__ /
+  `bill-0.1.tar.bz2 <bill-0.1.tar.bz2>`__
+
+* Debian_ package:
+  `bill-0.1-1.deb <bill-0.1-1.deb>`__
+
+The code can also be from the GIT_ repository::
+
+    git clone git://we.are.not/there.yet
+
+
 
 Documentation
 =============
 
-Manuals
--------
+* `Code style guidelines <codestyle.html>`__. Contains tips on how to write
+  shell code.
 
-#. `Deploying Bill scripts <deploy.html>`__
-#. `Code style guidelines <codestyle.html>`__
+* `Deploying Bill scripts <deploy.html>`__. A must if you plan to distribute
+  your shell code and being nice to others not requiring them to have Bill
+  installed.
 
-Reference
----------
-
-#. `Module index <module-index.html>`__
+* Standard library `module index <module-index.html>`__
 
 
 .. vim: expandtab filetype=rst shiftwidth=4 tabstop=4 spell spelllang=en

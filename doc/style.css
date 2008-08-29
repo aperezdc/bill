@@ -536,6 +536,7 @@ div.archive-even {
 }
 
 table.docinfo {
+	padding: 0.2em;
 	background: #fafafa;
 	border: 1px solid #ccc;
 	border-radius: 7px;
