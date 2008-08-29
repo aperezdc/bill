@@ -1,82 +1,548 @@
 
+body, html, h1, h2, h3, h4, h5, h6, ul, ol, dl, p {
+	font-family: "Droid Sans", "Trebuchet MS",
+		"Lucida Grande", "Bitstream Vera Sans", "Verdana",
+		"Lucida Sans Unicode", "Lucida", "Geneva", "Helvetica", sans-serif;
+}
+
+pre, tt {
+	font-family: "Droid Sans Mono", monospace;
+}
+
+html {
+	background: url(img/logo.png) 105% 2em no-repeat;
+	background-attachment: fixed;
+	padding: 0;
+	margin: 0;
+}
+
 body {
-	font-family: "Trebuchet MS", sans-serif;
-	font-size: 12px;
-	margin: 1em 4em;
+	min-height: 300px;
+	padding: 0;
+	margin: 2em 11em 2em 3em;
+	color: #000;
+	font-size: 13px;
 }
 
-.title {
-	background:#dedfe0;
-	border:1px solid #0052A3;
-	margin-left:-1em;
-	padding-left:0.5em;
-	color:#0052A3;
+
+a {
+	color: #777;
+	font-weight: bold;
+	text-decoration: none;
 }
 
-#contents {
-	color:#0052A3;
-	border-bottom:1px dotted #0052A3;
-	font-size:x-large;
+a:hover {
+	color: #aaa;
 }
 
-.section h1 {
-	color:#0052A3;
-	border-bottom:1px dotted #0052A3;
+
+div#wrap-content-bottom a:hover {
+	color: #444;
 }
 
-h2 {
-	color:#0052A3;
+
+div#wrap-outer {
+	min-width: 616px;
+	background: url(img/vshade-black-trans.png) 100% 0 repeat-y;
+	padding-right: 8px;
 }
+
+
+div#wrap-inner {
+	min-width: 608px;
+	background: url(img/vshade-trans-black.png) 0 0 repeat-y;
+	padding-left: 8px;
+}
+
+
+div#wrap-outer-bottom {
+	min-width: 616px;
+	background: url(img/lbcorner-black-trans.png) 100% 0 no-repeat;
+	padding-right: 8px;
+	margin-bottom: 1.3em;
+}
+
+
+div#wrap-inner-bottom {
+	min-width: 608px;
+	background: url(img/rbcorner-black-trans.png) 0 0 no-repeat;
+	padding-left: 8px;
+}
+
+
+div#wrap-content-bottom {
+	min-width: 600px;
+	background: url(img/hshade-black-trans.png) 0 0 repeat-x;
+	height: 8px;
+	padding-top: 1.5em;
+	text-align: center;
+	font-size: 85%;
+	color: #777;
+}
+
+
+div#clear-both-dummy {
+	clear: both;
+}
+
+
+div#header-outer {
+	background: #000 url(img/headshade.png) 0 0 repeat-x;
+	height: 60px;
+}
+
+
+div#header-inner {
+	background: url(img/headtitle.png) 10px 50% no-repeat;
+	height: 60px;
+}
+
+
+div#header-content {
+	margin-left: 170px;
+	margin-right: 10px;
+	margin-top: 10px;
+	float: right;
+}
+
+
+div#header img {
+	display: block;
+	margin: 0 auto;
+}
+
+
+div#wrap-content {
+	min-width: 600px;
+	background: #fff;
+	padding-bottom: 0.1em;
+}
+
+
+div#content-body {
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-bottom: 1em;
+	margin-top: 0;
+}
+
+
+div#content-menu {
+	padding: 0;
+	margin: 0;
+}
+
+
+div#content-menu span {
+	text-transform: lowercase;
+	padding: 0.2em 0.5em;
+	color: #666;
+	float: right;
+	display: block;
+}
+
+
+div#content-menu ul {
+	padding: 0;
+	margin: 0;
+	border-left: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	/* background: #ddd url(img/whiteshade.png) 0 0 repeat-x; */
+	padding: 0.2em 0em;
+	background: #ddd url(img/whiteshade.png) 0 -5px repeat-x;
+}
+
+
+div#content-menu li {
+	text-transform: lowercase;
+	display: inline;
+	padding: 0;
+	margin: 0;
+}
+
+
+div#content-menu li a {
+	margin: 0;
+	display: inline;
+	padding: 0.2em 0.5em;
+	border-right: 1px solid #bbb;
+	background: #ddd url(img/whiteshade.png) 0 -5px repeat-x;
+}
+
+
+div#content-menu li a:hover {
+	background: #bbb url(img/whiteshade.png) 0 -5px repeat-x;
+	color: #333;
+}
+
+
+div.article {
+	margin: 0.5em;
+	margin-bottom: 2em;
+}
+
+
+p, dl {
+	margin: 0.8em 1em;
+	font: 13px/17px "Lucida Grande", "Bitstream Vera Sans", "Verdana",
+		"Lucida Sans Unicode", "Lucida", "Geneva", "Helvetica", sans-serif;
+}
+
+p {
+	text-align: justify;
+}
+
 
 pre {
-	background:#efffaf;
-	border:1px solid #cd8;
-	border-left:4px solid #cd8;
-	padding:0.5em;
+	padding: 0.2em;
+	margin: 0.4em 1.5em;
+	border: 1px solid #ddd;
+	border-left: 0.3em solid #ddd;
+	background: #f8f8f8;
 }
 
-th {
-	text-align:left;
-	background:transparent;
-	padding-right:1em;
+pre:hover {
+	border-color: #bbb;
 }
 
-td tr { background:transparent; }
 
-table {
-	margin-left:1em;
-	background:#dedfe0;
-	padding:0.5em;
- -moz-border-radius:10px;
+tt {
+	padding-right: 0.1em;
+	padding-left: 0.15em;
+	border: 1px solid #ddd;
+	background: #f8f8f8;
+}
+tt:hover {
+	border-color: #bbb;
 }
 
-.system-messages {
-  color: 1px solid red;
+
+li, dd, dl {
+	text-align: justify;
+	margin-right: 2em;
 }
 
-.system-messages h1 {
-  border-bottom: 1px dotted red;
+
+h1 {
+	background: #ddd url(img/whiteshade.png) 0 0 repeat-x;
+	padding: 0.05em 0.2em;
+	border-bottom: 1px solid #bbb;
 }
 
-.system-messages h1 a {
-  color: 1px dotted red;
+h1.title {
+	background: url(img/headshade.png) 0 50% repeat-x;
+	border: 1px solid #333;
+	color: #fff;
+	padding: 0.2em 0.3em;
+	font-size: 24px;
+	border-radius: 9px;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
 }
 
-.system-message {
-  border: 1px solid red;
-  background: #fcc;
- -moz-border-radius:10px;
-  margin: 1em;
-  padding: 1em;
+
+h2 {
+	margin-left: 0em;
 }
 
-a { text-decoration:none; }
 
-.reference { color: #0052a3; }
+h3 {
+	margin-left: 0.5em;
+}
 
-.reference:hover { border-bottom:1px dotted #0052a3; }
+h4, h5, h6 {
+	margin-left: 1em;
+}
 
-dt { font-weight:bold; }
 
-dd { font-style:italic; }
+/*
+div.error, p.error {
+	background: #fee url(img/icon-error.png) 4px 4px no-repeat;
+	border: 1px solid #faa;
+	padding: 4px;
+	padding-left: 24px;
+	min-height: 16px;
+	-moz-border-radius: 7px;
+}
+	*/
+
+
+form#main-search fieldset {
+	margin: 0;
+	padding: 0 0.1em 0 0.3em;
+	border: none;
+	border-top: 1px solid #444;
+}
+
+
+form#main-search fieldset legend {
+	font-weight: normal;
+	font-size: 75%;
+	color: #444;
+	padding: 0.1em;
+}
+
+
+form#main-search fieldset:hover {
+	border-color: #000;
+}
+
+
+form#main-search fieldset:hover legend {
+	color: #000;
+}
+
+
+form fieldset {
+	border: 1px solid #ccc;
+}
+
+
+form input, form textarea, button {
+	border: 1px solid gray;
+	background: #eee url(img/hshade-black-trans.png) 0 -3px repeat-x;
+}
+
+
+form input:hover, form textarea:hover, button:hover {
+	border-color: #333;
+}
+
+
+form input:focus, form textarea:focus, button:focus {
+	border-color: #333;
+	background-color: #fff;
+}
+
+
+textarea {
+	font-family: "Droid Sans Mono", monospace;
+	font-size: 85%;
+}
+
+
+form legend {
+	padding: 0.5em;
+	font-weight: bold;
+}
+
+
+form input.image {
+	background: none;
+	border: none;
+	vertical-align: middle;
+	padding: 1px;
+}
+
+
+.hide {
+	display: none;
+}
+
+
+form label {
+	float: left;
+	width: 150px;
+}
+
+
+form iframe {
+	margin-top: 1em;
+	border: 1px solid #aaa;
+	background: url(img/preview.png) -30px -50px repeat;
+}
+
+
+button, button:focus, input[type="submit"] {
+	border-top-color: #aaa;
+	border-left-color: #aaa;
+	color: #444;
+	font-weight: bold;
+	background: #aaa url(img/whiteshade.png) 0 -5px repeat-x;
+}
+
+button:hover, input[type="submit"]:hover {
+	border-top-color: #666;
+	border-left-color: #666;
+	background-color: #444;
+	color: #222;
+}
+
+
+/* Images inside articles. */
+div.article img {
+	margin: 0.4em 1em;
+	border: 1px solid #bbb;
+}
+
+div.article img:hover {
+	border-color: #999;
+}
+
+
+/* ReST: Notes, admonitions... */
+
+div.note, div.important, div.warning, div.tip, div.danger,
+div.caution, div.attention, div.hint, div.error, div.admonition {
+	margin: 0 1em 0.5em 1em;
+	border: 1px solid #ccc;
+	font-size: 85%;
+	overflow: hidden;
+}
+
+div.note p, div.important p, div.warning p, div.tip p,
+div.error p, div.danger p, div.caution p, div.attention p,
+div.hint p, div.admonition p {
+	margin-right: 64px;
+}
+
+div.error {
+	background: #fbb url(img/error.png) 102% -10px no-repeat;
+	border-color: #f66;
+}
+div.note {
+	background: #eef url(img/information.png) 102% -10px no-repeat;
+}
+div.warning, div.danger {
+	background: #fee url(img/warning.png) 102% -10px no-repeat;
+}
+div.important, div.caution, div.attention {
+	background: #efd url(img/important.png) 102% -10px no-repeat;
+}
+div.tip, div.hint {
+	background: #fff url(img/tip.png) 102% -10px no-repeat;
+}
+div.admonition {
+	background: #eee url(img/admonition.png) 102% -10px no-repeat;
+}
+
+p.admonition-title {
+	margin: 0 ! important;
+	padding-top: 0.5em;
+	padding-left: 1em;
+	font-style: italic;
+	font-weight: bold;
+	background: url(img/hshade-black-trans.png) 0 -3px repeat-x;
+}
+
+
+/* ReST: Sidebars */
+
+div.sidebar {
+	float: right;
+	clear: right;
+	width: 25%;
+	margin: 0 1em 0.5em 2em;
+	border: 1px solid #ccc;
+	font-size: 85%;
+	background: url(img/bg.png) 0 0 repeat;
+}
+
+div.sidebar p {
+	text-align: left;
+}
+
+p.sidebar-title {
+	margin: 0 ! important;
+	padding: 0.3em 1em 0.2em 1em;
+	font-style: italic;
+	font-weight: bold;
+	text-align: right;
+	background: #ddd url(img/whiteshade.png) 0 -5px repeat-x;
+	border-bottom: 1px solid #ccc;
+}
+
+
+/* Admin actions. */
+
+div.admin-actions {
+	float: right;
+	border-top: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	margin: -2em 1em 0.5em 1.5em;
+	background: #ddd url(img/whiteshade.png) 0 -7px repeat-x;
+}
+
+div.admin-actions a {
+	border-left: 1px solid #bbb;
+	padding: 0 22px 0 0.4em;
+}
+
+div.admin-actions a:hover {
+	color: #333;
+}
+
+div.admin-actions a.edit {
+	background: url(img/icon-prefs.png) 98% 50% no-repeat;
+}
+div.admin-actions a.remove {
+	background: url(img/icon-trash.png) 98% 50% no-repeat;
+}
+div.admin-actions a.source {
+	background: url(img/icon-source.png) 98% 50% no-repeat;
+}
+
+
+/*
+ * Archives page.
+ */
+div.archive-item {
+	border: 1px solid #fff;
+}
+div.archive-item:hover {
+	border-color: #777;
+}
+div.archive-item h4 {
+	padding: 0;
+	margin: 1em 1em 0 1em;
+	border-bottom: 1px solid #aaa;
+}
+div.archive-item h4:hover {
+	border-bottom-color: #777;
+}
+
+div.archive-item dl {
+	padding: 0;
+	margin: 0.75em 0 1.5em 1em;
+	font-size: 75%;
+	font-style: italic;
+	color: #777;
+}
+
+div.archive-item dl dt {
+	font-weight: bold;
+	margin-left: 1.5em;
+	margin-right: 0.5em;
+	float: left;
+	display: block;
+}
+
+div.archive-odd {
+	width: 49.6%;
+	float: left;
+}
+div.archive-even {
+	width: 49.6%;
+	float: right;
+}
+
+.odd {
+	background: #f0f0f0;
+}
+.even {
+}
+
+table.docinfo {
+	background: #fafafa;
+	border: 1px solid #ccc;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+}
+
+table.docinfo th.docinfo-name {
+	text-align: right;
+}
 
