@@ -2,28 +2,59 @@
 
 [ "$1" ] || die "Module path missing"
 
+need cat  || die "Needed tool 'cat' not found"
+need sort || {
+    warn "Tool 'sort' not found, contents will be unordered"
+    sort () {
+        cat
+    }
+}
+
+
 cat <<EOF
 ============
 Module Index
 ============
 
+:Abstract: This is a full listing of all the modules in the Bill standard
+    library along with a one-line summary of them and links to their API
+    reference.
+
+.. contents:: Module Categories
+
 EOF
 
-
-for path in $(find "$1" -name '*.bsh')
+for path in $(echo "$1"/* | sort)
 do
-    name=${path%.bsh}
-    name=${name#$1/}
-
-    abstract=$(sed -e '/:[aA]bstract:/s,.*:[aA]bstract:[ \t]*,,p' -e d "$path")
-
-    echo "\`$name <${path%.bsh}.html>\`__"
-    if [ "$abstract" ]
+    if [ -d "$path" ] && [ -r "$path/README" ]
     then
-        echo "  $abstract"
-    else
-        echo "  *No description available.*"
+        title=${path#$1/}
+        echo
+        echo "${title}"
+        echo "$(echo "$title" | sed 's:.:=:g')"
+        echo
+        cat "$path/README"
+        echo
+        echo '.. csv-table::'
+        echo '  :header: "Module", "Summary"'
+        echo '  :class: modules'
+        echo
+
+        for module in $(echo "$path"/*.bsh | sort)
+        do
+            name=${module%.bsh}
+            name=${name#$1/}
+            modpath=${module#$1/}
+            abstract=$(sed -e '/:[aA]bstract:/s,.*:[aA]bstract:[ \t]*,,p' -e d "$module")
+            if [ "$abstract" ]
+            then
+                echo "  \"\`$name <${modpath%.bsh}.html>\`_\", \"$abstract\""
+            else
+                echo "  \"\`$name <${modpath%.bsh}.html>\`_\", \"*No description*\""
+            fi
+        done
     fi
 done
+
 echo
 

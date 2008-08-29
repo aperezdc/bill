@@ -3,6 +3,7 @@
 # Adrián Pérez, 2008-08-14 20:29
 #
 
+module_readmes  := $(wildcard lib/*/README)
 all_txt_docs    := $(wildcard doc/*.txt)
 all_bsh_modules := $(shell find lib -name '*.bsh')
 all_html_pages  := $(patsubst %.bsh,doc/%.html,$(all_bsh_modules)) \
@@ -15,7 +16,7 @@ doc/%.html: %.bsh
 	mkdir -p $(dir $@)
 	awk -f scripts/docextract.awk $< | $(rst2html) - $@
 
-doc/module-index.html: $(all_bsh_modules)
+doc/module-index.html: $(all_bsh_modules) $(module_readmes)
 	./scripts/bill scripts/gen-module-index lib | $(rst2html) - $@
 
 %.html: %.txt

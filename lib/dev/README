@@ -1,0 +1,4 @@
+Modules in this category allow for controlling both physical (hardware)
+devices and logical ones (like terminal consoles.)
+
+.. vim: filetype=rst

@@ -543,6 +543,30 @@ table.docinfo {
 	-webkit-border-radius: 7px;
 }
 
+table.modules {
+	background: #fafafa url(img/whiteshade.png) 0 0 repeat-x;
+	border: 1px solid #ccc;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	margin: 1em auto;
+	width: 90%;
+}
+
+table.modules td, table.modules th {
+	border: none;
+	text-align: left;
+}
+
+table.modules td {
+	border-top: 1px solid #ccc;
+}
+
+table.modules th {
+	padding-bottom: 0.3em;
+	padding-top: 0.3em;
+}
+
 div.abstract, div.contents {
 	margin: 2em 0;
 	padding: 0;
@@ -555,6 +579,9 @@ div.abstract, div.contents {
 div.abstract {
 	float: right;
 	width: 48%;
+}
+
+div.abstract p {
 	text-align: left;
 }
 
@@ -593,4 +620,20 @@ h2.subtitle {
 	padding: 0;
 	position: relative;
 	margin-right: 1em;
+}
+
+
+div.system-message p {
+	color: #000;
+	margin: 0 0 0 -2em;
+}
+
+div.system-message {
+	color: #888;
+	border-bottom: 1px solid #ddd;
+	padding: 0.3em 0.3em 0.3em 2.3em;
+}
+
+div.system-message:hover {
+	background: #fafafa;
 }
