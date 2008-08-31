@@ -36,6 +36,8 @@ rst2html := $(shell type -P \
 
 clean:
 	$(RM) $(all_html_pages)
+	$(RM) .bill.deb.count
+	$(RM) bill*.deb
 
 deb: doc
 	./scripts/bill scripts/gen-debian-package
