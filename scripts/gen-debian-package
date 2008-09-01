@@ -73,6 +73,7 @@ copy_files ()
         gzip --best "$deb_name/usr/share/doc/bill/$name"
     done
     gzip --best "$deb_name/usr/share/doc/bill"/*.txt
+    gzip --best "$deb_name/usr/share/doc/bill/lib"/*/*.txt
     echo "doc ]"
 }
 
