@@ -1,0 +1,14 @@
+==========================
+ Documenting Bill modules
+==========================
+
+:Author: Adrian Perez <aperez@igalia.com>
+:License: GPL v2
+:Abstract: Explains how to document Bill modules used the tools bundled with
+    Bill itself.
+
+.. contents::
+
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+
