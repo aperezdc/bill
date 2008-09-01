@@ -25,13 +25,8 @@ doc/module-index.html: $(all_bsh_modules) $(module_readmes)
 
 .PHONY: doc
 
-SHELL = bash
-rst2html := $(shell type -P \
-	docutils-rst2html.py \
-	docutils-rst2html \
-	rst2html.py \
-	rst2html \
-| head -1) --link-stylesheet --stylesheet-path=doc/style.css
+rst2html := ./scripts/pygmentrst2html.py \
+            --link-stylesheet --stylesheet-path=doc/style.css
 
 
 clean:
