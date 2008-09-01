@@ -17,7 +17,7 @@ BEGIN {
 
 /^#\+\+/ {
 	in_comment = 1;
-	print "\n\n";
+	print "\n";
 	$0 = substr($0, 5);
 	print $1;
 	underscores = $1;

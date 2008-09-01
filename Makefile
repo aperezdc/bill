@@ -13,9 +13,11 @@ all_html_pages  := $(patsubst %.bsh,doc/%.html,$(all_bsh_modules)) \
 
 doc: $(all_html_pages)
 
-doc/%.html: %.bsh
+doc/%.txt: %.bsh
 	mkdir -p $(dir $@)
-	awk -f scripts/docextract.awk $< | $(rst2html) - $@
+	awk -f scripts/docextract.awk $< > $@
+
+.SECONDARY:
 
 doc/module-index.html: $(all_bsh_modules) $(module_readmes)
 	./scripts/bill scripts/gen-module-index lib | $(rst2html) - $@
@@ -31,6 +33,7 @@ rst2html := ./scripts/pygmentrst2html.py \
 
 clean:
 	$(RM) $(all_html_pages)
+	$(RM) -r doc/lib
 	$(RM) .bill.deb.count
 	$(RM) bill*.deb
 
