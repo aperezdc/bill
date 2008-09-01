@@ -48,9 +48,9 @@ do
             abstract=$(sed -e '/:[aA]bstract:/s,.*:[aA]bstract:[ \t]*,,p' -e d "$module")
             if [ "$abstract" ]
             then
-                echo "  \"\`$name <${modpath%.bsh}.html>\`_\", \"$abstract\""
+                echo "  \"\`$name <lib/${modpath%.bsh}.html>\`_\", \"$abstract\""
             else
-                echo "  \"\`$name <${modpath%.bsh}.html>\`_\", \"*No description*\""
+                echo "  \"\`$name <lib/${modpath%.bsh}.html>\`_\", \"*No description*\""
             fi
         done
     fi
