@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>BILL built-ins</title>
+<meta name="author" content="Adrián Pérez &lt;aperez&#64;igalia.com&gt;" />
+<meta name="copyright" content="Igalia S.L. 2008" />
+<link rel="stylesheet" href="../../style.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="bill-built-ins">
+<h1 class="title">BILL built-ins</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Adrián Pérez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Copyright:</th>
+<td>Igalia S.L. 2008</td></tr>
+<tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
+</tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Provides functions of common usage in shell code.
+This module is always imported by the Bill interpreter at startup.</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#warn" id="id1">warn</a></li>
+<li><a class="reference internal" href="#die" id="id2">die</a></li>
+<li><a class="reference internal" href="#need" id="id3">need</a></li>
+<li><a class="reference internal" href="#use" id="id4">use</a></li>
+<li><a class="reference internal" href="#main" id="id5">main</a></li>
+</ul>
+</div>
+<div class="section" id="warn">
+<h1><a class="toc-backref" href="#id1">warn</a></h1>
+<pre class="literal-block">
+warn message
+</pre>
+<p>Prints a message to the standard error stream.</p>
+</div>
+<div class="section" id="die">
+<h1><a class="toc-backref" href="#id2">die</a></h1>
+<pre class="literal-block">
+die [ message ]
+</pre>
+<p>Exits running process with a non-zero status, optionally printing an
+error message before exiting.</p>
+</div>
+<div class="section" id="need">
+<h1><a class="toc-backref" href="#id3">need</a></h1>
+<pre class="literal-block">
+need tool1 [ tool2 [ ... [ toolN ] ] ]
+</pre>
+<p>Checks whether a list of commands are available on the system and can be
+accessed by means of the current <tt class="docutils literal"><span class="pre">$PATH</span></tt> setting. If one of the
+dependencies is not met, return status will be non-zero. If you want to
+know exactly which tool was not found then check the tools one at
+a time:</p>
+<div class="highlight"><pre>need openssl <span class="o">||</span> die <span class="s2">&quot;openssl not found&quot;</span>
+need convert <span class="o">||</span> die <span class="s2">&quot;ImageMagick is not installed&quot;</span>
+</pre></div>
+</div>
+<div class="section" id="use">
+<h1><a class="toc-backref" href="#id4">use</a></h1>
+<pre class="literal-block">
+use module
+</pre>
+<p>Loads one module from the library search path, which is itself
+taken from the <tt class="docutils literal"><span class="pre">$BILLPATH</span></tt> environment variable. If a module is not
+found, execution will be aborted and an informative message will be
+printed to standard error.</p>
+<p>The function will search for a function named the same as the module
+name with slashes changed to underscores, prefixed with
+<tt class="docutils literal"><span class="pre">__bill_module__</span></tt>. If the function is found, it will be executed
+instead of sourcing the module from disk.</p>
+<p>On successful module load the module name will be appended to the
+<tt class="docutils literal"><span class="pre">bill_loaded_modules</span></tt> array, and when trying to load the module
+afterwards will do nothing.</p>
+</div>
+<div class="section" id="main">
+<h1><a class="toc-backref" href="#id5">main</a></h1>
+<pre class="literal-block">
+main
+</pre>
+<p>Checks whether a module is running as a standalone script and runs the
+supplied function with a set of arguments. This allows modules both being
+imported and for acting as a script. For example.</p>
+<div class="highlight"><pre>foo <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="s2">&quot;I am foo&quot;</span>
+<span class="o">}</span>
+
+main foo
+</pre></div>
+</div>
+</div>
+</body>
+</html>

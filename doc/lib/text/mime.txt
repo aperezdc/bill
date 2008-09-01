@@ -1,0 +1,65 @@
+==================
+Handling MIME data
+==================
+:Author: Adrián Pérez <aperez@igalia.com>
+:Copyright: 2008 Igalia S.L.
+:License: GPL v2
+:Abstract: Provides tools for handling MIME-encoded data.
+    The format is defined in RFCs number
+    `822 <http://www.ietf.org/rfc/rfc822.txt>`__ and
+    `2822 <http://www.ietf.org/rfc/rfc2822.txt>`__.
+
+.. contents::
+
+
+
+
+mime_decode
+-----------
+
+::
+
+  mime_decode [ headersfile ]
+
+
+Takes the standard input as a MIME-formatted message. Headers are sent
+to the file specified as *headersfile*, or to standard error if not
+specified (more exactly to ``/dev/stderr``). Headers will be converted
+to shell variables so you can ``source`` the resulting file in your
+code. Header names are converted as follows:
+
+1. The header name is converted to lowercase.
+2. Characters in the ``A-Z`` range and underscores are left as-is.
+3. All other characters are changed to underscrores.
+4. The header name is prefixed with ``H_``.
+
+The header value is kept in its original form. Only trailing whitespace
+is removed from multiline header values.
+
+The contents of the body of the MIME message are send unchanged to
+standard output.
+
+As an exaple, consider decoding the follow e-mail content::
+
+    From: Adrian Perez <aperez@igalia.com>
+    To: Ella Fitzgerald <fitzgerald@divas.net>,
+        Maestro Manggiacapprini <m-m@capprini.com>
+    Subject: Bash rules!
+    Content-Type: text/plain
+
+    Hello pals!
+
+    We will be having a meeting tomorrow at 8:00 PM. Do not forget
+    to bring your notes regarding current musical trends.
+
+That would output the following in the headers file:
+
+.. sourcecode:: bash
+
+    H_from='Adrian Perez <aperez@igalia.com>'
+    H_to='Ella Fitzgerald <fitzgerald@divas.net>, Maestro Manggiacapprini <m-m@capprini.com>'
+    H_subject='Bash rules!'
+    H_content_type='text/plain'
+
+
+

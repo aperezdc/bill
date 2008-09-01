@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Handling MIME data</title>
+<meta name="author" content="Adrián Pérez &lt;aperez&#64;igalia.com&gt;" />
+<meta name="copyright" content="2008 Igalia S.L." />
+<link rel="stylesheet" href="../../style.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="handling-mime-data">
+<h1 class="title">Handling MIME data</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Adrián Pérez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Copyright:</th>
+<td>2008 Igalia S.L.</td></tr>
+<tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
+</tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Provides tools for handling MIME-encoded data.
+The format is defined in RFCs number
+<a class="reference external" href="http://www.ietf.org/rfc/rfc822.txt">822</a> and
+<a class="reference external" href="http://www.ietf.org/rfc/rfc2822.txt">2822</a>.</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#mime-decode" id="id1">mime_decode</a></li>
+</ul>
+</div>
+<div class="section" id="mime-decode">
+<h1><a class="toc-backref" href="#id1">mime_decode</a></h1>
+<pre class="literal-block">
+mime_decode [ headersfile ]
+</pre>
+<p>Takes the standard input as a MIME-formatted message. Headers are sent
+to the file specified as <em>headersfile</em>, or to standard error if not
+specified (more exactly to <tt class="docutils literal"><span class="pre">/dev/stderr</span></tt>). Headers will be converted
+to shell variables so you can <tt class="docutils literal"><span class="pre">source</span></tt> the resulting file in your
+code. Header names are converted as follows:</p>
+<ol class="arabic simple">
+<li>The header name is converted to lowercase.</li>
+<li>Characters in the <tt class="docutils literal"><span class="pre">A-Z</span></tt> range and underscores are left as-is.</li>
+<li>All other characters are changed to underscrores.</li>
+<li>The header name is prefixed with <tt class="docutils literal"><span class="pre">H_</span></tt>.</li>
+</ol>
+<p>The header value is kept in its original form. Only trailing whitespace
+is removed from multiline header values.</p>
+<p>The contents of the body of the MIME message are send unchanged to
+standard output.</p>
+<p>As an exaple, consider decoding the follow e-mail content:</p>
+<pre class="literal-block">
+From: Adrian Perez &lt;aperez&#64;igalia.com&gt;
+To: Ella Fitzgerald &lt;fitzgerald&#64;divas.net&gt;,
+    Maestro Manggiacapprini &lt;m-m&#64;capprini.com&gt;
+Subject: Bash rules!
+Content-Type: text/plain
+
+Hello pals!
+
+We will be having a meeting tomorrow at 8:00 PM. Do not forget
+to bring your notes regarding current musical trends.
+</pre>
+<p>That would output the following in the headers file:</p>
+<div class="highlight"><pre><span class="nv">H_from</span><span class="o">=</span><span class="s1">&#39;Adrian Perez &lt;aperez@igalia.com&gt;&#39;</span>
+<span class="nv">H_to</span><span class="o">=</span><span class="s1">&#39;Ella Fitzgerald &lt;fitzgerald@divas.net&gt;, Maestro Manggiacapprini &lt;m-m@capprini.com&gt;&#39;</span>
+<span class="nv">H_subject</span><span class="o">=</span><span class="s1">&#39;Bash rules!&#39;</span>
+<span class="nv">H_content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span>
+</pre></div>
+</div>
+</div>
+</body>
+</html>

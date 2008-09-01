@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Code style guidelines</title>
+<meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="code-style-guidelines">
+<h1 class="title">Code style guidelines</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
+</tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Provides general guidelines on how to write and organize shell
+code in general and when using the Bill library in particular.</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#shell-independent-tips" id="id2">Shell-independent tips</a><ul>
+<li><a class="reference internal" href="#structured-programming" id="id3">Structured programming</a></li>
+<li><a class="reference internal" href="#fork-exec" id="id4">fork+exec</a></li>
+<li><a class="reference internal" href="#internal-commands" id="id5">Internal commands</a></li>
+<li><a class="reference internal" href="#last-things-occur-last" id="id6">Last things occur... last</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bashisms" id="id7">“Bashisms”</a><ul>
+<li><a class="reference internal" href="#locality-is-good" id="id8">Locality is good</a></li>
+<li><a class="reference internal" href="#cleaning-up" id="id9">Cleaning up</a></li>
+<li><a class="reference internal" href="#reading-file-contents" id="id10">Reading file contents</a></li>
+<li><a class="reference internal" href="#use-the-source-luke" id="id11">Use the <em>source</em>, Luke</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#philosophy-basics" id="id12">Philosophy basics</a></li>
+</ul>
+</div>
+<div class="section" id="shell-independent-tips">
+<h1><a class="toc-backref" href="#id2">Shell-independent tips</a></h1>
+<div class="section" id="structured-programming">
+<h2><a class="toc-backref" href="#id3">Structured programming</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use shell functions to organize your code, as you would do in
+other programming languages.</p>
+</div>
+<p>Clean and structured code is a lot easier to read and maintain than
+unstructured “spaghetti” mash-ups. All decent-enough shells have a way of
+defining shell functions. Also, writing functions is the first step needed
+to write modular, reusable code.</p>
+<p>Using shell functions instead of separate scripts has also the advantage of
+avoiding calling <a class="reference internal" href="#fork-exec">fork+exec</a> when invoking them.</p>
+</div>
+<div class="section" id="fork-exec">
+<h2><a class="toc-backref" href="#id4">fork+exec</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Avoid calling external commands when possible, especially
+inside tight loops.</p>
+</div>
+<p>Launching external commands from the shell incurs in calling the
+<a class="reference external" href="http://linux.die.net/man/2/fork">fork()</a> and
+<a class="reference external" href="http://linux.die.net/man/3/exec">exec()</a> system calls. The first
+one duplicates the running process into a new child process with its own
+identifier, memory area, open file descriptors... The second one replaces
+that new process with the code of the program being run. Although this is
+done quite efficiently in recent operating systems, it is far more work
+than calling <a class="reference internal" href="#internal-commands">internal commands</a> defined by the shell.</p>
+</div>
+<div class="section" id="internal-commands">
+<h2><a class="toc-backref" href="#id5">Internal commands</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use shell built-in commands whenever possible.</p>
+</div>
+<p>Most shells include implementations for a number of usual commands in it,
+thus avoiding expensive <a class="reference internal" href="#fork-exec">fork+exec</a> operations. Sometimes built-in commands
+are even a superset of the standard ones and include extra features.</p>
+<p>Commands eligible for such implementations are:</p>
+<pre class="literal-block">
+:
+[
+echo
+printf
+test
+true
+false
+pwd
+kill
+</pre>
+</div>
+<div class="section" id="last-things-occur-last">
+<h2><a class="toc-backref" href="#id6">Last things occur... last</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If the exit status of a function is the result of executing a
+command, just leave that command at the end of the function.</p>
+</div>
+<p>At a first attempt one may be tempted to write “defensive” code that ensures
+that the exit status is always set before exiting a functions:</p>
+<div class="highlight"><pre>string_is_magic <span class="o">()</span>
+<span class="o">{</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$1&quot;</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span> <span class="o">]</span> ; <span class="k">then</span>
+<span class="k">        return </span>0
+    <span class="k">else</span>
+<span class="k">        return </span>1
+    <span class="k">fi</span>
+<span class="o">}</span>
+</pre></div>
+<p>The code is correct and will work as expected, but it is hairy and has not
+pleasant aesthetics. As a first refinement one may found that the following
+works:</p>
+<div class="highlight"><pre>string_is_magic <span class="o">()</span> <span class="o">{</span>
+    <span class="o">[</span> <span class="s2">&quot;$1&quot;</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span> <span class="o">]</span>
+    <span class="k">return</span> <span class="nv">$?</span>
+<span class="o">}</span>
+</pre></div>
+<p>Be aware that the last command always sets the exit status of the <em>entire
+function</em>, so the optimal way of implementing this function is the
+following:</p>
+<div class="highlight"><pre>string_is_magic <span class="o">()</span> <span class="o">{</span>
+    <span class="o">[</span> <span class="s2">&quot;$1&quot;</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span> <span class="o">]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bashisms">
+<h1><a class="toc-backref" href="#id7">“Bashisms”</a></h1>
+<p><a class="reference external" href="http://www.gnu.org/software/bash">Bash</a> is a <em>better</em> <tt class="docutils literal"><span class="pre">sh</span></tt>, but it is more than that: it encourages some
+ways of doing things which use specific extensions provided by the shell.
+This is the reason why some people call them “bashisms”.</p>
+<div class="section" id="locality-is-good">
+<h2><a class="toc-backref" href="#id8">Locality is good</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use <tt class="docutils literal"><span class="pre">local</span></tt> to define local variables inside functions.</p>
+</div>
+<p>When using Bash one can mark shell variables as <em>local</em> in shell functions.
+Polluting the global namespace too much is a bad thing, so it is very common
+to see code that uses the <tt class="docutils literal"><span class="pre">local</span></tt> keyword in most variable definitions:</p>
+<div class="highlight"><pre>say_hello <span class="o">()</span> <span class="o">{</span>
+    <span class="c"># The &#39;whom&#39; variable will not be seen outside the function</span>
+    <span class="nb">local </span><span class="nv">whom</span><span class="o">=</span><span class="k">${</span><span class="nv">1</span><span class="k">:-</span><span class="s1">&#39;world&#39;</span><span class="k">}</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Hello ${whom}!&quot;</span>
+<span class="o">}</span>
+</pre></div>
+<p>When using built-ins that define the variables themselves (like the
+<a class="reference internal" href="#read-built-in">read built-in</a>) the variables must be marked as local before using the
+command:</p>
+<div class="highlight"><pre>add_prefix <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">local </span>line
+    <span class="k">while </span><span class="nb">read </span>line ; <span class="k">do</span>
+<span class="k">        </span><span class="nb">echo</span> <span class="s2">&quot;$1 - $line&quot;</span>
+    <span class="k">done</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="section" id="cleaning-up">
+<h2><a class="toc-backref" href="#id9">Cleaning up</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">unset</span></tt> built-in can be used to delete variables <em>and</em>
+function definitions from the environment.</p>
+</div>
+<p>If you use a temporary variable you can use <tt class="docutils literal"><span class="pre">unset</span></tt> to remove its
+definition. For functions it is better to use <a class="reference internal" href="#locality-is-good">local variables</a> but
+sometimes it may be needed to remove items from the environment. This
+command will also remove definitions of functions.</p>
+</div>
+<div class="section" id="reading-file-contents">
+<h2><a class="toc-backref" href="#id10">Reading file contents</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use <tt class="docutils literal"><span class="pre">$(&lt;</span> <span class="pre">...)</span></tt> instead of <tt class="docutils literal"><span class="pre">$(cat</span> <span class="pre">...)</span></tt> when possible.</p>
+</div>
+<div class="warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Keep in mind that <tt class="docutils literal"><span class="pre">$(&lt;</span> <span class="pre">...)</span></tt> will <em>only</em> work when just
+reading the contents of a file. If there are a pipeline in the
+expansion (e.g. <tt class="docutils literal"><span class="pre">$(cat</span> <span class="pre">foo</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">bar)</span></tt> this shorthand will
+render an empty output.</p>
+</div>
+<p>Reading all the contents of a file in shell code is usually done by using
+the <tt class="docutils literal"><span class="pre">cat</span></tt> command in a command expansion. For example we can read the
+contents of the password database file with the following snippet:</p>
+<div class="highlight"><pre><span class="c"># The usual code for reading files:</span>
+<span class="nv">contents</span><span class="o">=</span><span class="k">$(</span>cat /etc/passwd<span class="k">)</span>
+</pre></div>
+<p>This is a rather common construction that incurs in the <a class="reference internal" href="#fork-exec">fork+exec</a>
+operation. There is an alternative recognized by Bash which produces the
+same result but is implemented inside the shell:</p>
+<div class="highlight"><pre><span class="c"># This is faster than using &#39;cat&#39;:</span>
+<span class="nv">contents</span><span class="o">=</span><span class="k">$(</span>&lt; /etc/passwd<span class="k">)</span>
+</pre></div>
+<div class="tip" id="read-built-in">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use the <tt class="docutils literal"><span class="pre">read</span></tt> built-in for processing line-based input.</p>
+</div>
+<p>Finally, sometimes you need to read a big file (which may even not fit in
+memory), but only one line at a time is needed. Imagine you are a spammer
+which wants to send a zillion e-mails to a list of addresses. Here the
+<tt class="docutils literal"><span class="pre">read</span></tt> builtin fits perfectly: it will read content enough up to
+a delimiter (end of line by default). Moreover, its exit code will always
+be zero until the end of the input is reached. This way one can easily
+parse huge line-based text files:</p>
+<div class="highlight"><pre><span class="c"># Read one line at a time, assign it to the &#39;recipient&#39; variable</span>
+<span class="c"># and use &#39;sendmail&#39; to spam out people:</span>
+<span class="nv">message</span><span class="o">=</span><span class="s1">&#39;Subject: Improve your relations</span>
+
+<span class="s1">Buy V14gr4 online NOW!&#39;</span>
+
+<span class="k">while </span><span class="nb">read </span>myline ; <span class="k">do</span>
+<span class="k">    </span>sendmail <span class="s2">&quot;$recipient&quot;</span> &lt;&lt;&lt; <span class="s2">&quot;$message&quot;</span>
+<span class="k">done</span> &lt; email-list.txt
+</pre></div>
+</div>
+<div class="section" id="use-the-source-luke">
+<h2><a class="toc-backref" href="#id11">Use the <em>source</em>, Luke</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use <tt class="docutils literal"><span class="pre">source</span></tt> as it is clearer than <tt class="docutils literal"><span class="pre">.</span></tt> (dot).</p>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">source</span></tt> keywords works exactly the same way as <tt class="docutils literal"><span class="pre">.</span></tt> (dot): it reads
+a file containing shell code in the current context (i.e. without invoking
+a subshell). Apart from being longer, <tt class="docutils literal"><span class="pre">source</span></tt> is easier in the eyes and
+makes clear that one wants to read <em>source</em> code.</p>
+</div>
+</div>
+<div class="section" id="philosophy-basics">
+<h1><a class="toc-backref" href="#id12">Philosophy basics</a></h1>
+<p>And now for something completely different: a quick tour on <a class="reference external" href="http://www.faqs.org/docs/artu/ch01s06.html">The Unix
+Philosophy</a>. Having a quick
+summary of the basics at hand is, er, <em>handy</em>. As we are dealing with the
+shell, which is an angular piece of Unix, it is nice to review some of the
+precepts which make it a great operating system, and apply them to the
+shell. Alas, some of them are of particular interest for shell programming.
+In no particular order:</p>
+<dl class="docutils">
+<dt>Rule of Modularity</dt>
+<dd>Write simple parts connected by clean interfaces.</dd>
+<dt>Rule of Composition</dt>
+<dd>Design programs to be connected to other programs.</dd>
+<dt>Rule of Extensibility</dt>
+<dd>Design for the future, because it will be here sooner than you
+think.</dd>
+<dt>Rule of Silence</dt>
+<dd>When a program has nothing surprising to say, it should say nothing.</dd>
+<dt>Rule of Repair</dt>
+<dd>When something must fail, fail noisily and as soon as possible.</dd>
+<dt>Rule of Clarity</dt>
+<dd>Clarity is better than cleverness.</dd>
+</dl>
+<!-- vim: expandtab filetype=rst shiftwidth=4 tabstop=4 spell spelllang=en -->
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Bill Tutorial</title>
+<meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="bill-tutorial">
+<h1 class="title">Bill Tutorial</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
+</tr>
+</tbody>
+</table>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>This step-by-step tutorial is a quick introduction to Bill, and
+covers using the usage of the interactive interpreter, usage of already
+available modules, and creating new ones.</p>
+</div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#some-literature-first" id="id1">Some literature first...</a></li>
+<li><a class="reference internal" href="#using-the-interpreter" id="id2">Using the interpreter</a><ul>
+<li><a class="reference internal" href="#interactive-mode" id="id3">Interactive mode</a></li>
+<li><a class="reference internal" href="#executable-scripts" id="id4">Executable scripts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#defining-functions" id="id5">Defining functions</a></li>
+<li><a class="reference internal" href="#using-modules" id="id6">Using modules</a><ul>
+<li><a class="reference internal" href="#importing-existing-modules" id="id7">Importing existing modules</a></li>
+<li><a class="reference internal" href="#crafting-your-own" id="id8">Crafting your own</a></li>
+<li><a class="reference internal" href="#a-full-example" id="id9">A full example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="some-literature-first">
+<h1><a class="toc-backref" href="#id1">Some literature first...</a></h1>
+<p>If you do code shell scripts it is almost sure that you have implemented the
+same functionality in more than one script, or maybe you found yourself
+copying and pasting snippets from others. Traditional shell programming is
+tedious and error prone: enter the world of Bill!</p>
+<p>Bill makes shell programming a refreshing breeze, thanks to two of its
+main <a class="reference external" href="index.html#features">features</a>:</p>
+<ul class="simple">
+<li>A modular system for shell code.</li>
+<li>Its reusable standard library.</li>
+</ul>
+<p>Maybe the “reusable” and “modular” buzzwords have already picked up your
+attention, but just in case you are not convinced to continue reading the
+tutorial, Bill could look more attractive to you knowing that you do not
+need it at all once your code reaches production-grade quality: standalone
+versions of scripts can be automagically created with the included toolchain.</p>
+</div>
+<div class="section" id="using-the-interpreter">
+<h1><a class="toc-backref" href="#id2">Using the interpreter</a></h1>
+<p>The Bill interpreter is usually installed at <tt class="docutils literal"><span class="pre">/usr/local/bin/bill</span></tt> or
+<tt class="docutils literal"><span class="pre">/usr/bin/bill</span></tt>, which are likely to be in the shell search path for
+programs. Starting the interpreter is only a matter of typing:</p>
+<pre class="literal-block">
+bill
+</pre>
+<p>Typing the end-of-file character (Ctrl-D) at the primary prompt will exit
+the interpreter. This can be accomplished using the <tt class="docutils literal"><span class="pre">exit</span></tt> command as
+well.</p>
+<p>The interpreter will have the same capabilities as the installed Bash
+version, for example you will have line-editing functions if Bash was
+compiled with support for the GNU <em>readline</em> library. Remember that Bill
+builds upon Bash!</p>
+<p>Commands will be executed interactively in a read-eval-print loop (REPL)
+when invoked without arguments. When passing a file name as argument,
+commands will be read from it instead and executed in sequence.</p>
+<div class="section" id="interactive-mode">
+<h2><a class="toc-backref" href="#id3">Interactive mode</a></h2>
+<p>Using Bill interactively allows for running code in the same environment as
+scripts do, and although you could use it as your day-to-day shell it is
+intended to be used for testing. Let us fire up the interpreter by entering
+<tt class="docutils literal"><span class="pre">bill</span></tt> at the command line:</p>
+<pre class="literal-block">
+aperez ~ $ bill
+</pre>
+<p>The <em>primary prompt</em> will greet you:</p>
+<pre class="literal-block">
+(bill)
+</pre>
+<p>When entering multi-line commands, the <em>secondary prompt</em> will be shown until
+all input lines have been read:</p>
+<pre class="literal-block">
+(bill) the_world_is_flat=true
+(bill) if $the_world_is_flat ; then
+  ...)     echo 'Be careful not to fall off!'
+  ...) fi
+Be careful not to fall off!
+</pre>
+</div>
+<div class="section" id="executable-scripts">
+<h2><a class="toc-backref" href="#id4">Executable scripts</a></h2>
+<p>On Unix systems, Bill scripts can be made directly executable, like regular
+shell scripts, by adding the line:</p>
+<pre class="literal-block">
+#! /usr/bin/env bill
+</pre>
+<p>at the beginning of the script (assuming that the interpreter is on the
+user's <tt class="docutils literal"><span class="pre">$PATH</span></tt>) and giving the file executable mode. The <tt class="docutils literal"><span class="pre">#!</span></tt> <strong>must</strong>
+be exactly the two first characters of the file. Note that the hash, or
+pound, is used to start comments in Bill, like in regular shell scripts.</p>
+<p>The script can be given executable mode by using the <tt class="docutils literal"><span class="pre">chmod</span></tt> command:</p>
+<pre class="literal-block">
+$ chmod +x myscript
+</pre>
+</div>
+</div>
+<div class="section" id="defining-functions">
+<h1><a class="toc-backref" href="#id5">Defining functions</a></h1>
+<p>We can create a function that concatenates all of its arguments using
+a particular separator:</p>
+<div class="highlight"><pre><span class="o">(</span>bill<span class="o">)</span> concatenate <span class="o">()</span> <span class="o">{</span>
+  ...<span class="o">)</span>     <span class="nb">local </span><span class="nv">separator</span><span class="o">=</span><span class="nv">$1</span> <span class="nv">result</span><span class="o">=</span><span class="nv">$2</span> ; <span class="nb">shift </span>2
+  ...<span class="o">)</span>     <span class="k">for </span>word in <span class="s2">&quot;$@&quot;</span> ; <span class="k">do</span>
+  ...<span class="o">)</span>         result+<span class="o">=</span><span class="s2">&quot;$separator$word&quot;</span>
+  ...<span class="o">)</span>     <span class="k">done</span>
+  ...<span class="o">)</span>     <span class="nb">echo</span> <span class="s2">&quot;$result&quot;</span>
+  ...<span class="o">)</span> <span class="o">}</span>
+</pre></div>
+<p>Then we can use the function just defined:</p>
+<div class="highlight"><pre><span class="o">(</span>bill<span class="o">)</span> concatenate - tic tac toe
+tic-tac-toe
+</pre></div>
+<p>A name followed by parentheses <tt class="docutils literal"><span class="pre">()</span></tt> introduces a function definition. The
+contents of the body are enclosed within the brackets <tt class="docutils literal"><span class="pre">{</span></tt> and <tt class="docutils literal"><span class="pre">}</span></tt>.
+Defining a function makes its name available as a usable command. Some
+remarks regarding functions in shell code:</p>
+<ul class="simple">
+<li>Positional arguments are accessed using <tt class="docutils literal"><span class="pre">$1</span></tt>, <tt class="docutils literal"><span class="pre">$2</span></tt> and so on.</li>
+<li>The result of the function is put at standard output. Functions have
+a finalization status code, just like regular programs.</li>
+<li>If the <tt class="docutils literal"><span class="pre">return</span></tt> command is not used, the exit status of the function is
+the same as the exit status of the last executed command.</li>
+<li>A non-zero exit status is used to signal an error, and evaluates to
+“false”.</li>
+</ul>
+<p>If you need to reuse the output of a function you can use <tt class="docutils literal"><span class="pre">$(...)</span></tt> to
+capture its output, as it it was a regular program:</p>
+<div class="highlight"><pre><span class="o">(</span>bill<span class="o">)</span> <span class="nv">output</span><span class="o">=</span><span class="k">$(</span>concatename - tic tac toe<span class="k">)</span>
+<span class="o">(</span>bill<span class="o">)</span> <span class="nb">echo</span> <span class="s2">&quot;Output was: ${output}&quot;</span>
+Output was: tic-tac-toe
+</pre></div>
+</div>
+<div class="section" id="using-modules">
+<h1><a class="toc-backref" href="#id6">Using modules</a></h1>
+<div class="section" id="importing-existing-modules">
+<h2><a class="toc-backref" href="#id7">Importing existing modules</a></h2>
+<p>Existing modules can be readily used by bringing them into the execution
+environment. Thanks to <tt class="docutils literal"><span class="pre">use</span></tt>, one of Bill's
+<a class="reference external" href="lib/bill/builtins.html">builtins</a>, this is an easy task:</p>
+<div class="highlight"><pre><span class="o">(</span>bill<span class="o">)</span> use text/string
+<span class="o">(</span>bill<span class="o">)</span> string_length hello
+5
+</pre></div>
+<p>Module names are composed of a category name, a slash (<tt class="docutils literal"><span class="pre">/</span></tt>) and the module
+name. Categories have no real meaning and are only used to group related
+modules. Functions defined by the module are prefixed with the name of the
+module and an underscore (<tt class="docutils literal"><span class="pre">_</span></tt>). In the previous example the <tt class="docutils literal"><span class="pre">string</span></tt>
+module from the <tt class="docutils literal"><span class="pre">text</span></tt> category was imported. It defines several
+functions, including the used <tt class="docutils literal"><span class="pre">string_length</span></tt> function.</p>
+<p>Regarding the the <tt class="docutils literal"><span class="pre">use</span></tt> command, you should know that:</p>
+<ul class="simple">
+<li>Modules are searched in the directories specified in the <tt class="docutils literal"><span class="pre">$BILLPATH</span></tt>
+environment variable. By default it contains the path of the standard
+library <em>and</em> the directory where the interactive interpreter was started.
+If the interpreter is not interactive, the path where the script passed as
+argument resides in the search path instead.</li>
+<li>It takes care of only importing modules once. Issuing <tt class="docutils literal"><span class="pre">use</span> <span class="pre">foo/bar</span></tt>
+twice will only import the module the first time.</li>
+</ul>
+</div>
+<div class="section" id="crafting-your-own">
+<h2><a class="toc-backref" href="#id8">Crafting your own</a></h2>
+<p>Modules are regular text files with <tt class="docutils literal"><span class="pre">.bsh</span></tt> suffix. Categories are no more
+than directories in the file system. If you wanted to create a module named
+<tt class="docutils literal"><span class="pre">bar</span></tt> inside category <tt class="docutils literal"><span class="pre">foo</span></tt> just create a <tt class="docutils literal"><span class="pre">foo/bar.bsh</span></tt> text file:</p>
+<pre class="literal-block">
+aperez ~ $ mkdir foo
+aperez ~ $ echo 'echo &quot;Hello module...&quot;' &gt; foo/bar.bsh
+</pre>
+<p>Now you can start the interpreter and import the module:</p>
+<pre class="literal-block">
+aperez ~ $ bill
+(bill) use foo/bar
+Hello module...
+</pre>
+<p>Using categories is a convention used in the Bill standard library, you do
+not need to use them in your programs. If you decide not to use them, you
+will not need to use directories and remove the category name from <tt class="docutils literal"><span class="pre">use</span></tt>
+invocations.</p>
+<p>You can add any code you want to your modules, but it is recommended to only
+define functions and variables. Also, names should be prefixed with the name
+of the module plus an underscore, unless you have a very good reason to do
+so.</p>
+</div>
+<div class="section" id="a-full-example">
+<h2><a class="toc-backref" href="#id9">A full example</a></h2>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can find this example inside the <tt class="docutils literal"><span class="pre">examples/</span></tt> subdirectory
+of the Bill source code distribution.</p>
+</div>
+<p>First, let us create a <tt class="docutils literal"><span class="pre">hello.bsh</span></tt> file for a fictitious <tt class="docutils literal"><span class="pre">hello</span></tt> module
+which includes a function capable of greeting people (or the entire world):</p>
+<div class="highlight"><pre><span class="c">#! /usr/bin/env bill</span>
+<span class="c">#++</span>
+<span class="c">#   ==============</span>
+<span class="c">#   Example module</span>
+<span class="c">#   ==============</span>
+<span class="c">#   :Author: Adrián Pérez &lt;aperez@igalia.com&gt;</span>
+<span class="c">#   :Copyright: Igalia S.L, 2008</span>
+<span class="c">#   :Abstract: Provides an example ``hello`` function.</span>
+<span class="c">#       This module is used by the ``hello`` test script.</span>
+<span class="c">#--</span>
+
+<span class="c">#++ hello [ name ]</span>
+<span class="c">#</span>
+<span class="c">#   The (in)famous “Hello, world!” example, as a Bill module.</span>
+<span class="c">#   Pass ``name`` to greet someone, otherwise the full world will be greeted</span>
+<span class="c">#   instead.</span>
+<span class="c">#</span>
+<span class="c">#--</span>
+hello <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Hello ${1:-world}!&quot;</span>
+<span class="o">}</span>
+</pre></div>
+<p>Comment blocks starting with <tt class="docutils literal"><span class="pre">#++</span></tt> and ending with <tt class="docutils literal"><span class="pre">#--</span></tt> are
+documentation strings. There is a set of tools included with Bill which can
+be used to <a class="reference external" href="documenting.html">generate documentation</a>, but we will not
+cover that topic in the tutorial.</p>
+<p>In the same directory, write down a <tt class="docutils literal"><span class="pre">hello</span></tt> file which uses the module
+above:</p>
+<div class="highlight"><pre><span class="c">#! /usr/bin/env bill</span>
+
+use hello
+
+hello <span class="s2">&quot;Linus&quot;</span>
+hello <span class="s2">&quot;Richard&quot;</span>
+hello
+</pre></div>
+<p>Then, you can add the execution permission and test it:</p>
+<pre class="literal-block">
+aperez ~ $ chmod +x hello
+aperez ~ $ ./hello
+Hello Linus!
+Hello Richard!
+Hello world!
+aperez ~ $
+</pre>
+<!-- vim: filetype=rst expandtab tabstop=4 shiftwidth=4 spell spelllang=en -->
+</div>
+</div>
+</div>
+</body>
+</html>

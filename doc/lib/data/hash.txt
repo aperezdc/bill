@@ -1,0 +1,126 @@
+=========
+Hash maps
+=========
+
+:Author: Adrián Pérez <aperez@igalia.com>
+:Copyright: Igalia S.L., 2008
+:License: GPL v2
+:Abstract: Provides a hash-like data structure for use in shell code.
+
+.. contents::
+
+Introduction
+============
+This module adds functions to manage pseudo hash tables using arrays. It
+it not as efficient as a proper hash table implementation, but that
+would be difficult to do in shell code and this suffices for a vast
+amount of cases where performance is not critical.
+
+An array containing paired items is considered to be a hash map, like the
+following example:
+
+.. sourcecode:: bash
+
+    myhash=(
+        "key1"    "value1"
+        "key2"    "value2"
+        # ...
+    )
+
+
+Obviously enough, a hash map must contain an even number of elements.
+
+.. warning:: This hash map implementation is neither CPU and memory
+   efficient. Each algorithm has *O(n)* complexity. This is *not*
+   considered to be an error.
+
+
+Functions
+=========
+
+
+
+
+hash_get
+--------
+
+::
+
+  hash_get hashmap key
+
+
+Obtains the value associated with a particular key. The exit status is
+non-zero if the specified key does not exist.
+
+
+
+
+hash_key
+--------
+
+::
+
+  hash_key hashmap value
+
+
+Finds the first key which has the given value associated. Exits status
+is non-zero if the item is not found.
+
+
+
+
+hash_keys
+---------
+
+::
+
+  hash_keys hashmap
+
+
+Gets a list of all the keys in a hash map. Exit status is non-zero if
+the hash map is empty.
+
+
+
+
+hash_size
+---------
+
+::
+
+  hash_size hashmap
+
+
+Calculates the number of elements present in a hash map.
+
+
+
+
+hash_item
+---------
+
+::
+
+  hash_item hashmap index
+
+
+Returns item at the given position of the map. Usually you do not need
+to use this function, as it will be used internally by the rest of the
+functions of the module. It could be useful to build additional features
+in other modules.
+
+
+
+
+hash_values
+-----------
+
+::
+
+  hash_values hashmap
+
+
+Obtains a list of all the values in a hash map. Exit status is non-zero
+if the hash map is empty.
+
+
