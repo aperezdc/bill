@@ -9,12 +9,242 @@
 
 .. contents::
 
-Preface
-=======
+.. _bash: http://www.gnu.org/software/bash
 
-.. admonition:: To-do
 
-   Finish writing this document.
+Shell-independent tips
+======================
 
-.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+Structured programming
+----------------------
+.. tip:: Use shell functions to organize your code, as you would do in
+         other programming languages.
+
+Clean and structured code is a lot easier to read and maintain than
+unstructured “spaghetti” mash-ups. All decent-enough shells have a way of
+defining shell functions. Also, writing functions is the first step needed
+to write modular, reusable code.
+
+Using shell functions instead of separate scripts has also the advantage of
+avoiding calling `fork+exec`_ when invoking them.
+
+
+fork+exec
+---------
+.. tip:: Avoid calling external commands when possible, especially
+         inside tight loops.
+
+Launching external commands from the shell incurs in calling the
+`fork() <http://linux.die.net/man/2/fork>`_ and
+`exec() <http://linux.die.net/man/3/exec>`_ system calls. The first
+one duplicates the running process into a new child process with its own
+identifier, memory area, open file descriptors... The second one replaces
+that new process with the code of the program being run. Although this is
+done quite efficiently in recent operating systems, it is far more work
+than calling `internal commands`_ defined by the shell.
+
+
+Internal commands
+-----------------
+.. tip:: Use shell built-in commands whenever possible.
+
+Most shells include implementations for a number of usual commands in it,
+thus avoiding expensive `fork+exec`_ operations. Sometimes built-in commands
+are even a superset of the standard ones and include extra features.
+
+Commands eligible for such implementations are::
+
+   :
+   [
+   echo
+   printf
+   test
+   true
+   false
+   pwd
+   kill
+
+
+Last things occur... last
+-------------------------
+.. tip:: If the exit status of a function is the result of executing a
+         command, just leave that command at the end of the function.
+
+At a first attempt one may be tempted to write “defensive” code that ensures
+that the exit status is always set before exiting a functions:
+
+.. sourcecode:: bash
+
+    string_is_magic ()
+    {
+        if [ "$1" = "magic" ] ; then
+            return 0
+        else
+            return 1
+        fi
+    }
+
+The code is correct and will work as expected, but it is hairy and has not
+pleasant aesthetics. As a first refinement one may found that the following
+works:
+
+.. sourcecode:: bash
+
+    string_is_magic () {
+        [ "$1" = "magic" ]
+        return $?
+    }
+
+Be aware that the last command always sets the exit status of the *entire
+function*, so the optimal way of implementing this function is the
+following:
+
+.. sourcecode:: bash
+
+    string_is_magic () {
+        [ "$1" = "magic" ]
+    }
+
+
+“Bashisms”
+==========
+
+Bash_ is a *better* ``sh``, but it is more than that: it encourages some
+ways of doing things which use specific extensions provided by the shell.
+This is the reason why some people call them “bashisms”.
+
+
+Locality is good
+----------------
+.. tip:: Use ``local`` to define local variables inside functions.
+
+When using Bash one can mark shell variables as *local* in shell functions.
+Polluting the global namespace too much is a bad thing, so it is very common
+to see code that uses the ``local`` keyword in most variable definitions:
+
+.. sourcecode:: bash
+
+    say_hello () {
+        # The 'whom' variable will not be seen outside the function
+        local whom=${1:-'world'}
+        echo "Hello ${whom}!"
+    }
+
+When using built-ins that define the variables themselves (like the
+`read built-in`_) the variables must be marked as local before using the
+command:
+
+.. sourcecode:: bash
+
+    add_prefix () {
+        local line
+        while read line ; do
+            echo "$1 - $line"
+        done
+    }
+
+
+Cleaning up
+-----------
+.. tip:: The ``unset`` built-in can be used to delete variables *and*
+         function definitions from the environment.
+
+If you use a temporary variable you can use ``unset`` to remove its
+definition. For functions it is better to use `local variables`__ but
+sometimes it may be needed to remove items from the environment. This
+command will also remove definitions of functions.
+
+__ `locality is good`_
+
+
+Reading file contents
+---------------------
+
+.. tip:: Use ``$(< ...)`` instead of ``$(cat ...)`` when possible.
+
+.. warning:: Keep in mind that ``$(< ...)`` will *only* work when just
+    reading the contents of a file. If there are a pipeline in the
+    expansion (e.g. ``$(cat foo | grep bar)`` this shorthand will
+    render an empty output.
+
+
+Reading all the contents of a file in shell code is usually done by using
+the ``cat`` command in a command expansion. For example we can read the
+contents of the password database file with the following snippet:
+
+.. sourcecode:: bash
+
+    # The usual code for reading files:
+    contents=$(cat /etc/passwd)
+
+This is a rather common construction that incurs in the `fork+exec`_
+operation. There is an alternative recognized by Bash which produces the
+same result but is implemented inside the shell:
+
+.. sourcecode:: bash
+
+    # This is faster than using 'cat':
+    contents=$(< /etc/passwd)
+
+.. _read built-in:
+
+.. tip:: Use the ``read`` built-in for processing line-based input.
+
+Finally, sometimes you need to read a big file (which may even not fit in
+memory), but only one line at a time is needed. Imagine you are a spammer
+which wants to send a zillion e-mails to a list of addresses. Here the
+``read`` builtin fits perfectly: it will read content enough up to
+a delimiter (end of line by default). Moreover, its exit code will always
+be zero until the end of the input is reached. This way one can easily
+parse huge line-based text files:
+
+.. sourcecode:: bash
+
+    # Read one line at a time, assign it to the 'recipient' variable
+    # and use 'sendmail' to spam out people:
+    message='Subject: Improve your relations
+
+    Buy V14gr4 online NOW!'
+
+    while read myline ; do
+        sendmail "$recipient" <<< "$message"
+    done < email-list.txt
+
+
+Use the *source*, Luke
+----------------------
+.. tip:: Use ``source`` as it is clearer than ``.`` (dot).
+
+The ``source`` keywords works exactly the same way as ``.`` (dot): it reads
+a file containing shell code in the current context (i.e. without invoking
+a subshell). Apart from being longer, ``source`` is easier in the eyes and
+makes clear that one wants to read *source* code.
+
+
+Philosophy basics
+=================
+And now for something completely different: a quick tour on `The Unix
+Philosophy <http://www.faqs.org/docs/artu/ch01s06.html>`__. Having a quick
+summary of the basics at hand is, er, *handy*. As we are dealing with the
+shell, which is an angular piece of Unix, it is nice to review some of the
+precepts which make it a great operating system, and apply them to the
+shell. Alas, some of them are of particular interest for shell programming.
+In no particular order:
+
+Rule of Modularity
+    Write simple parts connected by clean interfaces.
+Rule of Composition
+    Design programs to be connected to other programs.
+Rule of Extensibility
+    Design for the future, because it will be here sooner than you
+    think.
+Rule of Silence
+    When a program has nothing surprising to say, it should say nothing.
+Rule of Repair
+    When something must fail, fail noisily and as soon as possible.
+Rule of Clarity
+    Clarity is better than cleverness.
+
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4 spell spelllang=en
 

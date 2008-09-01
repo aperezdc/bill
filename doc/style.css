@@ -639,6 +639,15 @@ div.system-message:hover {
 	background: #fafafa;
 }
 
+dt {
+	font-weight: bold;
+	border-left: 1em solid #eee;
+	padding-left: 0.25em;
+	color: #555;
+}
+dd {
+	margin-bottom: 0.5em;
+}
 
 /*
  * Pygments style definitions -- Keep them at the end.
