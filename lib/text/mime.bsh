@@ -28,7 +28,7 @@ need sed grep cat || die "grep, sed or cat are missing"
 #   1. The header name is converted to lowercase.
 #   2. Characters in the ``A-Z`` range and underscores are left as-is.
 #   3. All other characters are changed to underscrores.
-#   4. The header name is prefixed with ``H\_``.
+#   4. The header name is prefixed with ``H_``.
 #
 #   The header value is kept in its original form. Only trailing whitespace
 #   is removed from multiline header values.
@@ -49,7 +49,9 @@ need sed grep cat || die "grep, sed or cat are missing"
 #       We will be having a meeting tomorrow at 8:00 PM. Do not forget
 #       to bring your notes regarding current musical trends.
 #
-#   That would output the following in the headers file::
+#   That would output the following in the headers file:
+#
+#   .. sourcecode:: bash
 #
 #       H_from='Adrian Perez <aperez@igalia.com>'
 #       H_to='Ella Fitzgerald <fitzgerald@divas.net>, Maestro Manggiacapprini <m-m@capprini.com>'

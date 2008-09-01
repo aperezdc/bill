@@ -19,7 +19,9 @@
 #   amount of cases where performance is not critical.
 #
 #   An array containing paired items is considered to be a hash map, like the
-#   following example::
+#   following example:
+#
+#   .. sourcecode:: bash
 #
 #       myhash=(
 #           "key1"    "value1"

@@ -43,7 +43,9 @@ die ()
 #   accessed by means of the current ``$PATH`` setting. If one of the
 #   dependencies is not met, return status will be non-zero. If you want to
 #   know exactly which tool was not found then check the tools one at
-#   a time::
+#   a time:
+#
+#   .. sourcecode:: bash
 #
 #       need openssl || die "openssl not found"
 #       need convert || die "ImageMagick is not installed"
@@ -129,7 +131,9 @@ use ()
 #
 #   Checks whether a module is running as a standalone script and runs the
 #   supplied function with a set of arguments. This allows modules both being
-#   imported and for acting as a script. For example::
+#   imported and for acting as a script. For example.
+#
+#   .. sourcecode:: bash
 #
 #       foo () {
 #           echo "I am foo"

@@ -27,12 +27,16 @@
 #   using the module. The most important one follows the *avoid doing the
 #   same operation twice* motto: calling tty_color_fg_ and tty_color_bg_ is
 #   not cheap in terms of efficiency, but their result can be saved for
-#   later use. So instead of::
+#   later use. So instead of:
+#
+#   .. sourcecode:: bash
 #
 #       echo "$(tty_color_fg red) This is RED $(tty_color_fg reset)"
 #       echo "$(tty_color_fg red) This one too... $(tty_color_fg reset)"
 #
-#   it is better to save results in variables and reuse the values::
+#   it is better to save results in variables and reuse the values:
+#
+#   .. sourcecode:: bash
 #
 #       red=$(tty_color_fg red)
 #       reset=$(tty_color_fg reset)

@@ -34,15 +34,19 @@
 #       ``for``-loops and the like.
 #
 #   Variables are expanded from the ones defined in the environment, but
-#   only variables starting with a given prefix (``var\_`` by default) will
-#   be seen by the templates. For example the following template::
+#   only variables starting with a given prefix (``var_`` by default) will
+#   be seen by the templates. For example the following template:
+#
+#   .. sourcecode:: bash
 #
 #       Hello ${name}!
 #
 #   would use a variable named ``var_name`` when expanding it, for example
-#   using the following command::
+#   using the following command:
 #
-#       var_name=Peter bsp_expand < input.txt > output.txt
+#   .. sourcecode:: bash
+#
+#       var_name='Peter' template_expand < input.txt > output.txt
 #
 #   The final rendered result would be (as expected)::
 #
@@ -57,13 +61,15 @@ template_IFS='
 #++ template_expand [ prefix ]
 #
 #   Expands shell variables in lines given as input. Optionally a prefix can
-#   be specified (default is "var\_") so a reference to ``${xyz}`` in the
+#   be specified (default is ``var_``) so a reference to ``${xyz}`` in the
 #   input will be expanded with the contents of ``${var_xyz}``. The template
 #   is read from the standard input and the expanded result dumped as
-#   standard output. Typical usage would be::
+#   standard output. Typical usage would be:
+#
+#   .. sourcecode:: bash
 #
 #       var_foo='This is foo' var_bar='This is bar' \
-#           bsp_expand < input_template > expanded_output
+#           template_expand < input_template > expanded_output
 #--
 template_expand () {
 
