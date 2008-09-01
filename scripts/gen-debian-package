@@ -8,8 +8,21 @@ need bash     || die "Command 'bash' not found (Definitely you WILL need it)"
 need gzip     || die "Command 'gzip' not found (You want it, man, yeah!)"
 
 
+build_count ()
+{
+    local c=0
+    [ -r ".bill.deb.count" ] && c=$(< ".bill.deb.count")
+
+    (( c++ ))
+    echo "$c" > ".bill.deb.count" 2> /dev/null
+    echo "$c"
+}
+
+
+[ "$1" ] && deb_count=$1 || deb_count=$(build_count)
+
 bash_path=$(which bash)
-deb_version="${BILL_VERSION}-${1:-1}"
+deb_version="${BILL_VERSION}-${deb_count}"
 deb_name="bill_${deb_version}_all"
 bash_scripts=( bill )
 bill_scripts=( unbill )
