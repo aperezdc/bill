@@ -15,7 +15,7 @@ Quickstart
 
 Use the ``unbill`` script to produce a standalone version of a script::
 
-    $ ./scripts/bill/bill scripts/unbill myscript > myscript-standalone
+    $ ./scripts/bill scripts/unbill myscript > myscript-standalone
 
 
 .. vim: expandtab filetype=rst shiftwidth=4 tabstop=4

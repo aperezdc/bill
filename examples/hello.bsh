@@ -6,7 +6,7 @@
 #   :Author: Adrián Pérez <aperez@igalia.com>
 #   :Copyright: Igalia S.L, 2008
 #   :Abstract: Provides an example ``hello`` function.
-#       This module is used by the ``scripts/hello`` test script.
+#       This module is used by the ``hello`` test script.
 #--
 
 #++ hello [ name ]

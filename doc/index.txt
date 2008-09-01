@@ -59,6 +59,9 @@ The code can also be from the GIT_ repository::
 Documentation
 =============
 
+* The `tutorial <tutorial.html>`__ is a quick reading to get started with
+  the Bill framework.
+
 * `Code style guidelines <codestyle.html>`__. Contains tips on how to write
   shell code.
 
