@@ -30,7 +30,7 @@ string_upper ()
 #--
 string_lower ()
 {
-    tr '[A-Z' '[a-z]' <<< "*$"
+    tr '[A-Z]' '[a-z]' <<< "$*"
 }
 
 
