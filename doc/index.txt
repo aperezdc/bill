@@ -65,6 +65,8 @@ Documentation
 * `Code style guidelines <codestyle.html>`__. Contains tips on how to write
   shell code.
 
+* How to `contribute with Bill <contribute.html>`__.
+
 * `Deploying Bill scripts <deploy.html>`__. A must if you plan to distribute
   your shell code and being nice to others not requiring them to have Bill
   installed.

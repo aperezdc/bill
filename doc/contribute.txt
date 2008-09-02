@@ -1,0 +1,176 @@
+======================
+ Contributing to Bill
+======================
+:Author: Adrian Perez <aperez@igalia.com>
+:License: GPL v2
+:Abstract: Instructs how to contribute with the Bill project by sending
+    patches and implementing new features using the Git_ version control
+    system.
+
+.. _git: http://git.or.gz
+.. _vim: http://www.vim.org
+
+.. contents::
+
+
+First steps
+===========
+
+When you eventually submit a patch it helps if you have told Git your name
+and email address: they will show up in the commit history, so that other
+people may know that you wrote the patch and how to contact you. To do this,
+enter something like:
+
+.. sourcecode:: bash
+
+    git-config --global user.name "Eric Finnet"
+    git-config --global user.email "eric@fin.net"
+
+(You should obviously put your own name and email address in there.) This
+step only needs to be carried out once; the ``--global`` switch ensures that
+all Git repositories you have from now on will know your name and email.
+
+
+Branching and commiting
+=======================
+Lets say you want to add a new feature to Bill. The first thing to do is to
+create a new branch to work on and leave the ``master`` branch untouched.
+Lets call the new branch ``feature``:
+
+.. sourcecode:: bash
+
+    git-checkout -b feature
+
+This creates a branch called ``feature`` and checks it out so you can just
+start working on it. As you work away on your new feature the daily work
+flow goes something like:
+
+1. Edit source code.
+2. Test it.
+3. Commit changes.
+4. Repeat.
+
+Steps 1-2 are up to you to figure out, step 3 can be done in one of two ways.
+The simplest way works if you have only modified existing files:
+
+.. sourcecode:: bash
+
+    git-commit -a
+
+This will make a commit including all modified files (but not newly created
+files!) and bring up an editor window so you can enter a commit message. Here
+is an example of what the commit message could look like::
+
+    Avoid en extra evaluation of a variable
+
+    Provides a minor speedup by saving the evaluation of a expression in
+    a new variable and reusing the calculated value instead of evaluating
+    it three times in function foo().
+
+The format of a commit message is thus: a line with a concise summary of the
+commit (required), and a blank line followed by a more verbose description
+of the commit (optional). To ensure these messages look good, please make sure
+each line is not longer than 72 characters (``:set tw=72`` and ``gq`` are your
+friends when using Vim_).
+
+
+
+Updating to the latest version
+==============================
+
+While you are working on your feature it is not entirely unlikely that commits
+are made to the public Git repository. In this situation you will probably want
+to update your ``master`` branch to be up-to-date with the public repository.
+Before doing this you should make sure you have no uncommited changes (commit
+first if you do), then you switch to the ``master`` branch and pull the latest
+version with the following two commands:
+
+.. sourcecode:: bash
+
+    git-checkout master
+    git-pull
+
+That will update the ``master`` branch to the latest version of the source code.
+In order to get these changes merged into your ``feature`` branch as well you
+should rebase your commits on top of the changes made to the ``master`` branch:
+
+.. sourcecode:: bash
+
+    git-checkout feature
+    git-rebase master
+
+Those two commands will switch back to your ``feature`` branch and then apply
+the commits you just pulled in front of your own commits that you have made
+in the ``feature`` branch. (Don't worry if this makes no sense to you; check
+the Git documentation if you are curious as to what ``git-rebase`` does.)
+
+
+Submitting a patch
+==================
+
+When you have finished implementing your new feature you are ready to create
+a patch series to be submitted. But before doing so, make sure you have
+updated your repository to the latest version as described in the `previous
+section <#updating-to-the-lastest>`__. Once you have updated the ``master``
+branch, you create a patch series with the following command:
+
+.. sourcecode:: bash
+
+    git-format-patch master
+
+This will make a diff between your branch and the ``master`` branch, and
+output a series of ``.patch`` files in the current directory. One patch
+file is created for each commit that you have made in your branch.
+
+Once you have created the patch files, simply submit them to the `author
+<mailto:aperez@igalia.com>`__. If there are more than one file in the
+patch series you should archive it first. For example:
+
+.. sourcecode:: bash
+
+    tar cjf my-feature.tar.bz2 *.patch
+
+This command will create an archive called ``my-feature.tar.bz2`` containing
+all the patch files.
+
+
+Common tasks
+============
+
+The first stop for general Git information is the `Git Home Page <git_>`__.
+However, here is a quick summary of the features people use everyday.
+
+Typically, when one starts working wants to see how things are going::
+
+    git log
+
+Then, when coding, one wants to know what has been done and review things
+before committing::
+
+    git status
+
+If one wants to see exactly what the changes are::
+
+    git diff
+
+It often happens that one is doing tests that are not to be kept. To
+quickly reset all the changes made since the last commit one uses::
+
+    git reset --hard
+
+That would undo the changes in all files that are marked as ``Changed``
+in the output of ``git status``. Resetting changes in a particular file is
+also possible by issuing::
+
+    git checkout filename
+
+If you do not remember in which branch you are one can use the following
+command instead of ``git status``, because it prints out all other branch
+names::
+
+    git branch
+
+
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+
