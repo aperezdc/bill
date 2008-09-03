@@ -23,8 +23,8 @@ enter something like:
 
 .. sourcecode:: bash
 
-    git-config --global user.name "Eric Finnet"
-    git-config --global user.email "eric@fin.net"
+    git config --global user.name "Eric Finnet"
+    git config --global user.email "eric@fin.net"
 
 (You should obviously put your own name and email address in there.) This
 step only needs to be carried out once; the ``--global`` switch ensures that
@@ -39,7 +39,7 @@ Lets call the new branch ``feature``:
 
 .. sourcecode:: bash
 
-    git-checkout -b feature
+    git checkout -b feature
 
 This creates a branch called ``feature`` and checks it out so you can just
 start working on it. As you work away on your new feature the daily work
@@ -55,7 +55,7 @@ The simplest way works if you have only modified existing files:
 
 .. sourcecode:: bash
 
-    git-commit -a
+    git commit -a
 
 This will make a commit including all modified files (but not newly created
 files!) and bring up an editor window so you can enter a commit message. Here
@@ -87,8 +87,8 @@ version with the following two commands:
 
 .. sourcecode:: bash
 
-    git-checkout master
-    git-pull
+    git checkout master
+    git pull
 
 That will update the ``master`` branch to the latest version of the source code.
 In order to get these changes merged into your ``feature`` branch as well you
@@ -96,13 +96,13 @@ should rebase your commits on top of the changes made to the ``master`` branch:
 
 .. sourcecode:: bash
 
-    git-checkout feature
-    git-rebase master
+    git checkout feature
+    git rebase master
 
 Those two commands will switch back to your ``feature`` branch and then apply
 the commits you just pulled in front of your own commits that you have made
 in the ``feature`` branch. (Don't worry if this makes no sense to you; check
-the Git documentation if you are curious as to what ``git-rebase`` does.)
+the Git documentation if you are curious as to what ``git rebase`` does.)
 
 
 Submitting a patch
@@ -116,7 +116,7 @@ branch, you create a patch series with the following command:
 
 .. sourcecode:: bash
 
-    git-format-patch master
+    git format-patch master
 
 This will make a diff between your branch and the ``master`` branch, and
 output a series of ``.patch`` files in the current directory. One patch

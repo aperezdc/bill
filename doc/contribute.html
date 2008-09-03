@@ -43,8 +43,8 @@ system.</p>
 and email address: they will show up in the commit history, so that other
 people may know that you wrote the patch and how to contact you. To do this,
 enter something like:</p>
-<div class="highlight"><pre>git-config --global user.name <span class="s2">&quot;Eric Finnet&quot;</span>
-git-config --global user.email <span class="s2">&quot;eric@fin.net&quot;</span>
+<div class="highlight"><pre>git config --global user.name <span class="s2">&quot;Eric Finnet&quot;</span>
+git config --global user.email <span class="s2">&quot;eric@fin.net&quot;</span>
 </pre></div>
 <p>(You should obviously put your own name and email address in there.) This
 step only needs to be carried out once; the <tt class="docutils literal"><span class="pre">--global</span></tt> switch ensures that
@@ -55,7 +55,7 @@ all Git repositories you have from now on will know your name and email.</p>
 <p>Lets say you want to add a new feature to Bill. The first thing to do is to
 create a new branch to work on and leave the <tt class="docutils literal"><span class="pre">master</span></tt> branch untouched.
 Lets call the new branch <tt class="docutils literal"><span class="pre">feature</span></tt>:</p>
-<div class="highlight"><pre>git-checkout -b feature
+<div class="highlight"><pre>git checkout -b feature
 </pre></div>
 <p>This creates a branch called <tt class="docutils literal"><span class="pre">feature</span></tt> and checks it out so you can just
 start working on it. As you work away on your new feature the daily work
@@ -68,7 +68,7 @@ flow goes something like:</p>
 </ol>
 <p>Steps 1-2 are up to you to figure out, step 3 can be done in one of two ways.
 The simplest way works if you have only modified existing files:</p>
-<div class="highlight"><pre>git-commit -a
+<div class="highlight"><pre>git commit -a
 </pre></div>
 <p>This will make a commit including all modified files (but not newly created
 files!) and bring up an editor window so you can enter a commit message. Here
@@ -94,19 +94,19 @@ to update your <tt class="docutils literal"><span class="pre">master</span></tt>
 Before doing this you should make sure you have no uncommited changes (commit
 first if you do), then you switch to the <tt class="docutils literal"><span class="pre">master</span></tt> branch and pull the latest
 version with the following two commands:</p>
-<div class="highlight"><pre>git-checkout master
-git-pull
+<div class="highlight"><pre>git checkout master
+git pull
 </pre></div>
 <p>That will update the <tt class="docutils literal"><span class="pre">master</span></tt> branch to the latest version of the source code.
 In order to get these changes merged into your <tt class="docutils literal"><span class="pre">feature</span></tt> branch as well you
 should rebase your commits on top of the changes made to the <tt class="docutils literal"><span class="pre">master</span></tt> branch:</p>
-<div class="highlight"><pre>git-checkout feature
-git-rebase master
+<div class="highlight"><pre>git checkout feature
+git rebase master
 </pre></div>
 <p>Those two commands will switch back to your <tt class="docutils literal"><span class="pre">feature</span></tt> branch and then apply
 the commits you just pulled in front of your own commits that you have made
 in the <tt class="docutils literal"><span class="pre">feature</span></tt> branch. (Don't worry if this makes no sense to you; check
-the Git documentation if you are curious as to what <tt class="docutils literal"><span class="pre">git-rebase</span></tt> does.)</p>
+the Git documentation if you are curious as to what <tt class="docutils literal"><span class="pre">git</span> <span class="pre">rebase</span></tt> does.)</p>
 </div>
 <div class="section" id="submitting-a-patch">
 <h1><a class="toc-backref" href="#id4">Submitting a patch</a></h1>
@@ -115,7 +115,7 @@ a patch series to be submitted. But before doing so, make sure you have
 updated your repository to the latest version as described in the <a class="reference external" href="#updating-to-the-lastest">previous
 section</a>. Once you have updated the <tt class="docutils literal"><span class="pre">master</span></tt>
 branch, you create a patch series with the following command:</p>
-<div class="highlight"><pre>git-format-patch master
+<div class="highlight"><pre>git format-patch master
 </pre></div>
 <p>This will make a diff between your branch and the <tt class="docutils literal"><span class="pre">master</span></tt> branch, and
 output a series of <tt class="docutils literal"><span class="pre">.patch</span></tt> files in the current directory. One patch
