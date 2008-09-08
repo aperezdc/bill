@@ -74,7 +74,14 @@ copy_files ()
     done
     gzip --best "$deb_name/usr/share/doc/bill"/*.txt
     gzip --best "$deb_name/usr/share/doc/bill/lib"/*/*.txt
-    echo "doc ]"
+    echo -n "doc "
+
+    mkdir -p "$deb_name/usr/share/man/man1"
+    for name in doc/*.1 ; do
+        cp "$name" "$deb_name/usr/share/man/man1"
+    done
+    gzip --best "$deb_name/usr/share/man/man1"/*.1
+    echo "man ]"
 }
 
 
