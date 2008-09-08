@@ -612,7 +612,12 @@ table.docinfo th.docinfo-name {
 }
 
 h2.subtitle {
-	font-family: "ParkAvenue", "Rechtman", fantasy;
+	font-family:
+		"ParkAvenue",
+		"Rechtman",
+		"URW Chancery L",
+		"URW Chancery",
+		fantasy;
 	font-size: 28px;
 	color: #bbb;
 	float: right;
