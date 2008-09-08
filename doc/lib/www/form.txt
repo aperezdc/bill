@@ -14,6 +14,22 @@ Handles HTML form submissions
 
 
 
+form_urldecode
+--------------
+
+::
+
+  form_urldecode
+
+
+Reads data in a line-by-line basis from standard input, performs
+URL-like decoding as defined in `RFC 1945
+<http://http://www.w3.org/Protocols/rfc1945/rfc1945>`__ and sends
+it decoded to standard output.
+
+
+
+
 form_multipart_handle
 ---------------------
 
@@ -43,5 +59,23 @@ its content body and ``output/headers/00`` the corresponding MIME
 headers. Each part is decoded using the mime_decode_ function.
 
 .. _mime_decode: mime.html#mime-decode
+
+
+
+
+form_handle
+-----------
+
+::
+
+  form_handle qs_var [ tmpdir ]
+
+
+Handles input if a HTML form, either from a ``POST`` or ``GET`` request.
+In both cases the query string will be stored in the hash map
+``qs_var``. When handling ``POST`` requests you may also want to
+provide a temporary directory ``tmpdir``, otherwise ``/tmp`` will be
+always used. Data stored in ``qs_var`` can be accessed using the
+functions in the `data/hash <../data/hash.html>`_ module.
 
 

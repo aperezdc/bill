@@ -1,4 +1,4 @@
-Here you will find utilities to be used when developing CGI applications. If
+Here you will find utilities to be used when developing web applications. If
 you need a simple template engine make sure to take a look at the
 `text/template`_ module.
 
