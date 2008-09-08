@@ -67,7 +67,7 @@ copy_files ()
 
     mkdir -p "$deb_name/usr/share/doc/bill"
     cp -R examples doc/* "$deb_name/usr/share/doc/bill"
-    cp README "$deb_name/usr/share/doc/bill"
+    cp README debian/copyright "$deb_name/usr/share/doc/bill"
     cp debian/changelog "$deb_name/usr/share/doc/bill/changelog.Debian"
     for name in "${gzip_files[@]}" ; do
         gzip --best "$deb_name/usr/share/doc/bill/$name"
