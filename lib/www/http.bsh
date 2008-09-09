@@ -1,0 +1,143 @@
+#! /usr/bin/env bill
+#++
+#   ==================
+#   Simple HTTP server
+#   ==================
+#   :Author: Adrian Perez <aperez@igalia.com>
+#   :License: GPL v2
+#   :Copyright: 2008 Igalia S.L.
+#   :Abstract: Provides a not-so-basic standalone web server.
+#       Socket functionality is **not** provided. Requests are
+#       read from standard input, responses are sent to standard
+#       output and logging is done the standard error stream.
+#
+#   .. contents::
+#--
+
+use data/hash
+use text/string
+use text/template
+
+
+http_response_by_code=(
+    200  'Ok - Transceiver and a coke, please'
+    403  'Forbidden'
+    404  'Not Found'
+    500  'Internal Server Error'
+    501  'Not Implemented'
+)
+
+
+http_error_document_template='<html>
+  <head>
+    <title>Error: ${err_text}</title>
+  </head>
+  <body>
+    <h1>${err_text}</h1>
+    <p>Additional information:</p>
+    <pre>${err_description}</pre>
+  </body>
+</html>'
+
+
+http_CR=$(printf "\015")
+
+
+#++ http_error_document [ code [ description ... ] ]
+#
+#   Generates an error document in standard output:
+#
+#   * ``code`` is the HTTP error code (default is ``500``)
+#   * ``description`` is an arbitrary piece of text which will be inserted
+#     pre-formatted in the output.
+#
+#--
+http_error_document ()
+{
+    local mess=$(hash_get http_response_by_code $1)
+    shift
+    local desc=$(string_join $'\n' "$@")
+    [[ -z $desc ]] && desc='No additional information supplied'
+
+    var_err_number=$1       \
+    var_err_text=$mess       \
+    var_err_description=$desc \
+        template_expand <<< "$http_error_document_template"
+}
+
+
+http_error_send ()
+{
+    http_log_stderr "$@"
+    printf "HTTP/1.0 %s %s\r\n" $1 "$(hash_get http_response_by_code $1)"
+    printf "Content-Type: text/html\r\n"
+    printf "Connection: close\r\n"
+    printf "\r\n"
+    http_error_document "$@"
+}
+
+
+#++ http_log_stderr [ arg1 [ arg2 ... [ argN ] ] ]
+#
+#   Logs a line of output to standard error.
+#--
+http_log_stderr ()
+{
+    local mess=$(string_join ' ' "$@")
+    echo "$REQUEST_METHOD $PATH_INFO $HTTP_VERSION - $mess" 1>&2
+}
+
+
+
+#++ http_handle_request
+#
+#   Serves a single HTTP request. The following variables are set by the
+#   function and their values **will be clamped** if already defined. Note
+#   that most of them start with the ``HTTP_`` prefix or have names of the
+#   variables used by the `CGI interface`_:
+#
+#   * REQUEST_METHOD
+#   * PATH_INFO
+#   * QUERY_STRING
+#   * HTTP_VERSION
+#
+#   .. _cgi interface: http://www.w3.org/CGI/
+#--
+http_handle_request ()
+{
+    # Use CGI variables as log as possible, so interfacing with external
+    # CGIs will be easier.
+    #
+    local REQUEST_METHOD PATH_INFO QUERY_STRING HTTP_VERSION
+    local readmore
+
+    read REQUEST_METHOD PATH_INFO HTTP_VERSION
+    # String annoying carriage return characters
+    export REQUEST_METHOD=$(string_upper "${REQUEST_METHOD%${http_CR}}")
+    export HTTP_VERSION=$(string_upper "${HTTP_VERSION%${http_CR}}")
+    export PATH_INFO=${PATH_INFO%${http_CR}}
+
+    case $HTTP_VERSION in
+        HTTP/1.0 | HTTP/1.1)
+            readmore=true
+            ;;
+        HTTP/0.9 | "")
+            readmore=false
+            ;;
+        *)
+            http_error_send 500 "Protocol version unrecognized"
+            return
+            ;;
+    esac
+
+    local handler="http_handle_$REQUEST_METHOD"
+    if [[ $(type -t "$handler") != 'function' ]]
+    then
+        http_error_send 501 "Method $REQUEST_METHOD not implemented"
+        return
+    fi
+}
+
+
+main http_handle_request
+
