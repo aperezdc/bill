@@ -18,6 +18,61 @@ use data/hash
 use text/string
 use text/template
 
+need sed || die "The 'sed' program was not found"
+need cat || die "The 'cat' program was not found"
+
+#++
+#   Running a webserver
+#   ===================
+#   Fortunately, dealing with sockets can be done in pure Bash [#]_.
+#   Unfortunately enough, some distributors choose not to enable support for
+#   this feature. This is the case of the Bash builds included with Debian_
+#   and Ubuntu_.
+#
+#   .. [#] http://unixjunkie.blogspot.com/2006/01/two-cool-bash-tricks.html
+#   .. _debian: http://debian.org
+#   .. _ubuntu: http://ubuntulinux.org
+#
+#
+#   Using auxiliar tools
+#   --------------------
+#   Some utilities exist which allow nearly all program
+#   using the standard input and output streams to use sockets. It is likely
+#   that at least one of these is available for your operating system of
+#   choice. All those examples run a simple web server listening in port
+#   ``8000`` at ``127.0.0.1`` (the loopback network address). Once you try
+#   one of those command lines, point a browser to http://localhost:8000/doc
+#   and you will be able of browsing the Bill documentation using the simple
+#   built-in web server.
+#
+#   .. class:: tabular
+#
+#   ========== =============================================================
+#   Package    Command
+#   ========== =============================================================
+#   ipsvd_     ``tcpsvd 127.0.0.1 8000 ./scripts/bill lib/www/http.bsh``
+#   ucspi-tcp_ ``tcpserver -q 127.0.0.1 8000 ./scripts/bill lib/www/http.bsh``
+#   netcat_    ``(while true ; do nc -l -p 8000 -c './scripts/bill lib/www/http.bsh'; done)``
+#   netpipes_  ``faucet 8000 -H 127.0.0.1 -i -o ./scripts/bill lib/www/http.bsh``
+#   ========== =============================================================
+#
+#   .. _ipsvd: http://smarden.org/ipsvd/
+#   .. _ucspi-tcp: http://cr.yp.to/ucspi-tcp.html
+#   .. _netcat: http://netcat.sourceforge.net/
+#   .. _netpipes: http://web.purplefrog.com/~thoth/netpipes/netpipes.html
+#
+#   .. note:: Commands should be run from the top-level Bill source
+#       directory, otherwise they may not work.
+#
+#   .. warning:: The netcat_ command is very flaky, it will not accept
+#       concurrent connections, and in general will perform poorly.
+#--
+
+#++
+#   Functions
+#   =========
+#--
+
 
 http_response_by_code=(
     200  'Ok - Transceiver and a coke, please'
@@ -55,10 +110,15 @@ http_mime_mapping=(
     bsh  text/plain
     txt  text/plain
     rst  text/plain
+    conf text/plain
+
     html text/html
     htm  text/html
+
     css  text/css
+
     png  image/png
+
     jpg  image/jpeg
     jpe  image/jpeg
     jpeg image/jpeg
@@ -66,6 +126,19 @@ http_mime_mapping=(
 
 
 #++ http_mimetype_guess path
+#
+#   Determines MIME types depending on the entries of a hash map named
+#   ``http_mime_mapping``, which contains a default set of entries which
+#   suffice for serving the Bill documentation. The suffix of the file
+#   pointed by ``path`` is used to determine its content type.
+#
+#   For example:
+#
+#   .. sourcecode:: bash
+#
+#       (bill) http_mimetype_guess /etc/sysctl.conf
+#       text/plain
+#
 #--
 http_mimetype_guess ()
 {
@@ -106,7 +179,8 @@ http_error_document ()
 #++ http_error [ code [ description ... ] ]
 #
 #   Sends an HTTP error status code and an accompanying HTML document
-#   explaining the error.
+#   explaining the error. Error document is formatted using
+#   http_error_document_.
 #--
 http_error ()
 {
@@ -119,10 +193,17 @@ http_error ()
 }
 
 
+#++ http_redirect uri [ code ]
+#
+#   Sends an HTTP redirection, to the given ``uri``. If not supplied, the
+#   ``code`` will be ``302`` (a permanent redirect). You can pass ``301``
+#   for temporary redirects. Keep in mind that using absolute paths in
+#   redirects is recommended.
+#--
 http_redirect ()
 {
-    http_log_stderr "302 Permanent redirect"
-    printf "HTTP/1.0 302 Permanent redirect\r\n"
+    http_log_stderr "${2:-302}"
+    printf "HTTP/1.0 ${2:-302}\r\n"
     printf "Location: $1\r\n"
     printf "Connection: close\r\n"
     printf "\r\n"
@@ -131,7 +212,14 @@ http_redirect ()
 
 #++ http_log_stderr [ arg1 [ arg2 ... [ argN ] ] ]
 #
-#   Logs a line of output to standard error.
+#   Logs a line of output to standard error. Log format is as follows::
+#
+#       <method> <path> HTTP/<version> - arg1 arg2 ... argN
+#
+#   Note that timestamps are not added to output. This is left as is
+#   intentionally: it is nicer to add a filter in standard output which
+#   does further formatting of logged text, and we do not have to mess
+#   with date formatting.
 #--
 http_log_stderr ()
 {
@@ -219,6 +307,23 @@ http_handle_GET ()
 #   * ...and so on.
 #
 #   .. _cgi interface: http://www.w3.org/CGI/
+#
+#   The ``handler_prefix`` can be used to change behavior of how requests
+#   are served. It is used to find which functions are used to serve the
+#   different HTTP methods. As an example, one could define:
+#
+#   .. sourcecode:: bash
+#
+#       my_handler_GET () {
+#           # Do something interesting...
+#       }
+#       my_handler_HEAD () {
+#           # ...and something *even* more interesting.
+#       }
+#
+#   and then use ``my_handler`` as prefix, then the HTTP request hadler will
+#   pass ``GET`` to ``my_handler_GET`` and ``HEAD`` ones to
+#   ``my_handler_HEAD``. This allows for easily reusing the HTTP module.
 #--
 http_handle_request ()
 {

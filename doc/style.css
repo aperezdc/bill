@@ -544,7 +544,7 @@ table.docinfo {
 	-webkit-border-radius: 7px;
 }
 
-table.modules {
+table.modules, table.tabular {
 	background: #fafafa url(img/whiteshade.png) 0 0 repeat-x;
 	border: 1px solid #ccc;
 	border-radius: 7px;
@@ -554,12 +554,21 @@ table.modules {
 	width: 90%;
 }
 
-table.modules td, table.modules th {
+table.modules td, table.modules th, table.tabular th {
 	border: none;
 	text-align: left;
 }
 
-table.modules td {
+table.tabular td {
+	border: none;
+}
+
+table.tabular td tt {
+	border: none;
+	background: none;
+}
+
+table.modules td, table.tabular td {
 	border-top: 1px solid #ccc;
 }
 
