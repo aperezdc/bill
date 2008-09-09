@@ -31,6 +31,14 @@ http_response_by_code=(
 http_error_document_template='<html>
   <head>
     <title>Error: ${err_text}</title>
+    <style type="text/css">
+    pre {
+        font-family: monospace;
+        background: #f8f8f8;
+        border: 1px solid #eee;
+        padding: 1em;
+    }
+    </style>
   </head>
   <body>
     <h1>${err_text}</h1>
@@ -41,6 +49,33 @@ http_error_document_template='<html>
 
 
 http_CR=$(printf "\015")
+
+
+http_mime_mapping=(
+    txt  text/plain
+    rst  text/plain
+    html text/html
+    htm  text/html
+    css  text/css
+    png  image/png
+    jpg  image/jpeg
+    jpe  image/jpeg
+    jpeg image/jpeg
+)
+
+
+#++ http_mimetype_guess path
+#--
+http_mimetype_guess ()
+{
+    local mime=$(hash_get http_mime_mapping "${1##*.}")
+    if [ "$mime" ]
+    then
+        echo "$mime"
+    else
+        echo "application/octet-stream"
+    fi
+}
 
 
 #++ http_error_document [ code [ description ... ] ]
@@ -66,6 +101,12 @@ http_error_document ()
 }
 
 
+
+#++ http_error_send [ code [ description ... ] ]
+#
+#   Sends an HTTP error status code and an accompanying HTML document
+#   explaining the error.
+#--
 http_error_send ()
 {
     http_log_stderr "$@"
@@ -89,7 +130,23 @@ http_log_stderr ()
 
 
 
-#++ http_handle_request
+http_handle_GET ()
+{
+    if ! [ -r "./$PATH_INFO" ]
+    then
+        http_error_send 404 "path=$PATH_INFO"
+        return 1
+    fi
+
+    printf "HTTP/1.0 200 Ok\r\n"
+    printf "Content-Type: %s\r\n" "$(http_mimetype_guess "./$PATH_INFO")"
+    printf "Connection: close\r\n"
+    printf "\r\n"
+    cat "./$PATH_INFO"
+}
+
+
+#++ http_handle_request [ handler_prefix ]
 #
 #   Serves a single HTTP request. The following variables are set by the
 #   function and their values **will be clamped** if already defined. Note
@@ -105,17 +162,23 @@ http_log_stderr ()
 #--
 http_handle_request ()
 {
+    local prefix=${1:-'http_handle'}
+
     # Use CGI variables as log as possible, so interfacing with external
     # CGIs will be easier.
     #
     local REQUEST_METHOD PATH_INFO QUERY_STRING HTTP_VERSION
-    local readmore
+    local readmore line key val
 
     read REQUEST_METHOD PATH_INFO HTTP_VERSION
     # String annoying carriage return characters
-    export REQUEST_METHOD=$(string_upper "${REQUEST_METHOD%${http_CR}}")
-    export HTTP_VERSION=$(string_upper "${HTTP_VERSION%${http_CR}}")
-    export PATH_INFO=${PATH_INFO%${http_CR}}
+    REQUEST_METHOD=$(string_upper "${REQUEST_METHOD%${http_CR}}")
+    HTTP_VERSION=$(string_upper "${HTTP_VERSION%${http_CR}}")
+    PATH_INFO=${PATH_INFO%${http_CR}}
+    QUERY_STRING=${PATH_INFO#*\?}
+    PATH_INFO=${PATH_INFO%%\?*}
+
+    export REQUEST_METHOD PATH_INFO HTTP_VERSION QUERY_STRING
 
     case $HTTP_VERSION in
         HTTP/1.0 | HTTP/1.1)
@@ -130,12 +193,31 @@ http_handle_request ()
             ;;
     esac
 
-    local handler="http_handle_$REQUEST_METHOD"
+    local handler="${prefix}_${REQUEST_METHOD}"
     if [[ $(type -t "$handler") != 'function' ]]
     then
         http_error_send 501 "Method $REQUEST_METHOD not implemented"
         return
     fi
+
+    while $readmore
+    do
+        read line
+        if [[ $line = $http_CR ]] || [[ -z $line ]]
+        then
+            # We have found the last empty line signaling end of headers.
+            readmore=false
+            break
+        fi
+
+        # TODO: Handle multi-line HTTP headers (check RFC for details)
+        line=${line%${http_CR}}
+        key=$(string_lower "${line%%:*}")
+        val=$(echo "${val#*:}" | sed -e 's:^[[:space:]]*::')
+        eval "export HTTP_${key//-/_}='${val//\'/\\\'}'"
+    done
+
+    $handler && http_log_stderr 200 "$handler"
 }
 
 
