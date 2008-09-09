@@ -127,3 +127,17 @@ Checks whether the given strings contains a substring inside it. Exit
 status is non-zero if the condition is not satisfied.
 
 
+
+
+string_join
+-----------
+
+::
+
+  string_join separator [ string1 [ string2 ... [ stringN ] ] ]
+
+
+Concatenates all given strings into a single one using the specified
+separator.
+
+

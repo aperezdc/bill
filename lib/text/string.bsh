@@ -121,3 +121,18 @@ string_contains ()
     [[ $1 = *$2* ]]
 }
 
+
+#++ string_join separator [ string1 [ string2 ... [ stringN ] ] ]
+#
+#   Concatenates all given strings into a single one using the specified
+#   separator.
+#--
+string_join ()
+{
+    local saved_IFS=$IFS
+    IFS=$1
+    shift
+    echo "$*"
+    IFS=$saved_IFS
+}
+
