@@ -52,6 +52,7 @@ http_CR=$(printf "\015")
 
 
 http_mime_mapping=(
+    bsh  text/plain
     txt  text/plain
     rst  text/plain
     html text/html
@@ -102,12 +103,12 @@ http_error_document ()
 
 
 
-#++ http_error_send [ code [ description ... ] ]
+#++ http_error [ code [ description ... ] ]
 #
 #   Sends an HTTP error status code and an accompanying HTML document
 #   explaining the error.
 #--
-http_error_send ()
+http_error ()
 {
     http_log_stderr "$@"
     printf "HTTP/1.0 %s %s\r\n" $1 "$(hash_get http_response_by_code $1)"
@@ -115,6 +116,16 @@ http_error_send ()
     printf "Connection: close\r\n"
     printf "\r\n"
     http_error_document "$@"
+}
+
+
+http_redirect ()
+{
+    http_log_stderr "302 Permanent redirect"
+    printf "HTTP/1.0 302 Permanent redirect\r\n"
+    printf "Location: $1\r\n"
+    printf "Connection: close\r\n"
+    printf "\r\n"
 }
 
 
@@ -130,19 +141,68 @@ http_log_stderr ()
 
 
 
+http_directory_template='#! local var_i
+<html>
+  <head>
+    <title>${path}</title>
+  </head>
+  <body>
+    <h1>${path}</h1>
+    <ul>
+    $([ "${path}" = "/" ] || echo "<li><a href=\\\"../\\\">[up]</a></li>")
+    $(for var_i in ".${path}"* ; do \
+        echo "<li><a href=\\\"${i:1}\\\">${i#.${path}}</a></li>" ; \
+    done)
+    </ul>
+  </body>
+</head>'
+
+
+#++ http_handle_GET
+#
+#   Default handler for the HTTP ``GET`` method. This does nothing more than
+#   serving static files and producing directory listings. Also, if path
+#   resolves to a directory which contains a file named ``index.html`` it
+#   will be served instead.
+#--
 http_handle_GET ()
 {
+    local isdir=false
+
     if ! [ -r "./$PATH_INFO" ]
     then
-        http_error_send 404 "path=$PATH_INFO"
+        http_error 404 "path=$PATH_INFO"
         return 1
     fi
 
+    if [ -d "./$PATH_INFO" ]
+    then
+        if ! string_endswith "$PATH_INFO" "/"
+        then
+            http_redirect "$PATH_INFO/"
+            return
+        fi
+
+        if [ -r "./$PATH_INFO/index.html" ]
+        then
+            PATH_INFO="${PATH_INFO}/index.html"
+        else
+            isdir=true
+        fi
+    fi
+
     printf "HTTP/1.0 200 Ok\r\n"
-    printf "Content-Type: %s\r\n" "$(http_mimetype_guess "./$PATH_INFO")"
     printf "Connection: close\r\n"
-    printf "\r\n"
-    cat "./$PATH_INFO"
+    if $isdir
+    then
+        printf "Content-Type: text/html; encoding=utf-8\r\n"
+        printf "\r\n"
+        var_path=$PATH_INFO template_expand <<< "$http_directory_template"
+    else
+        printf "Content-Type: %s\r\n" "$(http_mimetype_guess "./$PATH_INFO")"
+        printf "\r\n"
+        cat "./$PATH_INFO"
+    fi
 }
 
 
@@ -156,7 +216,7 @@ http_handle_GET ()
 #   * REQUEST_METHOD
 #   * PATH_INFO
 #   * QUERY_STRING
-#   * HTTP_VERSION
+#   * ...and so on.
 #
 #   .. _cgi interface: http://www.w3.org/CGI/
 #--
@@ -188,7 +248,7 @@ http_handle_request ()
             readmore=false
             ;;
         *)
-            http_error_send 500 "Protocol version unrecognized"
+            http_error 500 "Protocol version unrecognized"
             return
             ;;
     esac
@@ -196,7 +256,7 @@ http_handle_request ()
     local handler="${prefix}_${REQUEST_METHOD}"
     if [[ $(type -t "$handler") != 'function' ]]
     then
-        http_error_send 501 "Method $REQUEST_METHOD not implemented"
+        http_error 501 "Method $REQUEST_METHOD not implemented"
         return
     fi
 

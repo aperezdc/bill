@@ -1,0 +1,109 @@
+==================
+Simple HTTP server
+==================
+:Author: Adrian Perez <aperez@igalia.com>
+:License: GPL v2
+:Copyright: 2008 Igalia S.L.
+:Abstract: Provides a not-so-basic standalone web server.
+    Socket functionality is **not** provided. Requests are
+    read from standard input, responses are sent to standard
+    output and logging is done the standard error stream.
+
+.. contents::
+
+
+
+
+http_mimetype_guess
+-------------------
+
+::
+
+  http_mimetype_guess path
+
+
+
+
+
+http_error_document
+-------------------
+
+::
+
+  http_error_document [ code [ description ... ] ]
+
+
+Generates an error document in standard output:
+
+* ``code`` is the HTTP error code (default is ``500``)
+* ``description`` is an arbitrary piece of text which will be inserted
+  pre-formatted in the output.
+
+
+
+
+
+http_error
+----------
+
+::
+
+  http_error [ code [ description ... ] ]
+
+
+Sends an HTTP error status code and an accompanying HTML document
+explaining the error.
+
+
+
+
+http_log_stderr
+---------------
+
+::
+
+  http_log_stderr [ arg1 [ arg2 ... [ argN ] ] ]
+
+
+Logs a line of output to standard error.
+
+
+
+
+http_handle_GET
+---------------
+
+::
+
+  http_handle_GET
+
+
+Default handler for the HTTP ``GET`` method. This does nothing more than
+serving static files and producing directory listings. Also, if path
+resolves to a directory which contains a file named ``index.html`` it
+will be served instead.
+
+
+
+
+http_handle_request
+-------------------
+
+::
+
+  http_handle_request [ handler_prefix ]
+
+
+Serves a single HTTP request. The following variables are set by the
+function and their values **will be clamped** if already defined. Note
+that most of them start with the ``HTTP_`` prefix or have names of the
+variables used by the `CGI interface`_:
+
+* REQUEST_METHOD
+* PATH_INFO
+* QUERY_STRING
+* ...and so on.
+
+.. _cgi interface: http://www.w3.org/CGI/
+
+
