@@ -69,14 +69,23 @@ builtinsfile=$(find_module bill/builtins)
 scan "$1"
 
 echo '#! /bin/bash'
-cat "$builtinsfile"
-for module in "${seen_modules[@]}"
-do
-    echo
-    echo "__bill_module__${module//\//__} () {"
-    cat "$(find_module "$module")"
-    echo "}"
-    echo
-done
-cat "$1"
+(   cat "$builtinsfile"
+    for module in "${seen_modules[@]}"
+    do
+        echo
+        echo "__bill_module__${module//\//__} () {"
+        cat "$(find_module "$module")"
+        echo "}"
+        echo
+    done
+    cat "$1"
+) | grep -v '^[[:space:]]*\#'
+
+
+# FIXME: Alternatively, this one would remove empty lines as well. We should
+# provide a command line switch to allow for spitting out "minimized"
+# versions with a command even more powerful than this:
+#
+# sed -e '/^$/d' -e '/^[[:space:]]*#/d'
+
 
