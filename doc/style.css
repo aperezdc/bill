@@ -40,6 +40,26 @@ div#wrap-content-bottom a:hover {
 	color: #444;
 }
 
+blockquote {
+	padding-left: 50px;
+	border: 1px solid #eee;
+}
+
+blockquote:before {
+	font-family: "New York", "Georgia", "Bitstream Charter", serif;
+	font-weight: bold;
+	margin-left: -40px;
+	height: 0px;
+	content: open-quote;
+	display: block;
+	font-size: 80px;
+	color: #ccc;
+}
+
+blockquote .attribution {
+	text-align: right;
+	font-style: italic;
+}
 
 div#wrap-outer {
 	min-width: 616px;

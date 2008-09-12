@@ -15,6 +15,119 @@
 Shell-independent tips
 ======================
 
+Quoting
+-------
+
+    Just in terms of allocation of time resources, religion is not very
+    efficient. There's a lot more I could be doing on a Sunday morning.
+
+    -- Bill Gates
+
+.. tip:: Use always double-quotes to enclose variable expansions. Unless you
+    are *really* sure that you do not want them.
+
+You should be aware that *apparently* excessive quoting is not only allowed
+in shell code, but even desirable.
+
+Shells use quoting to allow passing characters which usually would need to
+be escaped in a more convenient way (e.g. spaces). Compare the following and
+decide which do you prefer:
+
+.. sourcecode:: bash
+
+    ls /path/to\ somwhere/with\ embedded\ spaces
+    ls "/path/to somwhere/with embedded spaces"
+
+As you can see, you can save some typing, and it makes code clearer. Quoting
+is very important when using variables, because expanding an unquoted
+variable will split it at spaces (more exactly: using the first character of
+the ``IFS`` variable), which is not always what you want. Enclosing
+a variable into double quotes instructs the shell not to perform splitting.
+The following loop will print out three lines, one character per line:
+
+.. sourcecode:: bash
+
+    data='a b c'
+    for item in $data ; do
+        echo $item
+    done
+
+But using quotes when expanding the ``data`` variable, the same loop will
+print only a single line:
+
+.. sourcecode:: bash
+
+    data='a b c'
+    for item in "$data" ; do
+        echo $item
+    done
+
+Subtle may appear due to due to missing quotes, and in general you will
+*always* want to quote variable expansions.
+
+Exceptions
+~~~~~~~~~~
+There are some cases where quoting is not necessary at all:
+
+* When assigning one variable the contents of another. The shell parser
+  knows about this case and will always do the right thing. This includes
+  expressions in the form ``a=$b``.
+
+* When assigning a variable the output of a command. Explanation is the same
+  as for the previous entry: the shell knows how to do ``a=$(pwd)`` right.
+
+* When you really want to split things out. For example when gathering
+  command line options in a variable which will be passed to a command:
+
+  .. sourcecode:: bash
+
+    flags="-a"
+    flags="$flags --verbose"
+    [ -o /some/file ] || flags="$flags --output /some/file"
+
+    run_command $flags
+
+
+  It is okay to omit quotes here, but if you are using Bash, you better
+  would be using arrays_.
+
+Sometimes it is really needed to split variable contents, but bear in mind
+that you usually are perfectly aware of that situations, so as a rule of
+thumb *do* always quote your variables. As an example, the following
+function will iterate over elements in a string separated by a given
+separator (for example the ``PATH`` environment variable):
+
+.. sourcecode:: bash
+
+    print_list_items ()
+    {
+        # Save the current separator characters.
+        local item= old_IFS=$IFS
+        IFS=$1
+
+        for item in $2
+        do
+            echo "$item"
+        done
+
+        # Restore separators.
+        IFS=$old_IFS
+    }
+
+    print_list_items ':' "$PATH"
+
+
+
+Single quotes
+~~~~~~~~~~~~~
+.. tip:: Use single quotes to enclose string literals.
+
+Text enclosed in single quotes is *never* interpreted by the shell. The only
+character which needs to be escaped is the quote character itself: all the
+other characters, even carriage returns, will be part of the string. This
+makes them a great feature for defining multi-line strings.
+
+
 Structured programming
 ----------------------
 .. tip:: Use shell functions to organize your code, as you would do in
@@ -209,6 +322,50 @@ parse huge line-based text files:
     while read myline ; do
         sendmail "$recipient" <<< "$message"
     done < email-list.txt
+
+
+Arrays
+------
+
+.. tip:: Consider using arrays when handling lists of data insteads of lists
+    with a character separating items.
+
+Bash includes supports for arrays right away as an extension over
+traditional Sh-like shells. Although they are somewhat limited, they are
+very useful in some cases. Defining an array and using it is easy:
+
+.. sourcecode:: bash
+
+    my_array=( item_1 item_2 item_3 )
+
+    echo ${my_array[1]}
+    echo ${my_array[2]}
+
+The limitation of arrays is that it is not possible to have multidimensional
+arrays... but they are not needed for most shell tasks after all. This makes
+the syntax for adding elements to an array rather funny:
+
+.. sourcecode:: bash
+
+    my_array=( "${my_array[@]}" another_element )
+
+One nice example of using arrays is gathering arguments which will be
+further passed to another function or command. It is safer to use an array
+rather than a space-separated string: you can have embedded spaces in
+command line arguments using arrays, which would screw your program when
+using a plain string. For example:
+
+.. sourcecode:: bash
+
+    flags=( -a )
+    [ -n "$VERBOSE"  ] && flags=( "${flags[@]}" --verbose )
+    [ -o 'some file' ] || flags=( "${flags[@]}" -o 'some file' )
+
+    run_command "${flags[@]}"
+
+The above code will always work as expected, even when the flags have
+bizarre characters inside, which would normally confuse the shell. Well, not
+the shell but you when trying to debug the problem.
 
 
 Use the *source*, Luke

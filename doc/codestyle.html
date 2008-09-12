@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title>Code style guidelines</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -16,7 +16,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
 </tr>
 </tbody>
@@ -26,30 +26,134 @@
 <p>Provides general guidelines on how to write and organize shell
 code in general and when using the Bill library in particular.</p>
 </div>
-<div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<div class="contents topic">
+<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference internal" href="#shell-independent-tips" id="id2">Shell-independent tips</a><ul>
-<li><a class="reference internal" href="#structured-programming" id="id3">Structured programming</a></li>
-<li><a class="reference internal" href="#fork-exec" id="id4">fork+exec</a></li>
-<li><a class="reference internal" href="#internal-commands" id="id5">Internal commands</a></li>
-<li><a class="reference internal" href="#last-things-occur-last" id="id6">Last things occur... last</a></li>
+<li><a class="reference" href="#shell-independent-tips" id="id2" name="id2">Shell-independent tips</a><ul>
+<li><a class="reference" href="#quoting" id="id3" name="id3">Quoting</a><ul>
+<li><a class="reference" href="#exceptions" id="id4" name="id4">Exceptions</a></li>
+<li><a class="reference" href="#single-quotes" id="id5" name="id5">Single quotes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bashisms" id="id7">“Bashisms”</a><ul>
-<li><a class="reference internal" href="#locality-is-good" id="id8">Locality is good</a></li>
-<li><a class="reference internal" href="#cleaning-up" id="id9">Cleaning up</a></li>
-<li><a class="reference internal" href="#reading-file-contents" id="id10">Reading file contents</a></li>
-<li><a class="reference internal" href="#use-the-source-luke" id="id11">Use the <em>source</em>, Luke</a></li>
+<li><a class="reference" href="#structured-programming" id="id6" name="id6">Structured programming</a></li>
+<li><a class="reference" href="#fork-exec" id="id7" name="id7">fork+exec</a></li>
+<li><a class="reference" href="#internal-commands" id="id8" name="id8">Internal commands</a></li>
+<li><a class="reference" href="#last-things-occur-last" id="id9" name="id9">Last things occur... last</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#philosophy-basics" id="id12">Philosophy basics</a></li>
+<li><a class="reference" href="#bashisms" id="id10" name="id10">“Bashisms”</a><ul>
+<li><a class="reference" href="#locality-is-good" id="id11" name="id11">Locality is good</a></li>
+<li><a class="reference" href="#cleaning-up" id="id12" name="id12">Cleaning up</a></li>
+<li><a class="reference" href="#reading-file-contents" id="id13" name="id13">Reading file contents</a></li>
+<li><a class="reference" href="#arrays" id="id14" name="id14">Arrays</a></li>
+<li><a class="reference" href="#use-the-source-luke" id="id15" name="id15">Use the <em>source</em>, Luke</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#philosophy-basics" id="id16" name="id16">Philosophy basics</a></li>
 </ul>
 </div>
-<div class="section" id="shell-independent-tips">
-<h1><a class="toc-backref" href="#id2">Shell-independent tips</a></h1>
-<div class="section" id="structured-programming">
-<h2><a class="toc-backref" href="#id3">Structured programming</a></h2>
+<div class="section">
+<h1><a class="toc-backref" href="#id2" id="shell-independent-tips" name="shell-independent-tips">Shell-independent tips</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id3" id="quoting" name="quoting">Quoting</a></h2>
+<blockquote>
+<p>Just in terms of allocation of time resources, religion is not very
+efficient. There's a lot more I could be doing on a Sunday morning.</p>
+<p class="attribution">&mdash;Bill Gates</p>
+</blockquote>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use always double-quotes to enclose variable expansions. Unless you
+are <em>really</em> sure that you do not want them.</p>
+</div>
+<p>You should be aware that <em>apparently</em> excessive quoting is not only allowed
+in shell code, but even desirable.</p>
+<p>Shells use quoting to allow passing characters which usually would need to
+be escaped in a more convenient way (e.g. spaces). Compare the following and
+decide which do you prefer:</p>
+<div class="highlight"><pre>ls /path/to<span class="se">\ </span>somwhere/with<span class="se">\ </span>embedded<span class="se">\ </span>spaces
+ls <span class="s2">&quot;/path/to somwhere/with embedded spaces&quot;</span>
+</pre></div>
+<p>As you can see, you can save some typing, and it makes code clearer. Quoting
+is very important when using variables, because expanding an unquoted
+variable will split it at spaces (more exactly: using the first character of
+the <tt class="docutils literal"><span class="pre">IFS</span></tt> variable), which is not always what you want. Enclosing
+a variable into double quotes instructs the shell not to perform splitting.
+The following loop will print out three lines, one character per line:</p>
+<div class="highlight"><pre><span class="nv">data</span><span class="o">=</span><span class="s1">&#39;a b c&#39;</span>
+<span class="k">for </span>item in <span class="nv">$data</span> ; <span class="k">do</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="nv">$item</span>
+<span class="k">done</span>
+</pre></div>
+<p>But using quotes when expanding the <tt class="docutils literal"><span class="pre">data</span></tt> variable, the same loop will
+print only a single line:</p>
+<div class="highlight"><pre><span class="nv">data</span><span class="o">=</span><span class="s1">&#39;a b c&#39;</span>
+<span class="k">for </span>item in <span class="s2">&quot;$data&quot;</span> ; <span class="k">do</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="nv">$item</span>
+<span class="k">done</span>
+</pre></div>
+<p>Subtle may appear due to due to missing quotes, and in general you will
+<em>always</em> want to quote variable expansions.</p>
+<div class="section">
+<h3><a class="toc-backref" href="#id4" id="exceptions" name="exceptions">Exceptions</a></h3>
+<p>There are some cases where quoting is not necessary at all:</p>
+<ul>
+<li><p class="first">When assigning one variable the contents of another. The shell parser
+knows about this case and will always do the right thing. This includes
+expressions in the form <tt class="docutils literal"><span class="pre">a=$b</span></tt>.</p>
+</li>
+<li><p class="first">When assigning a variable the output of a command. Explanation is the same
+as for the previous entry: the shell knows how to do <tt class="docutils literal"><span class="pre">a=$(pwd)</span></tt> right.</p>
+</li>
+<li><p class="first">When you really want to split things out. For example when gathering
+command line options in a variable which will be passed to a command:</p>
+<div class="highlight"><pre><span class="nv">flags</span><span class="o">=</span><span class="s2">&quot;-a&quot;</span>
+<span class="nv">flags</span><span class="o">=</span><span class="s2">&quot;$flags --verbose&quot;</span>
+<span class="o">[</span> -o /some/file <span class="o">]</span> || <span class="nv">flags</span><span class="o">=</span><span class="s2">&quot;$flags --output /some/file&quot;</span>
+
+run_command <span class="nv">$flags</span>
+</pre></div>
+<p>It is okay to omit quotes here, but if you are using Bash, you better
+would be using <a class="reference" href="#arrays">arrays</a>.</p>
+</li>
+</ul>
+<p>Sometimes it is really needed to split variable contents, but bear in mind
+that you usually are perfectly aware of that situations, so as a rule of
+thumb <em>do</em> always quote your variables. As an example, the following
+function will iterate over elements in a string separated by a given
+separator (for example the <tt class="docutils literal"><span class="pre">PATH</span></tt> environment variable):</p>
+<div class="highlight"><pre>print_list_items <span class="o">()</span>
+<span class="o">{</span>
+    <span class="c"># Save the current separator characters.</span>
+    <span class="nb">local </span><span class="nv">item</span><span class="o">=</span> <span class="nv">old_IFS</span><span class="o">=</span><span class="nv">$IFS</span>
+    <span class="nv">IFS</span><span class="o">=</span><span class="nv">$1</span>
+
+    <span class="k">for </span>item in <span class="nv">$2</span>
+    <span class="k">do</span>
+<span class="k">        </span><span class="nb">echo</span> <span class="s2">&quot;$item&quot;</span>
+    <span class="k">done</span>
+
+    <span class="c"># Restore separators.</span>
+    <span class="nv">IFS</span><span class="o">=</span><span class="nv">$old_IFS</span>
+<span class="o">}</span>
+
+print_list_items <span class="s1">&#39;:&#39;</span> <span class="s2">&quot;$PATH&quot;</span>
+</pre></div>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id5" id="single-quotes" name="single-quotes">Single quotes</a></h3>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use single quotes to enclose string literals.</p>
+</div>
+<p>Text enclosed in single quotes is <em>never</em> interpreted by the shell. The only
+character which needs to be escaped is the quote character itself: all the
+other characters, even carriage returns, will be part of the string. This
+makes them a great feature for defining multi-line strings.</p>
+</div>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id6" id="structured-programming" name="structured-programming">Structured programming</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use shell functions to organize your code, as you would do in
@@ -60,32 +164,32 @@ unstructured “spaghetti” mash-ups. All decent-enough shells have a way of
 defining shell functions. Also, writing functions is the first step needed
 to write modular, reusable code.</p>
 <p>Using shell functions instead of separate scripts has also the advantage of
-avoiding calling <a class="reference internal" href="#fork-exec">fork+exec</a> when invoking them.</p>
+avoiding calling <a class="reference" href="#fork-exec">fork+exec</a> when invoking them.</p>
 </div>
-<div class="section" id="fork-exec">
-<h2><a class="toc-backref" href="#id4">fork+exec</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id7" id="fork-exec" name="fork-exec">fork+exec</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Avoid calling external commands when possible, especially
 inside tight loops.</p>
 </div>
 <p>Launching external commands from the shell incurs in calling the
-<a class="reference external" href="http://linux.die.net/man/2/fork">fork()</a> and
-<a class="reference external" href="http://linux.die.net/man/3/exec">exec()</a> system calls. The first
+<a class="reference" href="http://linux.die.net/man/2/fork">fork()</a> and
+<a class="reference" href="http://linux.die.net/man/3/exec">exec()</a> system calls. The first
 one duplicates the running process into a new child process with its own
 identifier, memory area, open file descriptors... The second one replaces
 that new process with the code of the program being run. Although this is
 done quite efficiently in recent operating systems, it is far more work
-than calling <a class="reference internal" href="#internal-commands">internal commands</a> defined by the shell.</p>
+than calling <a class="reference" href="#internal-commands">internal commands</a> defined by the shell.</p>
 </div>
-<div class="section" id="internal-commands">
-<h2><a class="toc-backref" href="#id5">Internal commands</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="internal-commands" name="internal-commands">Internal commands</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use shell built-in commands whenever possible.</p>
 </div>
 <p>Most shells include implementations for a number of usual commands in it,
-thus avoiding expensive <a class="reference internal" href="#fork-exec">fork+exec</a> operations. Sometimes built-in commands
+thus avoiding expensive <a class="reference" href="#fork-exec">fork+exec</a> operations. Sometimes built-in commands
 are even a superset of the standard ones and include extra features.</p>
 <p>Commands eligible for such implementations are:</p>
 <pre class="literal-block">
@@ -100,8 +204,8 @@ pwd
 kill
 </pre>
 </div>
-<div class="section" id="last-things-occur-last">
-<h2><a class="toc-backref" href="#id6">Last things occur... last</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="last-things-occur-last" name="last-things-occur-last">Last things occur... last</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">If the exit status of a function is the result of executing a
@@ -135,13 +239,13 @@ following:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="bashisms">
-<h1><a class="toc-backref" href="#id7">“Bashisms”</a></h1>
-<p><a class="reference external" href="http://www.gnu.org/software/bash">Bash</a> is a <em>better</em> <tt class="docutils literal"><span class="pre">sh</span></tt>, but it is more than that: it encourages some
+<div class="section">
+<h1><a class="toc-backref" href="#id10" id="bashisms" name="bashisms">“Bashisms”</a></h1>
+<p><a class="reference" href="http://www.gnu.org/software/bash">Bash</a> is a <em>better</em> <tt class="docutils literal"><span class="pre">sh</span></tt>, but it is more than that: it encourages some
 ways of doing things which use specific extensions provided by the shell.
 This is the reason why some people call them “bashisms”.</p>
-<div class="section" id="locality-is-good">
-<h2><a class="toc-backref" href="#id8">Locality is good</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id11" id="locality-is-good" name="locality-is-good">Locality is good</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">local</span></tt> to define local variables inside functions.</p>
@@ -156,7 +260,7 @@ to see code that uses the <tt class="docutils literal"><span class="pre">local</
 <span class="o">}</span>
 </pre></div>
 <p>When using built-ins that define the variables themselves (like the
-<a class="reference internal" href="#read-built-in">read built-in</a>) the variables must be marked as local before using the
+<a class="reference" href="#read-built-in">read built-in</a>) the variables must be marked as local before using the
 command:</p>
 <div class="highlight"><pre>add_prefix <span class="o">()</span> <span class="o">{</span>
     <span class="nb">local </span>line
@@ -166,20 +270,20 @@ command:</p>
 <span class="o">}</span>
 </pre></div>
 </div>
-<div class="section" id="cleaning-up">
-<h2><a class="toc-backref" href="#id9">Cleaning up</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id12" id="cleaning-up" name="cleaning-up">Cleaning up</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">The <tt class="docutils literal"><span class="pre">unset</span></tt> built-in can be used to delete variables <em>and</em>
 function definitions from the environment.</p>
 </div>
 <p>If you use a temporary variable you can use <tt class="docutils literal"><span class="pre">unset</span></tt> to remove its
-definition. For functions it is better to use <a class="reference internal" href="#locality-is-good">local variables</a> but
+definition. For functions it is better to use <a class="reference" href="#locality-is-good">local variables</a> but
 sometimes it may be needed to remove items from the environment. This
 command will also remove definitions of functions.</p>
 </div>
-<div class="section" id="reading-file-contents">
-<h2><a class="toc-backref" href="#id10">Reading file contents</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id13" id="reading-file-contents" name="reading-file-contents">Reading file contents</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">$(&lt;</span> <span class="pre">...)</span></tt> instead of <tt class="docutils literal"><span class="pre">$(cat</span> <span class="pre">...)</span></tt> when possible.</p>
@@ -197,14 +301,14 @@ contents of the password database file with the following snippet:</p>
 <div class="highlight"><pre><span class="c"># The usual code for reading files:</span>
 <span class="nv">contents</span><span class="o">=</span><span class="k">$(</span>cat /etc/passwd<span class="k">)</span>
 </pre></div>
-<p>This is a rather common construction that incurs in the <a class="reference internal" href="#fork-exec">fork+exec</a>
+<p>This is a rather common construction that incurs in the <a class="reference" href="#fork-exec">fork+exec</a>
 operation. There is an alternative recognized by Bash which produces the
 same result but is implemented inside the shell:</p>
 <div class="highlight"><pre><span class="c"># This is faster than using &#39;cat&#39;:</span>
 <span class="nv">contents</span><span class="o">=</span><span class="k">$(</span>&lt; /etc/passwd<span class="k">)</span>
 </pre></div>
-<div class="tip" id="read-built-in">
-<p class="first admonition-title">Tip</p>
+<div class="tip">
+<p class="first admonition-title"><a id="read-built-in" name="read-built-in">Tip</a></p>
 <p class="last">Use the <tt class="docutils literal"><span class="pre">read</span></tt> built-in for processing line-based input.</p>
 </div>
 <p>Finally, sometimes you need to read a big file (which may even not fit in
@@ -225,8 +329,43 @@ parse huge line-based text files:</p>
 <span class="k">done</span> &lt; email-list.txt
 </pre></div>
 </div>
-<div class="section" id="use-the-source-luke">
-<h2><a class="toc-backref" href="#id11">Use the <em>source</em>, Luke</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id14" id="arrays" name="arrays">Arrays</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Consider using arrays when handling lists of data insteads of lists
+with a character separating items.</p>
+</div>
+<p>Bash includes supports for arrays right away as an extension over
+traditional Sh-like shells. Although they are somewhat limited, they are
+very useful in some cases. Defining an array and using it is easy:</p>
+<div class="highlight"><pre><span class="nv">my_array</span><span class="o">=(</span> item_1 item_2 item_3 <span class="o">)</span>
+
+<span class="nb">echo</span> <span class="k">${</span><span class="nv">my_array</span><span class="p">[1]</span><span class="k">}</span>
+<span class="nb">echo</span> <span class="k">${</span><span class="nv">my_array</span><span class="p">[2]</span><span class="k">}</span>
+</pre></div>
+<p>The limitation of arrays is that it is not possible to have multidimensional
+arrays... but they are not needed for most shell tasks after all. This makes
+the syntax for adding elements to an array rather funny:</p>
+<div class="highlight"><pre><span class="nv">my_array</span><span class="o">=(</span> <span class="s2">&quot;${my_array[@]}&quot;</span> another_element <span class="o">)</span>
+</pre></div>
+<p>One nice example of using arrays is gathering arguments which will be
+further passed to another function or command. It is safer to use an array
+rather than a space-separated string: you can have embedded spaces in
+command line arguments using arrays, which would screw your program when
+using a plain string. For example:</p>
+<div class="highlight"><pre><span class="nv">flags</span><span class="o">=(</span> -a <span class="o">)</span>
+<span class="o">[</span> -n <span class="s2">&quot;$VERBOSE&quot;</span>  <span class="o">]</span> &amp;&amp; <span class="nv">flags</span><span class="o">=(</span> <span class="s2">&quot;${flags[@]}&quot;</span> --verbose <span class="o">)</span>
+<span class="o">[</span> -o <span class="s1">&#39;some file&#39;</span> <span class="o">]</span> || <span class="nv">flags</span><span class="o">=(</span> <span class="s2">&quot;${flags[@]}&quot;</span> -o <span class="s1">&#39;some file&#39;</span> <span class="o">)</span>
+
+run_command <span class="s2">&quot;${flags[@]}&quot;</span>
+</pre></div>
+<p>The above code will always work as expected, even when the flags have
+bizarre characters inside, which would normally confuse the shell. Well, not
+the shell but you when trying to debug the problem.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id15" id="use-the-source-luke" name="use-the-source-luke">Use the <em>source</em>, Luke</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">source</span></tt> as it is clearer than <tt class="docutils literal"><span class="pre">.</span></tt> (dot).</p>
@@ -237,9 +376,9 @@ a subshell). Apart from being longer, <tt class="docutils literal"><span class="
 makes clear that one wants to read <em>source</em> code.</p>
 </div>
 </div>
-<div class="section" id="philosophy-basics">
-<h1><a class="toc-backref" href="#id12">Philosophy basics</a></h1>
-<p>And now for something completely different: a quick tour on <a class="reference external" href="http://www.faqs.org/docs/artu/ch01s06.html">The Unix
+<div class="section">
+<h1><a class="toc-backref" href="#id16" id="philosophy-basics" name="philosophy-basics">Philosophy basics</a></h1>
+<p>And now for something completely different: a quick tour on <a class="reference" href="http://www.faqs.org/docs/artu/ch01s06.html">The Unix
 Philosophy</a>. Having a quick
 summary of the basics at hand is, er, <em>handy</em>. As we are dealing with the
 shell, which is an angular piece of Unix, it is nice to review some of the
