@@ -100,10 +100,17 @@ print only a single line:</p>
 <ul>
 <li><p class="first">When assigning one variable the contents of another. The shell parser
 knows about this case and will always do the right thing. This includes
-expressions in the form <tt class="docutils literal"><span class="pre">a=$b</span></tt>.</p>
+expressions in the form <tt class="docutils literal"><span class="pre">a=$b</span></tt>:</p>
+<div class="highlight"><pre><span class="nv">b</span><span class="o">=</span><span class="s1">&#39;What the heck? - said the penguin&#39;</span>
+<span class="nv">a</span><span class="o">=</span><span class="s2">&quot;$b&quot;</span>  <span class="c"># This works, extra quoting does not harm</span>
+<span class="nv">a</span><span class="o">=</span><span class="nv">$b</span>    <span class="c"># Good one, too: this is just an assignment</span>
+</pre></div>
 </li>
 <li><p class="first">When assigning a variable the output of a command. Explanation is the same
-as for the previous entry: the shell knows how to do <tt class="docutils literal"><span class="pre">a=$(pwd)</span></tt> right.</p>
+as for the previous entry, as the shell knows how to do <tt class="docutils literal"><span class="pre">a=$(pwd)</span></tt> right:</p>
+<div class="highlight"><pre><span class="nv">a</span><span class="o">=</span><span class="s2">&quot;$(pwd)&quot;</span>  <span class="c"># Works. Did I say extra quoting does not harm?</span>
+<span class="nv">a</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>    <span class="c"># No problem, no ambiguity in the expression.</span>
+</pre></div>
 </li>
 <li><p class="first">When you really want to split things out. For example when gathering
 command line options in a variable which will be passed to a command:</p>
@@ -116,6 +123,14 @@ run_command <span class="nv">$flags</span>
 <p>It is okay to omit quotes here, but if you are using Bash, you better
 would be using <a class="reference" href="#arrays">arrays</a>.</p>
 </li>
+<li><p class="first">When using <tt class="docutils literal"><span class="pre">[[</span></tt> instead of <tt class="docutils literal"><span class="pre">[</span></tt> in Bash. The <tt class="docutils literal"><span class="pre">[[</span></tt> built-in is defined
+in the shell grammar and it does expansion “properly” because it is not
+a command:</p>
+<div class="highlight"><pre><span class="k">if</span> <span class="o">[[</span> :<span class="nv">$PATH</span>: <span class="o">=</span> *:/usr/bin:* <span class="o">]]</span> ; <span class="k">then</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="s1">&#39;$PATH contains /usr/bin&#39;</span>
+<span class="k">fi</span>
+</pre></div>
+</li>
 </ul>
 <p>Sometimes it is really needed to split variable contents, but bear in mind
 that you usually are perfectly aware of that situations, so as a rule of
@@ -124,17 +139,14 @@ function will iterate over elements in a string separated by a given
 separator (for example the <tt class="docutils literal"><span class="pre">PATH</span></tt> environment variable):</p>
 <div class="highlight"><pre>print_list_items <span class="o">()</span>
 <span class="o">{</span>
-    <span class="c"># Save the current separator characters.</span>
-    <span class="nb">local </span><span class="nv">item</span><span class="o">=</span> <span class="nv">old_IFS</span><span class="o">=</span><span class="nv">$IFS</span>
+    <span class="nb">local </span><span class="nv">item</span><span class="o">=</span> <span class="nv">old_IFS</span><span class="o">=</span><span class="nv">$IFS</span>  <span class="c"># Save the current separator characters.</span>
     <span class="nv">IFS</span><span class="o">=</span><span class="nv">$1</span>
 
-    <span class="k">for </span>item in <span class="nv">$2</span>
-    <span class="k">do</span>
+    <span class="k">for </span>item in <span class="nv">$2</span> ; <span class="k">do</span>
 <span class="k">        </span><span class="nb">echo</span> <span class="s2">&quot;$item&quot;</span>
     <span class="k">done</span>
 
-    <span class="c"># Restore separators.</span>
-    <span class="nv">IFS</span><span class="o">=</span><span class="nv">$old_IFS</span>
+<span class="k">    </span><span class="nv">IFS</span><span class="o">=</span><span class="nv">$old_IFS</span>              <span class="c"># Restore separators.</span>
 <span class="o">}</span>
 
 print_list_items <span class="s1">&#39;:&#39;</span> <span class="s2">&quot;$PATH&quot;</span>
