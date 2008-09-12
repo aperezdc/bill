@@ -265,11 +265,13 @@ h1.title {
 
 h2 {
 	margin-left: 0em;
+	border-bottom: 1px solid #ccc;
 }
 
 
 h3 {
 	margin-left: 0.5em;
+	border-bottom: 1px dotted #ccc;
 }
 
 h4, h5, h6 {
