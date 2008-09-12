@@ -196,6 +196,33 @@ Commands eligible for such implementations are::
    kill
 
 
+Avoid using backticks
+---------------------
+.. tip:: Use ``$(command)`` (POSIX command expansion) instead of
+    ```command``` (traditional backtick expansion).
+
+Use always ``$( )`` for command expansion, *always*. There is no reason to
+keep using backticks (`````) because functionality is exactly the same, but
+the firs method is more powerful. The nasty thing about backticks is that
+you cannot nest them, like in the following example:
+
+.. sourcecode:: bash
+
+    # Will not work: the shell believes the command is "grep foo"
+    # (from the first to the second backtick)
+    output=`grep foo `find /usr/share/doc -type f -name '*.txt'``
+
+But it will work like a charm when using the POSIX variant:
+
+.. sourcecode:: bash
+
+    # This works, POSIX command expansion works great!
+    output=$(grep foo $(find /usr/share/doc -type f -name '*.txt'))
+
+
+In short: beware of backticks!
+
+
 Last things occur... last
 -------------------------
 .. tip:: If the exit status of a function is the result of executing a

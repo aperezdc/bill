@@ -38,18 +38,19 @@ code in general and when using the Bill library in particular.</p>
 <li><a class="reference" href="#structured-programming" id="id6" name="id6">Structured programming</a></li>
 <li><a class="reference" href="#fork-exec" id="id7" name="id7">fork+exec</a></li>
 <li><a class="reference" href="#internal-commands" id="id8" name="id8">Internal commands</a></li>
-<li><a class="reference" href="#last-things-occur-last" id="id9" name="id9">Last things occur... last</a></li>
+<li><a class="reference" href="#avoid-using-backticks" id="id9" name="id9">Avoid using backticks</a></li>
+<li><a class="reference" href="#last-things-occur-last" id="id10" name="id10">Last things occur... last</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#bashisms" id="id10" name="id10">“Bashisms”</a><ul>
-<li><a class="reference" href="#locality-is-good" id="id11" name="id11">Locality is good</a></li>
-<li><a class="reference" href="#cleaning-up" id="id12" name="id12">Cleaning up</a></li>
-<li><a class="reference" href="#reading-file-contents" id="id13" name="id13">Reading file contents</a></li>
-<li><a class="reference" href="#arrays" id="id14" name="id14">Arrays</a></li>
-<li><a class="reference" href="#use-the-source-luke" id="id15" name="id15">Use the <em>source</em>, Luke</a></li>
+<li><a class="reference" href="#bashisms" id="id11" name="id11">“Bashisms”</a><ul>
+<li><a class="reference" href="#locality-is-good" id="id12" name="id12">Locality is good</a></li>
+<li><a class="reference" href="#cleaning-up" id="id13" name="id13">Cleaning up</a></li>
+<li><a class="reference" href="#reading-file-contents" id="id14" name="id14">Reading file contents</a></li>
+<li><a class="reference" href="#arrays" id="id15" name="id15">Arrays</a></li>
+<li><a class="reference" href="#use-the-source-luke" id="id16" name="id16">Use the <em>source</em>, Luke</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#philosophy-basics" id="id16" name="id16">Philosophy basics</a></li>
+<li><a class="reference" href="#philosophy-basics" id="id17" name="id17">Philosophy basics</a></li>
 </ul>
 </div>
 <div class="section">
@@ -217,7 +218,28 @@ kill
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id9" id="last-things-occur-last" name="last-things-occur-last">Last things occur... last</a></h2>
+<h2><a class="toc-backref" href="#id9" id="avoid-using-backticks" name="avoid-using-backticks">Avoid using backticks</a></h2>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Use <tt class="docutils literal"><span class="pre">$(command)</span></tt> (POSIX command expansion) instead of
+<tt class="docutils literal"><span class="pre">`command`</span></tt> (traditional backtick expansion).</p>
+</div>
+<p>Use always <tt class="docutils literal"><span class="pre">$(</span> <span class="pre">)</span></tt> for command expansion, <em>always</em>. There is no reason to
+keep using backticks (<tt class="docutils literal"><span class="pre">`</span></tt>) because functionality is exactly the same, but
+the firs method is more powerful. The nasty thing about backticks is that
+you cannot nest them, like in the following example:</p>
+<div class="highlight"><pre><span class="c"># Will not work: the shell believes the command is &quot;grep foo&quot;</span>
+<span class="c"># (from the first to the second backtick)</span>
+<span class="nv">output</span><span class="o">=</span><span class="sb">`</span>grep foo <span class="sb">`</span>find /usr/share/doc -type f -name <span class="s1">&#39;*.txt&#39;</span><span class="sb">``</span>
+</pre></div>
+<p>But it will work like a charm when using the POSIX variant:</p>
+<div class="highlight"><pre><span class="c"># This works, POSIX command expansion works great!</span>
+<span class="nv">output</span><span class="o">=</span><span class="k">$(</span>grep foo <span class="k">$(</span>find /usr/share/doc -type f -name <span class="s1">&#39;*.txt&#39;</span><span class="k">))</span>
+</pre></div>
+<p>In short: beware of backticks!</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id10" id="last-things-occur-last" name="last-things-occur-last">Last things occur... last</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">If the exit status of a function is the result of executing a
@@ -252,12 +274,12 @@ following:</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id10" id="bashisms" name="bashisms">“Bashisms”</a></h1>
+<h1><a class="toc-backref" href="#id11" id="bashisms" name="bashisms">“Bashisms”</a></h1>
 <p><a class="reference" href="http://www.gnu.org/software/bash">Bash</a> is a <em>better</em> <tt class="docutils literal"><span class="pre">sh</span></tt>, but it is more than that: it encourages some
 ways of doing things which use specific extensions provided by the shell.
 This is the reason why some people call them “bashisms”.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id11" id="locality-is-good" name="locality-is-good">Locality is good</a></h2>
+<h2><a class="toc-backref" href="#id12" id="locality-is-good" name="locality-is-good">Locality is good</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">local</span></tt> to define local variables inside functions.</p>
@@ -283,7 +305,7 @@ command:</p>
 </pre></div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id12" id="cleaning-up" name="cleaning-up">Cleaning up</a></h2>
+<h2><a class="toc-backref" href="#id13" id="cleaning-up" name="cleaning-up">Cleaning up</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">The <tt class="docutils literal"><span class="pre">unset</span></tt> built-in can be used to delete variables <em>and</em>
@@ -295,7 +317,7 @@ sometimes it may be needed to remove items from the environment. This
 command will also remove definitions of functions.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id13" id="reading-file-contents" name="reading-file-contents">Reading file contents</a></h2>
+<h2><a class="toc-backref" href="#id14" id="reading-file-contents" name="reading-file-contents">Reading file contents</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">$(&lt;</span> <span class="pre">...)</span></tt> instead of <tt class="docutils literal"><span class="pre">$(cat</span> <span class="pre">...)</span></tt> when possible.</p>
@@ -342,7 +364,7 @@ parse huge line-based text files:</p>
 </pre></div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id14" id="arrays" name="arrays">Arrays</a></h2>
+<h2><a class="toc-backref" href="#id15" id="arrays" name="arrays">Arrays</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Consider using arrays when handling lists of data insteads of lists
@@ -377,7 +399,7 @@ bizarre characters inside, which would normally confuse the shell. Well, not
 the shell but you when trying to debug the problem.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id15" id="use-the-source-luke" name="use-the-source-luke">Use the <em>source</em>, Luke</a></h2>
+<h2><a class="toc-backref" href="#id16" id="use-the-source-luke" name="use-the-source-luke">Use the <em>source</em>, Luke</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">source</span></tt> as it is clearer than <tt class="docutils literal"><span class="pre">.</span></tt> (dot).</p>
@@ -389,7 +411,7 @@ makes clear that one wants to read <em>source</em> code.</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id16" id="philosophy-basics" name="philosophy-basics">Philosophy basics</a></h1>
+<h1><a class="toc-backref" href="#id17" id="philosophy-basics" name="philosophy-basics">Philosophy basics</a></h1>
 <p>And now for something completely different: a quick tour on <a class="reference" href="http://www.faqs.org/docs/artu/ch01s06.html">The Unix
 Philosophy</a>. Having a quick
 summary of the basics at hand is, er, <em>handy</em>. As we are dealing with the
