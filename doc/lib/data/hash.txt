@@ -1,42 +1,40 @@
-=========
-Hash maps
-=========
-
-:Author: Adrián Pérez <aperez@igalia.com>
-:Copyright: Igalia S.L., 2008
+===========
+Hash tables
+===========
+:Author: Adrian Perez <aperez@igalia.com>
+:Copyright: 2008 Igalia S.L.
 :License: GPL v2
-:Abstract: Provides a hash-like data structure for use in shell code.
+:Abstract: Efficient dictionary-like structures i.e. a hash tables.
 
 .. contents::
 
-Introduction
-============
-This module adds functions to manage pseudo hash tables using arrays. It
-it not as efficient as a proper hash table implementation, but that
-would be difficult to do in shell code and this suffices for a vast
-amount of cases where performance is not critical.
-
-An array containing paired items is considered to be a hash map, like the
-following example:
-
-.. sourcecode:: bash
-
-    myhash=(
-        "key1"    "value1"
-        "key2"    "value2"
-        # ...
-    )
 
 
-Obviously enough, a hash map must contain an even number of elements.
 
-.. warning:: This hash map implementation is neither CPU and memory
-   efficient. Each algorithm has *O(n)* complexity. This is *not*
-   considered to be an error.
+hash_new
+--------
+
+::
+
+  hash_new
 
 
-Functions
-=========
+Creates a new hash table. Returns a has table identifier which is needed
+as first argument to all the other functions of the module.
+
+
+
+
+hash_set
+--------
+
+::
+
+  hash_set hash_id key value
+
+
+Associates a ``key`` with a ``value``. The ``hash_id`` parameter must be
+an identifier obtained with hash_new_.
 
 
 
@@ -46,25 +44,58 @@ hash_get
 
 ::
 
-  hash_get hashmap key
+  hash_get hash_id key
 
 
-Obtains the value associated with a particular key. The exit status is
-non-zero if the specified key does not exist.
+Gets the value associated with a ``key``. The ``hash_id`` parameter must
+be an identifier obtained with hash_new_. The exit status is non-zero
+when an element is not found.
 
 
 
 
-hash_key
+hash_del
 --------
 
 ::
 
-  hash_key hashmap value
+  hash_del hash_id key
 
 
-Finds the first key which has the given value associated. Exits status
-is non-zero if the item is not found.
+Deletes a *(key, value)* pair from a hash table. The ``hash_id``
+parameter must be an identifier obtained with hash_new_.
+
+
+
+
+hash_has
+--------
+
+::
+
+  hash_has hash_id key
+
+
+Checks whether a given key is set in a hash table. The ``hash_id``
+parameter must be an identifier obtained with hash_new_. The exit status
+is zero when the keys exists, and non-zero otherwise.
+
+
+
+
+hash_keys_iter
+--------------
+
+::
+
+  hash_keys_iter hash_id callback
+
+
+Iterates over all keys of the given hash table ``hash_id``. The
+``callback`` will be called with the ``hash_id`` as first argument
+
+.. warning:: Do not add or remove keys while iterating over the
+    elements, behaviour is undefined.
 
 
 
@@ -74,53 +105,23 @@ hash_keys
 
 ::
 
-  hash_keys hashmap
+  hash_keys hash_id
 
 
-Gets a list of all the keys in a hash map. Exit status is non-zero if
-the hash map is empty.
-
-
-
-
-hash_size
----------
-
-::
-
-  hash_size hashmap
-
-
-Calculates the number of elements present in a hash map.
+Gathers all keys of a given hash table and print one key per line.
 
 
 
 
-hash_item
----------
+hash_clear
+----------
 
 ::
 
-  hash_item hashmap index
+  hash_clear hash_id
 
 
-Returns item at the given position of the map. Usually you do not need
-to use this function, as it will be used internally by the rest of the
-functions of the module. It could be useful to build additional features
-in other modules.
-
-
-
-
-hash_values
------------
-
-::
-
-  hash_values hashmap
-
-
-Obtains a list of all the values in a hash map. Exit status is non-zero
-if the hash map is empty.
+Empties a hash table. The ``hash_id`` parameter must be a valid
+identifier obtained with hash_new_.
 
 

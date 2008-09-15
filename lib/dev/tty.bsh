@@ -51,7 +51,7 @@
 #   =========
 #--
 
-use data/hash
+use data/map
 
 __tty_color_fg=(
     reset       0
@@ -114,7 +114,7 @@ __tty_color_alias=(
 #--
 tty_color_alias ()
 {
-    local name=$(hash_get __tty_color_alias "$1")
+    local name=$(map_get __tty_color_alias "$1")
     [ "$name" ] || name=$1
     echo "$name"
 }
@@ -131,7 +131,7 @@ tty_color_fg ()
 {
     while [ "$1" ]
     do
-        local attr=$(hash_get __tty_color_fg "$(tty_color_alias "$1")")
+        local attr=$(map_get __tty_color_fg "$(tty_color_alias "$1")")
         [ "$attr" ] && echo -n $'\e['"${attr}m"
         shift
     done
@@ -149,7 +149,7 @@ tty_color_bg ()
 {
     while [ "$1" ]
     do
-        local attr=$(hash_get __tty_color_bg "$(tty_color_alias "$1")")
+        local attr=$(map_get __tty_color_bg "$(tty_color_alias "$1")")
         [ "$attr" ] && echo -n $'\e['"${attr}m"
         shift
     done

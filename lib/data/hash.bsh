@@ -1,171 +1,114 @@
 #! /usr/bin/env bill
 #++
-#   =========
-#   Hash maps
-#   =========
-#
-#   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: Igalia S.L., 2008
+#   ===========
+#   Hash tables
+#   ===========
+#   :Author: Adrian Perez <aperez@igalia.com>
+#   :Copyright: 2008 Igalia S.L.
 #   :License: GPL v2
-#   :Abstract: Provides a hash-like data structure for use in shell code.
+#   :Abstract: Efficient dictionary-like structures i.e. a hash tables.
 #
 #   .. contents::
-#
-#   Introduction
-#   ============
-#   This module adds functions to manage pseudo hash tables using arrays. It
-#   it not as efficient as a proper hash table implementation, but that
-#   would be difficult to do in shell code and this suffices for a vast
-#   amount of cases where performance is not critical.
-#
-#   An array containing paired items is considered to be a hash map, like the
-#   following example:
-#
-#   .. sourcecode:: bash
-#
-#       myhash=(
-#           "key1"    "value1"
-#           "key2"    "value2"
-#           # ...
-#       )
-#
-#
-#   Obviously enough, a hash map must contain an even number of elements.
-#
-#   .. warning:: This hash map implementation is neither CPU and memory
-#      efficient. Each algorithm has *O(n)* complexity. This is *not*
-#      considered to be an error.
-#
-#
-#   Functions
-#   =========
 #--
 
 
-#++ hash_get hashmap key
+use data/random
+use text/string
+
+
+#++ hash_new
 #
-#   Obtains the value associated with a particular key. The exit status is
-#   non-zero if the specified key does not exist.
+#   Creates a new hash table. Returns a has table identifier which is needed
+#   as first argument to all the other functions of the module.
 #--
-hash_get ()
-{
-    # Calculate the lenght of the map
-    local hash_len="$(hash_size "$1")"
-    local hash_key="$2"
-
-    # Loop over map keys.
-    for (( i = 0; i < $hash_len ; i += 2 ))
-    do
-        # Check if we founded specified key. In this case print value into
-        # stdout and return true.
-        if [ "$(hash_item "$1" "$i")" = "$hash_key" ]
-        then
-            echo "$(hash_item "$1" "$((i+1))")"
-            return 0
-        fi
-    done
-
-    # If loop ends, then no key is found.
-    return 1
+hash_new () {
+    echo ":bill:$(random_pseudo_hex 20):"
 }
 
 
-#++ hash_key hashmap value
+#++ hash_set hash_id key value
 #
-#   Finds the first key which has the given value associated. Exits status
-#   is non-zero if the item is not found.
+#   Associates a ``key`` with a ``value``. The ``hash_id`` parameter must be
+#   an identifier obtained with hash_new_.
 #--
-hash_key ()
-{
-    local hash_len="$(hash_size "$1")"
-    local hash_val="$2"
-
-    # Loop over map keys.
-    for (( i = 1; i < $hash_len; i += 2 ))
-    do
-        if [ "$(hash_item "$1" "$i")" = "$hash_val" ]
-        then
-            echo "$(hash_item "$1" "$((i-1))")"
-            return 0
-        fi
-    done
-    return 1
+hash_set () {
+    builtin hash -p "$3" "$1$2"
 }
 
 
-#++ hash_keys hashmap
+#++ hash_get hash_id key
 #
-#   Gets a list of all the keys in a hash map. Exit status is non-zero if
-#   the hash map is empty.
+#   Gets the value associated with a ``key``. The ``hash_id`` parameter must
+#   be an identifier obtained with hash_new_. The exit status is non-zero
+#   when an element is not found.
+#--
+hash_get () {
+    builtin hash -t "$1$2" 2> /dev/null
+}
+
+
+#++ hash_del hash_id key
+#
+#   Deletes a *(key, value)* pair from a hash table. The ``hash_id``
+#   parameter must be an identifier obtained with hash_new_.
+#--
+hash_del () {
+    builtin hash -d "$1$2" 2> /dev/null
+}
+
+
+#++ hash_has hash_id key
+#
+#   Checks whether a given key is set in a hash table. The ``hash_id``
+#   parameter must be an identifier obtained with hash_new_. The exit status
+#   is zero when the keys exists, and non-zero otherwise.
+#--
+hash_has () {
+    builtin hash -t "$1$2" &> /dev/null
+}
+
+
+#++ hash_keys_iter hash_id callback
+#
+#   Iterates over all keys of the given hash table ``hash_id``. The
+#   ``callback`` will be called with the ``hash_id`` as first argument
+#
+#   .. warning:: Do not add or remove keys while iterating over the
+#       elements, behaviour is undefined.
+#--
+hash_keys_iter () {
+    local _a _b _c _d key hl=${#1}
+    builtin hash -l | while read _a _b _c _d key ; do
+        [[ ${key::$hl} = $1 ]] && "$2" "$1" "${key:$hl}"
+    done
+}
+
+
+#++ hash_keys hash_id
+#
+#   Gathers all keys of a given hash table and print one key per line.
 #--
 hash_keys ()
 {
-    local hash_len="$(hash_size "$1")"
-    local list_out=
-
-    for (( i = 0; i < $hash_len; i += 2 ))
-    do
-        list_out="${list_out:+${list_out}${IFS:0}}$(hash_item "$1" "$i")"
+    local _a _b _c _d key hl=${#1}
+    builtin hash -l | while read _a _b _c _d key ; do
+        [[ ${key::$hl} = $1 ]] && echo "${key:$hl}"
     done
-
-    # Finally print result in stdout if list_out contains something.
-    # If no result, then condition fails, and return value is automatically
-    # setted to *false*.
-    [ "$list_out" ] && echo "$list_out"
 }
 
 
-#++ hash_size hashmap
+
+#++ hash_clear hash_id
 #
-#   Calculates the number of elements present in a hash map.
+#   Empties a hash table. The ``hash_id`` parameter must be a valid
+#   identifier obtained with hash_new_.
 #--
-hash_size ()
-{
-    local size="$( eval "echo \${#${1}[@]}" )"
-    echo "$size"
-}
-
-
-# Function:    hash_item <map> <index>
-# Purpose:    return the item in *index* position of the *map*
-# Input:    *map* is a hash map;
-#+            *index* is a number to indexate the array
-# Output:    the value in *index* position
-# Return:    always *true*
-
-#++ hash_item hashmap index
-#
-#   Returns item at the given position of the map. Usually you do not need
-#   to use this function, as it will be used internally by the rest of the
-#   functions of the module. It could be useful to build additional features
-#   in other modules.
-#--
-hash_item ()
-{
-    eval "echo \${$1[$2]}"
-}
-
-
-#++ hash_values hashmap
-#
-#   Obtains a list of all the values in a hash map. Exit status is non-zero
-#   if the hash map is empty.
-#--
-hash_values ()
-{
-    local hash_len="$(hash_size "$1")"
-    local list_out=
-
-    for (( i = 1; i < $hash_len; i += 2 ))
+hash_clear () {
+    local keys=( $(hash_keys "$1") )
+    local item
+    for item in "${keys[@]}"
     do
-        # Concatenate current value into ``list_out`` variable.
-        list_out="${list_out:+${list_out}${IFS:0}}$(hash_item "$1" "$i")"
+        hash_del "$1" "$item"
     done
-
-    # Finally print result in ``stdout`` if ``list_out`` contains something.
-    # If no result, then condition fails, and return value is automatically
-    # setted to *false*.
-    [ "$list_out" ] && echo "$list_out"
 }
-
 
