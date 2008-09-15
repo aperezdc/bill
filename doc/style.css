@@ -649,6 +649,7 @@ h2.subtitle {
 		"URW Chancery L",
 		"URW Chancery",
 		fantasy;
+	border-bottom: none;
 	font-size: 28px;
 	color: #bbb;
 	float: right;

@@ -14,7 +14,7 @@
 #   .. contents::
 #--
 
-use data/hash
+use data/map
 use text/string
 use text/template
 
@@ -142,7 +142,7 @@ http_mime_mapping=(
 #--
 http_mimetype_guess ()
 {
-    local mime=$(hash_get http_mime_mapping "${1##*.}")
+    local mime=$(map_get http_mime_mapping "${1##*.}")
     if [ "$mime" ]
     then
         echo "$mime"
@@ -163,7 +163,7 @@ http_mimetype_guess ()
 #--
 http_error_document ()
 {
-    local mess=$(hash_get http_response_by_code $1)
+    local mess=$(map_get http_response_by_code $1)
     shift
     local desc=$(string_join $'\n' "$@")
     [[ -z $desc ]] && desc='No additional information supplied'
@@ -185,7 +185,7 @@ http_error_document ()
 http_error ()
 {
     http_log_stderr "$@"
-    printf "HTTP/1.0 %s %s\r\n" $1 "$(hash_get http_response_by_code $1)"
+    printf "HTTP/1.0 %s %s\r\n" $1 "$(map_get http_response_by_code $1)"
     printf "Content-Type: text/html\r\n"
     printf "Connection: close\r\n"
     printf "\r\n"
