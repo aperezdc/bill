@@ -175,6 +175,49 @@ http_error_document ()
 
 
 
+__HTTP_HEADER_SENT=true
+__HTTP_CONNECTION_HEADER=false
+
+
+#++ http_header name value
+#
+#   Sends an HTTP header.
+#--
+http_header ()
+{
+    $__HTTP_HEADER_SENT && die "HTTP headers already sent"
+
+    [[ $1 = [Cc]onnection ]] && __HTTP_CONNECTION_HEADER=true
+
+    printf "%s: %s\r\n" "$1" "$2"
+}
+
+
+#++ http_header_start [ code [ description ] ]
+#--
+http_response ()
+{
+    $__HTTP_HEADER_SENT || die "Cannot reinit an HTTP reponse"
+
+    local code=${1:-200}
+    local mess=${2:-$(http_response_by_code "$code")}
+    printf "HTTP/1.1 %s %s\r\n" "$code" "$mess"
+    __HTTP_HEADER_SENT=false
+}
+
+
+http_body ()
+{
+    $__HTTP_HEADER_SENT && die "Cannot reinit an HTTP response"
+    $__HTTP_CONNECTION_HEADER || http_header Connection close
+    printf "\r\n"
+
+    # Restore to initial values:
+    __HTTP_HEADER_SENT=true
+    __HTTP_CONNECTION_HEADER=false
+}
+
+
 #++ http_error [ code [ description ... ] ]
 #
 #   Sends an HTTP error status code and an accompanying HTML document
@@ -184,10 +227,12 @@ http_error_document ()
 http_error ()
 {
     http_log_stderr "$@"
-    printf "HTTP/1.0 %s %s\r\n" $1 "$(http_response_by_code $1)"
-    printf "Content-Type: text/html\r\n"
-    printf "Connection: close\r\n"
-    printf "\r\n"
+
+    http_response "$1"
+    http_header Content-Type text/html
+    http_header Connection close
+    http_body
+
     http_error_document "$@"
 }
 
@@ -201,11 +246,12 @@ http_error ()
 #--
 http_redirect ()
 {
-    http_log_stderr "${2:-302}"
-    printf "HTTP/1.0 ${2:-302}\r\n"
-    printf "Location: $1\r\n"
-    printf "Connection: close\r\n"
-    printf "\r\n"
+    local code=${2:-302}
+    http_log_stderr "$code"
+
+    http_response "$code"
+    http_header Location "$1"
+    http_body
 }
 
 
@@ -278,16 +324,15 @@ http_handle_GET ()
         fi
     fi
 
-    printf "HTTP/1.0 200 Ok\r\n"
-    printf "Connection: close\r\n"
+    http_response
     if $isdir
     then
-        printf "Content-Type: text/html; encoding=utf-8\r\n"
-        printf "\r\n"
+        http_header Content-Type "text/html; encoding=utf-8"
+        http_body
         var_path=$PATH_INFO template_expand <<< "$http_directory_template"
     else
-        printf "Content-Type: %s\r\n" "$(http_mimetype_guess "./$PATH_INFO")"
-        printf "\r\n"
+        http_header Content-Type "$(http_mimetype_guess "./$PATH_INFO")"
+        http_body
         cat "./$PATH_INFO"
     fi
 }
