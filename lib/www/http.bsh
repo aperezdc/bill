@@ -14,7 +14,6 @@
 #   .. contents::
 #--
 
-use data/map
 use text/string
 use text/template
 
@@ -74,13 +73,18 @@ need cat || die "The 'cat' program was not found"
 #--
 
 
-http_response_by_code=(
-    200  'Ok - Transceiver and a coke, please'
-    403  'Forbidden'
-    404  'Not Found'
-    500  'Internal Server Error'
-    501  'Not Implemented'
-)
+http_response_by_code ()
+{
+    local C='Unknown HTTP code'
+    case $1 in
+        200) C='Ok - Transceiver and a coke, please' ;;
+        403) C='Forbidden'                           ;;
+        404) C='Not Found'                           ;;
+        500) C='Internal Server Error'               ;;
+        501) C='Not Implemented'                     ;;
+    esac
+    echo "$C"
+}
 
 
 http_error_document_template='<html>
@@ -106,24 +110,6 @@ http_error_document_template='<html>
 http_CR=$(printf "\015")
 
 
-http_mime_mapping=(
-    bsh  text/plain
-    txt  text/plain
-    rst  text/plain
-    conf text/plain
-
-    html text/html
-    htm  text/html
-
-    css  text/css
-
-    png  image/png
-
-    jpg  image/jpeg
-    jpe  image/jpeg
-    jpeg image/jpeg
-)
-
 
 #++ http_mimetype_guess path
 #
@@ -140,16 +126,29 @@ http_mime_mapping=(
 #       text/plain
 #
 #--
-http_mimetype_guess ()
-{
-    local mime=$(map_get http_mime_mapping "${1##*.}")
-    if [ "$mime" ]
-    then
-        echo "$mime"
-    else
-        echo "application/octet-stream"
-    fi
-}
+
+# FIXME: Guess out why "file" does get CSS types well.
+if need file && false
+then
+    http_mimetype_guess ()
+    {
+        file -ib "$1"
+    }
+else
+    http_mimetype_guess ()
+    {
+        local m='application/octet-stream'
+        case ${1##*.} in
+            bsh | txt | rst | conf ) m='text/plain' ;;
+            jpg | jpe | jpeg) m='image/jpeg' ;;
+            png) m='image/png' ;;
+            html) m='text/html' ;;
+            htm) m='text/html' ;;
+            css) m='text/css' ;;
+        esac
+        echo "$m"
+    }
+fi
 
 
 #++ http_error_document [ code [ description ... ] ]
@@ -163,7 +162,7 @@ http_mimetype_guess ()
 #--
 http_error_document ()
 {
-    local mess=$(map_get http_response_by_code $1)
+    local mess=$(http_response_by_code $1)
     shift
     local desc=$(string_join $'\n' "$@")
     [[ -z $desc ]] && desc='No additional information supplied'
@@ -185,7 +184,7 @@ http_error_document ()
 http_error ()
 {
     http_log_stderr "$@"
-    printf "HTTP/1.0 %s %s\r\n" $1 "$(map_get http_response_by_code $1)"
+    printf "HTTP/1.0 %s %s\r\n" $1 "$(http_response_by_code $1)"
     printf "Content-Type: text/html\r\n"
     printf "Connection: close\r\n"
     printf "\r\n"
