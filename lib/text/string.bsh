@@ -118,7 +118,7 @@ string_ascii ()
 string_contains ()
 {
     # Quite trivial...
-    [[ $1 = *$2* ]]
+    [[ $2 = *$1* ]]
 }
 
 
