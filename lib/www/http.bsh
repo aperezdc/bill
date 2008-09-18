@@ -14,7 +14,6 @@
 #   .. contents::
 #--
 
-use data/map
 use text/string
 use text/template
 
@@ -74,13 +73,18 @@ need cat || die "The 'cat' program was not found"
 #--
 
 
-http_response_by_code=(
-    200  'Ok - Transceiver and a coke, please'
-    403  'Forbidden'
-    404  'Not Found'
-    500  'Internal Server Error'
-    501  'Not Implemented'
-)
+http_response_by_code ()
+{
+    local C='Unknown HTTP code'
+    case $1 in
+        200) C='Ok - Transceiver and a coke, please' ;;
+        403) C='Forbidden'                           ;;
+        404) C='Not Found'                           ;;
+        500) C='Internal Server Error'               ;;
+        501) C='Not Implemented'                     ;;
+    esac
+    echo "$C"
+}
 
 
 http_error_document_template='<html>
@@ -106,24 +110,6 @@ http_error_document_template='<html>
 http_CR=$(printf "\015")
 
 
-http_mime_mapping=(
-    bsh  text/plain
-    txt  text/plain
-    rst  text/plain
-    conf text/plain
-
-    html text/html
-    htm  text/html
-
-    css  text/css
-
-    png  image/png
-
-    jpg  image/jpeg
-    jpe  image/jpeg
-    jpeg image/jpeg
-)
-
 
 #++ http_mimetype_guess path
 #
@@ -140,16 +126,29 @@ http_mime_mapping=(
 #       text/plain
 #
 #--
-http_mimetype_guess ()
-{
-    local mime=$(map_get http_mime_mapping "${1##*.}")
-    if [ "$mime" ]
-    then
-        echo "$mime"
-    else
-        echo "application/octet-stream"
-    fi
-}
+
+# FIXME: Guess out why "file" does get CSS types well.
+if need file && false
+then
+    http_mimetype_guess ()
+    {
+        file -ib "$1"
+    }
+else
+    http_mimetype_guess ()
+    {
+        local m='application/octet-stream'
+        case ${1##*.} in
+            bsh | txt | rst | conf ) m='text/plain' ;;
+            jpg | jpe | jpeg) m='image/jpeg' ;;
+            png) m='image/png' ;;
+            html) m='text/html' ;;
+            htm) m='text/html' ;;
+            css) m='text/css' ;;
+        esac
+        echo "$m"
+    }
+fi
 
 
 #++ http_error_document [ code [ description ... ] ]
@@ -163,7 +162,7 @@ http_mimetype_guess ()
 #--
 http_error_document ()
 {
-    local mess=$(map_get http_response_by_code $1)
+    local mess=$(http_response_by_code $1)
     shift
     local desc=$(string_join $'\n' "$@")
     [[ -z $desc ]] && desc='No additional information supplied'
@@ -176,6 +175,52 @@ http_error_document ()
 
 
 
+__HTTP_HEADER_SENT=true
+__HTTP_SERVER_HEADER=false
+__HTTP_CONNECTION_HEADER=false
+
+
+#++ http_header name value
+#
+#   Sends an HTTP header.
+#--
+http_header ()
+{
+    $__HTTP_HEADER_SENT && die "HTTP headers already sent"
+
+    [[ $1 = [Cc]onnection ]] && __HTTP_CONNECTION_HEADER=true
+
+    printf "%s: %s\r\n" "$1" "$2"
+}
+
+
+#++ http_header_start [ code [ description ] ]
+#--
+http_response ()
+{
+    $__HTTP_HEADER_SENT || die "Cannot reinit an HTTP reponse"
+
+    local code=${1:-200}
+    local mess=${2:-$(http_response_by_code "$code")}
+    printf "HTTP/1.1 %s %s\r\n" "$code" "$mess"
+    __HTTP_HEADER_SENT=false
+}
+
+
+http_body ()
+{
+    $__HTTP_HEADER_SENT && die "Cannot reinit an HTTP response"
+    $__HTTP_SERVER_HEADER || http_header Server "Bill $BILL_VERSION www/http"
+    $__HTTP_CONNECTION_HEADER || http_header Connection close
+    printf "\r\n"
+
+    # Restore to initial values:
+    __HTTP_HEADER_SENT=true
+    __HTTP_SERVER_HEADER=false
+    __HTTP_CONNECTION_HEADER=false
+}
+
+
 #++ http_error [ code [ description ... ] ]
 #
 #   Sends an HTTP error status code and an accompanying HTML document
@@ -185,10 +230,12 @@ http_error_document ()
 http_error ()
 {
     http_log_stderr "$@"
-    printf "HTTP/1.0 %s %s\r\n" $1 "$(map_get http_response_by_code $1)"
-    printf "Content-Type: text/html\r\n"
-    printf "Connection: close\r\n"
-    printf "\r\n"
+
+    http_response "$1"
+    http_header Content-Type text/html
+    http_header Connection close
+    http_body
+
     http_error_document "$@"
 }
 
@@ -202,11 +249,12 @@ http_error ()
 #--
 http_redirect ()
 {
-    http_log_stderr "${2:-302}"
-    printf "HTTP/1.0 ${2:-302}\r\n"
-    printf "Location: $1\r\n"
-    printf "Connection: close\r\n"
-    printf "\r\n"
+    local code=${2:-302}
+    http_log_stderr "$code"
+
+    http_response "$code"
+    http_header Location "$1"
+    http_body
 }
 
 
@@ -279,16 +327,15 @@ http_handle_GET ()
         fi
     fi
 
-    printf "HTTP/1.0 200 Ok\r\n"
-    printf "Connection: close\r\n"
+    http_response
     if $isdir
     then
-        printf "Content-Type: text/html; encoding=utf-8\r\n"
-        printf "\r\n"
+        http_header Content-Type "text/html; encoding=utf-8"
+        http_body
         var_path=$PATH_INFO template_expand <<< "$http_directory_template"
     else
-        printf "Content-Type: %s\r\n" "$(http_mimetype_guess "./$PATH_INFO")"
-        printf "\r\n"
+        http_header Content-Type "$(http_mimetype_guess "./$PATH_INFO")"
+        http_body
         cat "./$PATH_INFO"
     fi
 }
