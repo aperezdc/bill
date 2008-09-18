@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title>Text templates</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;, initial concept and implementation by Andrés J. Díaz &lt;ajdiaz&#64;mundo-r.com&gt;. This implementation shares no code with the original one." />
 <meta name="copyright" content="2008 Igalia S.L." />
@@ -17,8 +17,8 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;, initial concept and
-implementation by Andrés J. Díaz &lt;<a class="reference external" href="mailto:ajdiaz&#64;mundo-r.com">ajdiaz&#64;mundo-r.com</a>&gt;. This
+<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;, initial concept and
+implementation by Andrés J. Díaz &lt;<a class="reference" href="mailto:ajdiaz&#64;mundo-r.com">ajdiaz&#64;mundo-r.com</a>&gt;. This
 implementation shares no code with the original one.</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>2008 Igalia S.L.</td></tr>
@@ -32,18 +32,19 @@ implementation shares no code with the original one.</td></tr>
 Can be used to dynamically generate any kind of text-based content,
 including (but not limited to) HTML.</p>
 </div>
-<div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<div class="contents topic">
+<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference internal" href="#template-language" id="id1">Template language</a><ul>
-<li><a class="reference internal" href="#template-expand" id="id2">template_expand</a></li>
-<li><a class="reference internal" href="#template-expand-cgi" id="id3">template_expand_cgi</a></li>
+<li><a class="reference" href="#template-language" id="id1" name="id1">Template language</a></li>
+<li><a class="reference" href="#functions" id="id2" name="id2">Functions</a><ul>
+<li><a class="reference" href="#template-expand" id="id3" name="id3">template_expand</a></li>
+<li><a class="reference" href="#template-expand-cgi" id="id4" name="id4">template_expand_cgi</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="template-language">
-<h1><a class="toc-backref" href="#id1">Template language</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id1" id="template-language" name="template-language">Template language</a></h1>
 <p>Templates reuse the Bash parser, so the followgin constructs can be used
 inside the template text:</p>
 <dl class="docutils">
@@ -72,8 +73,11 @@ using the following command:</p>
 <pre class="literal-block">
 Hello, Peter!
 </pre>
-<div class="section" id="template-expand">
-<h2><a class="toc-backref" href="#id2">template_expand</a></h2>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id2" id="functions" name="functions">Functions</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id3" id="template-expand" name="template-expand">template_expand</a></h2>
 <pre class="literal-block">
 template_expand [ prefix ]
 </pre>
@@ -86,13 +90,13 @@ standard output. Typical usage would be:</p>
     template_expand &lt; input_template &gt; expanded_output
 </pre></div>
 </div>
-<div class="section" id="template-expand-cgi">
-<h2><a class="toc-backref" href="#id3">template_expand_cgi</a></h2>
+<div class="section">
+<h2><a class="toc-backref" href="#id4" id="template-expand-cgi" name="template-expand-cgi">template_expand_cgi</a></h2>
 <pre class="literal-block">
 template_expand_cgi [ prefix ]
 </pre>
-<p>Works exactly like <a class="reference internal" href="#template-expand">template_expand</a>, but adds automatically the
-variables specified by the <a class="reference external" href="http://www.w3.org/CGI/">CGI</a> standard.</p>
+<p>Works exactly like <a class="reference" href="#template-expand">template_expand</a>, but adds automatically the
+variables specified by the <a class="reference" href="http://www.w3.org/CGI/">CGI</a> standard.</p>
 </div>
 </div>
 </div>

@@ -51,6 +51,10 @@ The final rendered result would be (as expected)::
     Hello, Peter!
 
 
+Functions
+=========
+
+
 
 
 template_expand
