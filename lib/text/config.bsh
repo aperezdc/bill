@@ -1,0 +1,28 @@
+#! /usr/bin/env bill
+#++
+#   ===================
+#   Config file parsing
+#   ===================
+#   :Author: Adrian Perez <aperez@igalia.com>
+#   :Copyright: 2008 Igalia S.L.
+#   :License: GPL v2
+#   :Abstract: Parse configuration files in key-value pairs and INI-style.
+#--
+
+use data/hash
+
+
+#++ config_keyval destination
+#--
+config_keyval_parse ()
+{
+    :
+}
+
+
+#++ config_ini_parse destination
+#--
+config_ini_parse ()
+{
+    local line
+}
