@@ -22,9 +22,11 @@ reference.</p>
 <li><a class="reference" href="#bill" id="id1" name="id1">bill</a></li>
 <li><a class="reference" href="#data" id="id2" name="id2">data</a></li>
 <li><a class="reference" href="#dev" id="id3" name="id3">dev</a></li>
-<li><a class="reference" href="#fs" id="id4" name="id4">fs</a></li>
-<li><a class="reference" href="#text" id="id5" name="id5">text</a></li>
-<li><a class="reference" href="#www" id="id6" name="id6">www</a></li>
+<li><a class="reference" href="#ext" id="id4" name="id4">ext</a></li>
+<li><a class="reference" href="#fs" id="id5" name="id5">fs</a></li>
+<li><a class="reference" href="#text" id="id6" name="id6">text</a></li>
+<li><a class="reference" href="#ui" id="id7" name="id7">ui</a></li>
+<li><a class="reference" href="#www" id="id8" name="id8">www</a></li>
 </ul>
 </div>
 <div class="section">
@@ -100,7 +102,29 @@ devices and logical ones (like terminal consoles.)</p>
 </table>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id4" id="fs" name="fs">fs</a></h1>
+<h1><a class="toc-backref" href="#id4" id="ext" name="ext">ext</a></h1>
+<p>Modules used to interface with external software, or which provide an API to
+use third-party applications from shell code.</p>
+<!-- vim: filetype=rst -->
+<table border="1" class="modules docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Module</th>
+<th class="head">Summary</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><a class="reference" href="lib/ext/twiki.html">ext/twiki</a></td>
+<td>Functions for performing operations on TWiki instances.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id5" id="fs" name="fs">fs</a></h1>
 <p>Supports handling of filesystem entities in different ways.</p>
 <!-- vim: filetype=rst -->
 <table border="1" class="modules docutils">
@@ -121,7 +145,7 @@ devices and logical ones (like terminal consoles.)</p>
 </table>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id5" id="text" name="text">text</a></h1>
+<h1><a class="toc-backref" href="#id6" id="text" name="text">text</a></h1>
 <p>Modules for text manipulation and parsing of text-based data formats.</p>
 <!-- vim: filetype=rst -->
 <table border="1" class="modules docutils">
@@ -148,7 +172,28 @@ devices and logical ones (like terminal consoles.)</p>
 </table>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id6" id="www" name="www">www</a></h1>
+<h1><a class="toc-backref" href="#id7" id="ui" name="ui">ui</a></h1>
+<p>User interface: those modules provide means of interacting with users.</p>
+<!-- vim: filetype=rst -->
+<table border="1" class="modules docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Module</th>
+<th class="head">Summary</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><a class="reference" href="lib/ui/cli.html">ui/cli</a></td>
+<td>User interaction using a command, line-oriented interface.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id8" id="www" name="www">www</a></h1>
 <p>Here you will find utilities to be used when developing web applications. If
 you need a simple template engine make sure to take a look at the
 <a class="reference" href="lib/text/template.html">text/template</a> module.</p>
@@ -164,7 +209,7 @@ you need a simple template engine make sure to take a look at the
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/www/billet.html">www/billet</a></td>
+<tr><td><a class="reference" href="lib/www/billets.html">www/billets</a></td>
 <td><em>No description</em></td>
 </tr>
 <tr><td><a class="reference" href="lib/www/form.html">www/form</a></td>

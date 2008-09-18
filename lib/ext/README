@@ -1,0 +1,4 @@
+Modules used to interface with external software, or which provide an API to
+use third-party applications from shell code.
+
+.. vim: filetype=rst

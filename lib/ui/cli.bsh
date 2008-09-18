@@ -1,0 +1,199 @@
+#! /usr/bin/env bill
+#++
+#   ======================
+#   Command Line Interface
+#   ======================
+#   :Author: Adrian Perez <aperez@igalia.com>
+#   :Copyright: 2008 Igalia S.L.
+#   :License: GPL v2
+#   :Abstract: User interaction using a command, line-oriented interface.
+#
+#   .. contents::
+#--
+
+use data/hash
+
+
+
+#++ cli_optparse [ -h ] [ -n ] options destination
+#
+#   Parses command line options. Supports both short and long options, as
+#   well as specifying defaults for options and generating help messages.
+#   Valid options, default values and descriptive texts for them are
+#   specified as an array of 3-tuples of the following:
+#
+#   * Short and long option, separated with a colon. For example ``q:quiet``
+#     would allow the user to pass ``-q`` or ``--quiet``.
+#   * Default value. For boolean options use ``true`` or ``false``,
+#     otherwise the next argument will be consumed.
+#   * Descriptive text for the option. This is only used to generate help
+#     messages.
+#
+#   The *destination* parameter should be a `hash table
+#   <../data/hash.html>`__ in which values for options will be stored. Make
+#   sure it is initialized before calling this function.
+#
+#   As an example:
+#
+#   .. sourcecode:: bash
+#
+#       opts=(
+#           q:quiet  false    'Quiet operation'
+#           i:input  ''       'Takes one argument'
+#           u:user   "$USER"  'User name'
+#       )
+#
+#   The previous array defines options which allow all of the following
+#   possibilities (among others):
+#
+#   .. sourcecode:: bash
+#
+#       --quiet
+#       -q --input input-file
+#       -u john --quiet -i foo
+#
+#   If the ``-h`` switch is given, a help message is generated when
+#   unrecognized command line options are found, and the process **will
+#   exit** with a non-zero status. If not given, the help message is not
+#   printed, but the function will have a non-zero exit status.
+#
+#   Command line will be parsed until the first non-option is found. The
+#   ``CLI_LAST_ARG`` variable will be set to the index of the last proper
+#   option.
+#
+#--
+cli_optparse ()
+{
+    CLI_LAST_ARG=1
+    local showhelp=false
+    if [ "$1" = "-h" ]
+    then
+        showhelp=true
+        shift
+    fi
+
+    local applydefaults=true
+    if [ "$1" = "-n" ]
+    then
+        applydefaults=false
+        shift
+    fi
+
+    local all="$1[@]" ; all=( "${!all}" )
+    local opt=$2
+    local arg= index= k= v=
+    shift 2
+
+    $applydefaults && __cli_optparse_apply_defaults
+
+    while [ "$1" ]
+    do
+        arg=$1
+        shift
+        case $arg in
+            --*) index=$(__cli_optparse_find_long  "${arg#--}") ;;
+            -* ) index=$(__cli_optparse_find_short "${arg#-}" ) ;;
+            *  ) return ;;
+        esac
+        if [ -z "$index" ] ; then
+            if $showhelp ; then
+                __cli_optparse_help 1>&2
+                exit 1
+            fi
+            return 1
+        fi
+
+        k=${all[$index]}
+        v=${all[$((index+1))]}
+        case $v in
+            false) v=true ;;
+            true ) v=false ;;
+            *) v=$1 ; shift ;;
+        esac
+        hash_set $opt "${k#*:}" "$v"
+        (( CLI_LAST_ARG++ ))
+    done
+}
+
+
+
+__cli_optparse_help ()
+{
+    local o d t i l=${#all[@]}
+
+    printf "Command options:\n"
+    for (( i = 0 ; i < l ; i += 3 ))
+    do
+        o=${all[$i]}
+        d=${all[$((i+1))]}
+        t=${all[$((i+2))]}
+        printf "  -%1s,  --%-20s  %s [default: %s]\n" ${o%%:*} ${o#*:} "$t" "$d"
+    done
+}
+
+
+__cli_optparse_apply_defaults ()
+{
+    local k v i l=${#all[@]}
+
+    for (( i = 0 ; i < l ; i += 3 ))
+    do
+        k=${all[$i]}
+        v=${all[$((i+1))]}
+        k=${k#*:}
+        hash_set $opt "$k" "$v"
+    done
+}
+
+
+__cli_optparse_find_short ()
+{
+    local c i l=${#all[@]}
+
+    for (( i = 0 ; i < l ; i += 3 ))
+    do
+        c=${all[$i]}
+        c=${c%%:*}
+        if [[ $c = $1 ]]
+        then
+            echo "$i"
+            return
+        fi
+    done
+}
+
+
+__cli_optparse_find_long ()
+{
+    local c i l=${#all[@]}
+
+    for (( i = 0 ; i < l ; i += 3 ))
+    do
+        c=${all[$i]}
+        c=${c#*:}
+        if [[ $c = $1 ]]
+        then
+            echo "$i"
+            return
+        fi
+    done
+}
+
+
+__cli_optparse_demo ()
+{
+    local args=$(hash_new)
+    local opts=(
+        q:quiet false 'Be quiet'
+        f:file  '-'   'Input file'
+    )
+
+    cli_optparse -h opts $args "$@"
+    echo "quiet: $(hash_get $args quiet)"
+    echo "file : $(hash_get $args file )"
+    echo "last : $CLI_LAST_ARG"
+    hash_clear $args
+}
+
+main __cli_optparse_demo "$@"
+
