@@ -17,7 +17,7 @@
 use text/mime
 use text/string
 
-need csplit head mkdir || "One of csplit, head, or mkdir is missing"
+need csplit head mkdir || die "One of csplit, head, or mkdir is missing"
 
 
 #++ form_urldecode
