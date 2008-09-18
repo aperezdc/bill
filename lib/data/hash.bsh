@@ -32,6 +32,7 @@ hash_new () {
 #   an identifier obtained with hash_new_.
 #--
 hash_set () {
+    builtin hash -d "$1$2" 2> /dev/null || true
     builtin hash -p "$3" "$1$2"
 }
 
@@ -53,7 +54,7 @@ hash_get () {
 #   parameter must be an identifier obtained with hash_new_.
 #--
 hash_del () {
-    builtin hash -d "$1$2" 2> /dev/null
+    builtin hash -d "$1$2" 2> /dev/null || true
 }
 
 
