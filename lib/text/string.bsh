@@ -136,3 +136,39 @@ string_join ()
     IFS=$saved_IFS
 }
 
+
+#++ string_lstrip
+#
+#   Removes blank characters from the start of lines of the given
+#   text. Works like a filter, using both standard input and
+#   output.
+#--
+string_lstrip ()
+{
+    sed -e 's,^[[:space:]]*,,'
+}
+
+
+#++ string_rstrip
+#
+#   Removes blank characters from the end of lines of the given
+#   text. Works like a filter, using both standard input and
+#   output.
+#--
+string_rstrip ()
+{
+    sed -e 's,[[:space:]]*$,,'
+}
+
+
+#++ string_strip
+#
+#   Removes blank characters *both* from the end and the start of lines
+#   given. Works like a filter, using both standard input and output.
+#--
+string_strip ()
+{
+    sed -e 's,^[[:space:]]*,,' \
+        -e 's,[[:space:]]*$,,'
+}
+
