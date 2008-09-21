@@ -18,7 +18,7 @@ augroup End
 " Purpose:	Load specified syntax higlighting for Bill scripts.
 "
 function <sid>CLoad()
-	if getline(1) =~ "^#!.*bill.*"
+	if getline(1) =~ "^#!.*bill.*" || getline(1) =~ "^#!.*butt.*"
 
 		" Load SH as "bash"
 

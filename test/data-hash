@@ -5,9 +5,109 @@ use data/hash
 test_create ()
 {
     local h1=$(hash_new)
-    local h2=$(hash_new)
     assertNotNull $h1
-    assertNotNull $h2
+
+    local h2=$(hash_new)
+    assertNotSame $h1 $h2
 }
 
 
+test_set_one ()
+{
+    local h=$(hash_new)
+    hash_set $h one 1
+    assertSame $(hash_get $h one) 1
+    hash_clear $h
+}
+
+
+test_set_some ()
+{
+    local i h=$(hash_new)
+    for i in $(seq 10) ; do
+        hash_set $h "key$i" "$i"
+    done
+    for i in $(seq 10) ; do
+        assertSame "$(hash_get $h "key$i")" "$i"
+    done
+    hash_clear $h
+}
+
+
+test_clear ()
+{
+    local h=$(hash_new)
+    hash_set $h one 1
+    hash_set $h two 2
+    assertNotNull "$(hash_keys $h)"
+    hash_clear $h
+    assertNull "$(hash_keys $h)"
+}
+
+
+test_nest ()
+{
+    local h=$(hash_new)
+    hash_set $h nested $(hash_new)
+    hash_set $(hash_get $h nested) one 1
+    assertSame $(hash_get $(hash_get $h nested) one) 1
+    hash_clear $(hash_get $h nested)
+    hash_clear $h
+}
+
+
+
+pass_ref_helper ()
+{
+    hash_set $1 one 1
+}
+
+
+test_pass_ref ()
+{
+    local h=$(hash_new)
+    pass_ref_helper $h
+    assertSame $(hash_get $h one) 1
+    hash_clear $h
+}
+
+
+test_del ()
+{
+    local h=$(hash_new)
+    hash_set $h one 1
+    hash_set $h two 2
+    hash_del $h one
+    assertSame $(hash_keys $h) two
+    assertSame $(hash_get $h two) 2
+    hash_clear $h
+}
+
+
+hash_iter_helper ()
+{
+    hash_iter_helper_keys=$2
+}
+
+
+test_iter ()
+{
+    local i h=$(hash_new)
+    local hash_iter_helper_keys
+
+    hash_set $h one 1
+    hash_keys_iter $h hash_iter_helper
+    assertSame one "$hash_iter_helper_keys"
+    hash_clear $h
+}
+
+
+test_has ()
+{
+    local h=$(hash_new)
+
+    hash_set $h one 1
+    hash_set $h two 2
+    hash_has $h one || fail "key not in hashtable"
+    hash_clear $h
+}

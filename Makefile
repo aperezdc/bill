@@ -42,6 +42,15 @@ deb: doc
 
 .PHONY: deb
 
+
+test:
+	@for i in test/* ; do \
+		echo "[1;1m*** $$i[0;0m" ; \
+		./scripts/bill scripts/butt "$$i" ; \
+	done
+
+.PHONY: test
+
 # vim:ft=make
 #
 

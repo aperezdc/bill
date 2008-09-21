@@ -42,5 +42,6 @@ F="bill-shunit-$$-$RANDOM"
   echo "source '$B/shunit2'"
 ) > "$F"
 
-bash "$F" ; rm -f "$F"
+bash "$F" || true
+rm -f "$F"
 
