@@ -3,38 +3,39 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Module Index</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
 <div class="document" id="module-index">
 <h1 class="title">Module Index</h1>
+
 <div class="abstract topic">
 <p class="topic-title first">Abstract</p>
 <p>This is a full listing of all the modules in the Bill standard
 library along with a one-line summary of them and links to their API
 reference.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="module-categories" name="module-categories">Module Categories</a></p>
+<div class="contents topic" id="module-categories">
+<p class="topic-title first">Module Categories</p>
 <ul class="simple">
-<li><a class="reference" href="#bill" id="id1" name="id1">bill</a></li>
-<li><a class="reference" href="#data" id="id2" name="id2">data</a></li>
-<li><a class="reference" href="#dev" id="id3" name="id3">dev</a></li>
-<li><a class="reference" href="#ext" id="id4" name="id4">ext</a></li>
-<li><a class="reference" href="#fs" id="id5" name="id5">fs</a></li>
-<li><a class="reference" href="#text" id="id6" name="id6">text</a></li>
-<li><a class="reference" href="#ui" id="id7" name="id7">ui</a></li>
-<li><a class="reference" href="#www" id="id8" name="id8">www</a></li>
+<li><a class="reference internal" href="#bill" id="id1">bill</a></li>
+<li><a class="reference internal" href="#data" id="id2">data</a></li>
+<li><a class="reference internal" href="#dev" id="id3">dev</a></li>
+<li><a class="reference internal" href="#ext" id="id4">ext</a></li>
+<li><a class="reference internal" href="#fs" id="id5">fs</a></li>
+<li><a class="reference internal" href="#text" id="id6">text</a></li>
+<li><a class="reference internal" href="#ui" id="id7">ui</a></li>
+<li><a class="reference internal" href="#www" id="id8">www</a></li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id1" id="bill" name="bill">bill</a></h1>
+<div class="section" id="bill">
+<h1><a class="toc-backref" href="#id1">bill</a></h1>
 <p>This category contains Bill's internal functions and support code. In
 general new modules should not be added here, unless the functionality they
 provide is directly related to the framework and is not directly reusable in
-third-party code. Note that the <a class="reference" href="lib/bill/builtins.html">bill/builtins</a> module is always available,
+third-party code. Note that the <a class="reference external" href="lib/bill/builtins.html">bill/builtins</a> module is always available,
 so it does not need to be imported by the user.</p>
 <table border="1" class="modules docutils">
 <colgroup>
@@ -47,14 +48,14 @@ so it does not need to be imported by the user.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/bill/builtins.html">bill/builtins</a></td>
+<tr><td><a class="reference external" href="lib/bill/builtins.html">bill/builtins</a></td>
 <td>Provides functions of common usage in shell code.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id2" id="data" name="data">data</a></h1>
+<div class="section" id="data">
+<h1><a class="toc-backref" href="#id2">data</a></h1>
 <p>This category contains modules related to data structures and manipulation.</p>
 <table border="1" class="modules docutils">
 <colgroup>
@@ -67,20 +68,20 @@ so it does not need to be imported by the user.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/data/hash.html">data/hash</a></td>
+<tr><td><a class="reference external" href="lib/data/hash.html">data/hash</a></td>
 <td>Efficient dictionary-like structures i.e. a hash tables.</td>
 </tr>
-<tr><td><a class="reference" href="lib/data/map.html">data/map</a></td>
+<tr><td><a class="reference external" href="lib/data/map.html">data/map</a></td>
 <td>Provides a dictionary-like data structure for use in shell code.</td>
 </tr>
-<tr><td><a class="reference" href="lib/data/random.html">data/random</a></td>
+<tr><td><a class="reference external" href="lib/data/random.html">data/random</a></td>
 <td>Helpful functions for random data generation.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id3" id="dev" name="dev">dev</a></h1>
+<div class="section" id="dev">
+<h1><a class="toc-backref" href="#id3">dev</a></h1>
 <p>Modules in this category allow for controlling both physical (hardware)
 devices and logical ones (like terminal consoles.)</p>
 <!-- vim: filetype=rst -->
@@ -95,14 +96,14 @@ devices and logical ones (like terminal consoles.)</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/dev/tty.html">dev/tty</a></td>
+<tr><td><a class="reference external" href="lib/dev/tty.html">dev/tty</a></td>
 <td>Handles settings of standard Unix terminal console devices.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id4" id="ext" name="ext">ext</a></h1>
+<div class="section" id="ext">
+<h1><a class="toc-backref" href="#id4">ext</a></h1>
 <p>Modules used to interface with external software, or which provide an API to
 use third-party applications from shell code.</p>
 <!-- vim: filetype=rst -->
@@ -117,14 +118,14 @@ use third-party applications from shell code.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/ext/twiki.html">ext/twiki</a></td>
+<tr><td><a class="reference external" href="lib/ext/twiki.html">ext/twiki</a></td>
 <td>Functions for performing operations on TWiki instances.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id5" id="fs" name="fs">fs</a></h1>
+<div class="section" id="fs">
+<h1><a class="toc-backref" href="#id5">fs</a></h1>
 <p>Supports handling of filesystem entities in different ways.</p>
 <!-- vim: filetype=rst -->
 <table border="1" class="modules docutils">
@@ -138,14 +139,14 @@ use third-party applications from shell code.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/fs/spool.html">fs/spool</a></td>
+<tr><td><a class="reference external" href="lib/fs/spool.html">fs/spool</a></td>
 <td>Provides mechanism for having a directory with spooled items.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id6" id="text" name="text">text</a></h1>
+<div class="section" id="text">
+<h1><a class="toc-backref" href="#id6">text</a></h1>
 <p>Modules for text manipulation and parsing of text-based data formats.</p>
 <!-- vim: filetype=rst -->
 <table border="1" class="modules docutils">
@@ -159,23 +160,23 @@ use third-party applications from shell code.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/text/config.html">text/config</a></td>
+<tr><td><a class="reference external" href="lib/text/config.html">text/config</a></td>
 <td>Parse configuration files in key-value pairs and INI-style.</td>
 </tr>
-<tr><td><a class="reference" href="lib/text/mime.html">text/mime</a></td>
+<tr><td><a class="reference external" href="lib/text/mime.html">text/mime</a></td>
 <td>Provides tools for handling MIME-encoded data.</td>
 </tr>
-<tr><td><a class="reference" href="lib/text/string.html">text/string</a></td>
+<tr><td><a class="reference external" href="lib/text/string.html">text/string</a></td>
 <td>Provides common functions used to manipulate text strings.</td>
 </tr>
-<tr><td><a class="reference" href="lib/text/template.html">text/template</a></td>
+<tr><td><a class="reference external" href="lib/text/template.html">text/template</a></td>
 <td>Miminalistic template engine to be used from shell scripts.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id7" id="ui" name="ui">ui</a></h1>
+<div class="section" id="ui">
+<h1><a class="toc-backref" href="#id7">ui</a></h1>
 <p>User interface: those modules provide means of interacting with users.</p>
 <!-- vim: filetype=rst -->
 <table border="1" class="modules docutils">
@@ -189,17 +190,17 @@ use third-party applications from shell code.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/ui/cli.html">ui/cli</a></td>
+<tr><td><a class="reference external" href="lib/ui/cli.html">ui/cli</a></td>
 <td>User interaction using a command, line-oriented interface.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id8" id="www" name="www">www</a></h1>
+<div class="section" id="www">
+<h1><a class="toc-backref" href="#id8">www</a></h1>
 <p>Here you will find utilities to be used when developing web applications. If
 you need a simple template engine make sure to take a look at the
-<a class="reference" href="lib/text/template.html">text/template</a> module.</p>
+<a class="reference external" href="lib/text/template.html">text/template</a> module.</p>
 <!-- vim: filetype=rst -->
 <table border="1" class="modules docutils">
 <colgroup>
@@ -212,13 +213,13 @@ you need a simple template engine make sure to take a look at the
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="lib/www/billets.html">www/billets</a></td>
+<tr><td><a class="reference external" href="lib/www/billet.html">www/billet</a></td>
 <td><em>No description</em></td>
 </tr>
-<tr><td><a class="reference" href="lib/www/form.html">www/form</a></td>
+<tr><td><a class="reference external" href="lib/www/form.html">www/form</a></td>
 <td>Handles input in the formats provided by HTML forms.</td>
 </tr>
-<tr><td><a class="reference" href="lib/www/http.html">www/http</a></td>
+<tr><td><a class="reference external" href="lib/www/http.html">www/http</a></td>
 <td>Provides a not-so-basic standalone web server.</td>
 </tr>
 </tbody>

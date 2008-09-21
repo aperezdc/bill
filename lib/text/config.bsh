@@ -10,13 +10,44 @@
 #--
 
 use data/hash
+use text/string
 
 
-#++ config_keyval destination
+#++ config_filter_uneeded [ commentchar ]
+#
+#   This function acts as a filter, stripping lines which start with a given
+#   ``commentchar``, and blank lines as well. By default the command
+#   character is ``#`` (hash), but can be changed to any other string.
+#--
+config_filter_uneeded ()
+{
+    local line=
+    while read line
+    do
+        if [[ $line = \#* ]] || [[ -z $line ]]
+        then
+            continue
+        else
+            echo "$line"
+        fi
+    done
+}
+
+
+#++ config_keyval destination [ separator ]
 #--
 config_keyval_parse ()
 {
-    :
+    local k v old_IFS=$IFS
+
+    IFS=${2:-'='}
+    config_filter_uneeded | while read k v
+    do
+        k=$(string_strip <<< "$k")
+        [ "$k" ] || return 1
+        hash_set "$1" "$k" "$(string_strip <<< "$v")"
+    done
+    IFS=$old_IFS
 }
 
 
@@ -24,5 +55,5 @@ config_keyval_parse ()
 #--
 config_ini_parse ()
 {
-    local line
+    :
 }

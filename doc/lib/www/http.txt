@@ -106,6 +106,30 @@ Generates an error document in standard output:
 
 
 
+http_header
+-----------
+
+::
+
+  http_header name value
+
+
+Sends an HTTP header.
+
+
+
+
+http_header_start
+-----------------
+
+::
+
+  http_header_start [ code [ description ] ]
+
+
+
+
+
 http_error
 ----------
 

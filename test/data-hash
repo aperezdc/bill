@@ -1,0 +1,13 @@
+#! /usr/bin/env butt
+
+use data/hash
+
+test_create ()
+{
+    local h1=$(hash_new)
+    local h2=$(hash_new)
+    assertNotNull $h1
+    assertNotNull $h2
+}
+
+

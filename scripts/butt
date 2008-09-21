@@ -1,0 +1,46 @@
+#! /usr/bin/env bill
+#
+# Bill Unit-Test Tester
+#
+
+[ "$1" ] || die "No test suite specified as first argument"
+
+find_shunit ()
+{
+    local old_IFS=$IFS
+    local found=false
+
+    IFS=':'
+    for path in $BILLPATH
+    do
+        if [ -r "$path/bill/shunit2" ]
+        then
+            echo "$path/bill"
+            found=true
+            break
+        fi
+    done
+
+    # Sanity check :)
+    if ! $found
+    then
+        ( echo "Could not find 'shunit2', the module search path is"
+          echo "  $BILLPATH"
+        ) 1>&2
+        exit 1
+    fi
+    IFS=$old_IFS
+}
+
+
+B=$(find_shunit)
+F="bill-shunit-$$-$RANDOM"
+
+( echo "BILLPATH='$BILLPATH'"
+  echo "source '$B/builtins.bsh'"
+  cat  "$1"
+  echo "source '$B/shunit2'"
+) > "$F"
+
+bash "$F" ; rm -f "$F"
+

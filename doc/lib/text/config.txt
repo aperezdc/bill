@@ -1,0 +1,46 @@
+===================
+Config file parsing
+===================
+:Author: Adrian Perez <aperez@igalia.com>
+:Copyright: 2008 Igalia S.L.
+:License: GPL v2
+:Abstract: Parse configuration files in key-value pairs and INI-style.
+
+
+
+
+config_filter_uneeded
+---------------------
+
+::
+
+  config_filter_uneeded [ commentchar ]
+
+
+This function acts as a filter, stripping lines which start with a given
+``commentchar``, and blank lines as well. By default the command
+character is ``#`` (hash), but can be changed to any other string.
+
+
+
+
+config_keyval
+-------------
+
+::
+
+  config_keyval destination [ separator ]
+
+
+
+
+
+config_ini_parse
+----------------
+
+::
+
+  config_ini_parse destination
+
+
+

@@ -4,14 +4,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
-<title>Billet Engine</title>
+<title>Config file parsing</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <meta name="copyright" content="2008 Igalia S.L." />
 <link rel="stylesheet" href="../../style.css" type="text/css" />
 </head>
 <body>
-<div class="document" id="billet-engine">
-<h1 class="title">Billet Engine</h1>
+<div class="document" id="config-file-parsing">
+<h1 class="title">Config file parsing</h1>
 <table class="docinfo" frame="void" rules="none">
 <col class="docinfo-name" />
 <col class="docinfo-content" />
@@ -24,22 +24,29 @@
 </tr>
 </tbody>
 </table>
-<div class="section" id="billet-handle-http-get">
-<h1>billet_handle_http_GET</h1>
+<div class="abstract topic">
+<p class="topic-title first">Abstract</p>
+<p>Parse configuration files in key-value pairs and INI-style.</p>
+</div>
+<div class="section" id="config-filter-uneeded">
+<h1>config_filter_uneeded</h1>
 <pre class="literal-block">
-billet_handle_http_GET
+config_filter_uneeded [ commentchar ]
+</pre>
+<p>This function acts as a filter, stripping lines which start with a given
+<tt class="docutils literal"><span class="pre">commentchar</span></tt>, and blank lines as well. By default the command
+character is <tt class="docutils literal"><span class="pre">#</span></tt> (hash), but can be changed to any other string.</p>
+</div>
+<div class="section" id="config-keyval">
+<h1>config_keyval</h1>
+<pre class="literal-block">
+config_keyval destination [ separator ]
 </pre>
 </div>
-<div class="section" id="billet-handle-http-post">
-<h1>billet_handle_http_POST</h1>
+<div class="section" id="config-ini-parse">
+<h1>config_ini_parse</h1>
 <pre class="literal-block">
-billet_handle_http_POST
-</pre>
-</div>
-<div class="section" id="billet-server-run">
-<h1>billet_server_run</h1>
-<pre class="literal-block">
-billet_server_run handlers
+config_ini_parse destination
 </pre>
 </div>
 </div>

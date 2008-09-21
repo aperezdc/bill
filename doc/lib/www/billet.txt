@@ -1,0 +1,41 @@
+=============
+Billet Engine
+=============
+:Author: Adrian Perez <aperez@igalia.com>
+:Copyright: 2008 Igalia S.L.
+:License: GPL v2
+
+
+
+
+billet_handle_http_GET
+----------------------
+
+::
+
+  billet_handle_http_GET
+
+
+
+
+
+billet_handle_http_POST
+-----------------------
+
+::
+
+  billet_handle_http_POST
+
+
+
+
+
+billet_server_run
+-----------------
+
+::
+
+  billet_server_run handlers
+
+
+
