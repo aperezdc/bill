@@ -92,9 +92,9 @@ hash_keys_iter () {
 hash_keys ()
 {
     local _a _b _c _d key hl=${#1}
-    builtin hash -l | while read _a _b _c _d key ; do
+    while read _a _b _c _d key ; do
         [[ ${key::$hl} = $1 ]] && echo "${key:$hl}"
-    done
+    done < <(builtin hash -l)
 }
 
 
@@ -107,8 +107,7 @@ hash_keys ()
 hash_clear () {
     local keys=( $(hash_keys "$1") )
     local item
-    for item in "${keys[@]}"
-    do
+    for item in "${keys[@]}" ; do
         hash_del "$1" "$item"
     done
 }
