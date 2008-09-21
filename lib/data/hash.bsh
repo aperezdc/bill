@@ -79,9 +79,9 @@ hash_has () {
 #--
 hash_keys_iter () {
     local _a _b _c _d key hl=${#1}
-    builtin hash -l | while read _a _b _c _d key ; do
+    while read _a _b _c _d key ; do
         [[ ${key::$hl} = $1 ]] && "$2" "$1" "${key:$hl}"
-    done
+    done < <(builtin hash -l)
 }
 
 
