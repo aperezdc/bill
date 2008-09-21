@@ -83,7 +83,7 @@ string_endswith ()
 string_ascii_code ()
 {
     local format=${2:-d}
-    printf "%${format::1}" "'${2::1}"
+    printf "%${format::1}" "'${1::1}"
 }
 
 

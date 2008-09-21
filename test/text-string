@@ -1,0 +1,109 @@
+#! /usr/bin/env butt
+
+use text/string
+
+
+test_upper ()
+{
+    assertSame A $(string_upper a)
+    assertSame ABCDEF $(string_upper abcdef)
+    assertSame ABCDEF $(string_upper ABCDEF)
+    assertSame "A B C D E" "$(string_upper "a b c d e")"
+    assertSame "   ABC   " "$(string_upper "   abc   ")"
+}
+
+
+test_lower ()
+{
+    assertSame a $(string_lower A)
+    assertSame abcdef $(string_lower ABCDEF)
+    assertSame abcdef $(string_lower abcdef)
+    assertSame "a b c d e" "$(string_lower "A B C D E")"
+    assertSame "   abc   " "$(string_lower "   ABC   ")"
+}
+
+
+test_length ()
+{
+    assertSame 0 $(string_length "")
+    assertSame 1 $(string_length a)
+    assertSame 3 $(string_length abc)
+}
+
+
+test_starts ()
+{
+    string_startswith "the answer is 42" "" || fail
+    string_startswith "the answer is 42" "the" || fail
+    string_startswith "the answer is 42" "the ans" || fail
+    string_startswith "the answer is 42" "blah blah" && fail
+}
+
+
+test_ends ()
+{
+    string_endswith "the answer is 42" "" || fail
+    string_endswith "the answer is 42" "42" || fail
+    string_endswith "the answer is 42" "is 42" || fail
+    string_endswith "the answer is 42" "blah blah" && fail
+}
+
+
+test_ascii_code ()
+{
+    assertSame 65  $(string_ascii_code "A")
+    assertSame 41  $(string_ascii_code "A" x)
+    assertSame 101 $(string_ascii_code "A" o)
+    assertSame 4F  $(string_ascii_code "O" X)
+    assertSame 4f  $(string_ascii_code "O" x)
+}
+
+
+test_ascii ()
+{
+    assertSame 65:79 $(string_ascii AO : d)
+    assertSame 41:4F $(string_ascii AO : X)
+    assertSame 41:4f $(string_ascii AO : x)
+}
+
+
+test_join ()
+{
+    assertSame abcdefg $(string_join "" a b c d e f g)
+    assertSame a:b:c:d $(string_join : a b c d)
+    assertSame abcdefg $(string_join "" abcdefg)
+    assertSame abcdefg $(string_join : abcdefg)
+}
+
+
+test_strip ()
+{
+    assertSame "abc" "$(string_strip <<< "abc")"
+    assertSame "abc" "$(string_strip <<< "abc ")"
+    assertSame "abc" "$(string_strip <<< " abc ")"
+    assertSame "abc" "$(string_strip <<< "  abc ")"
+    assertSame "abc" "$(string_strip <<< "  abc  ")"
+    assertSame "abc" "$(string_strip <<< " abc  ")"
+    assertSame "abc" "$(string_strip <<< " abc")"
+}
+
+
+test_lstrip ()
+{
+    assertSame "abc" "$(string_lstrip <<< "abc")"
+    assertSame "abc " "$(string_lstrip <<< "abc ")"
+    assertSame "abc " "$(string_lstrip <<< " abc ")"
+    assertSame "abc " "$(string_lstrip <<< "  abc ")"
+    assertSame "abc  " "$(string_lstrip <<< "  abc  ")"
+}
+
+
+test_rstrip ()
+{
+    assertSame "abc" "$(string_rstrip <<< "abc")"
+    assertSame " abc" "$(string_rstrip <<< " abc")"
+    assertSame " abc" "$(string_rstrip <<< " abc ")"
+    assertSame " abc" "$(string_rstrip <<< " abc  ")"
+    assertSame "  abc" "$(string_rstrip <<< "  abc  ")"
+}
+
