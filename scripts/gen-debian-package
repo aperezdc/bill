@@ -81,6 +81,8 @@ copy_files ()
         cp "$name" "$deb_name/usr/share/man/man1"
     done
     gzip --best "$deb_name/usr/share/man/man1"/*.1
+    rm "$deb_name/usr/share/doc/bill"/*.1
+    rm "$deb_name/usr/share/doc/bill"/*.1.rst
     echo "man ]"
 }
 
