@@ -64,7 +64,7 @@ use data/hash
 #--
 cli_optparse ()
 {
-    CLI_LAST_ARG=1
+    CLI_LAST_ARG=0
     local showhelp=false
     if [ "$1" = "-h" ]
     then
@@ -86,7 +86,7 @@ cli_optparse ()
 
     $applydefaults && __cli_optparse_apply_defaults
 
-    while [ "$1" ]
+    while [[ $# -gt 0 ]]
     do
         arg=$1
         shift
@@ -178,6 +178,77 @@ __cli_optparse_find_long ()
         fi
     done
 }
+
+
+
+#++ cli_qa_batch [ -f | --force-ask ] values questions
+#
+#   Performs a series of interactive questions, asking the user for answers
+#   and gathering answers into a hash table. Question sets are arrays of
+#   3-tuples with the following components:
+#
+#   * A key used to identify the question.
+#   * The question itself.
+#   * A suggested (or default) value.
+#
+#   As en example, the following could be used to input an user's
+#   information:
+#
+#   .. sourcecode:: bash
+#
+#       questions=(
+#           username  'User name'  "$USER"
+#           firstname 'First name' ''
+#           lastname  'Last name'  ''
+#       )
+#       values=$(hash_new)
+#       cli_qa_batch $values questions
+#       echo "Hello Mr. $(hash_get $values lastname)"
+#
+#   The above code would result in an interactive session like the
+#   following, supposing your login name is ``john``::
+#
+#       User name [john] > ripper
+#       First name > John
+#       Last name > T. Ripper
+#       Hello Mr. T. Ripper!
+#
+#   As you can see, default values are suggested between brackets, like in
+#   the first question of the example, and if the user just taps the “enter”
+#   key the default value will be used as input.
+#
+#   When requested values already have a key in the ``values`` hash table
+#   its value will be used instead of asking the user. If you pass the
+#   ``-f`` (also ``--force-ask``) flag the user will be prompted with the
+#   value stored in the hash table as suggestion.
+#--
+cli_qa_batch ()
+{
+    local forceask=false
+    if [[ $1 = -f ]] || [[ $1 = --force-ask ]]
+    then
+        forceask=true
+        shift
+    fi
+
+    local questions="$2[@]" ; questions=( "${!questions}" )
+    local val i tmp ql=${#questions[@]}
+
+    for (( i = 0; i < ql; i += 3 ))
+    do
+        if hash_has "$1" "${questions[$i]}" && ! $forceask
+        then
+            continue
+        fi
+        val=${questions[$((i+1))]}
+        tmp=$(hash_get "$1" "${questions[$i]}" || echo "${questions[$((i+2))]}")
+        [[ -z $tmp ]] || val="$val [$tmp]"
+        read -r -e -p "$val > " val
+        [[ -z $val ]] && val=$tmp
+        hash_set "$1" "${questions[$i]}" "$val"
+    done
+}
+
 
 
 __cli_optparse_demo ()

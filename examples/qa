@@ -1,0 +1,26 @@
+#! /usr/bin/env bill
+
+use ui/cli
+
+questions_batch=(
+    first-name 'First name' ''
+    last-name  'Last name' ''
+    country    'Your country' 'Spain'
+)
+
+
+ans=$(hash_new)
+cli_qa_batch $ans questions_batch
+echo "Name: $(hash_get $ans first-name) $(hash_get $ans last-name)"
+echo "Nationality: $(hash_get $ans country)"
+echo
+hash_clear $answers
+
+hash_set $ans first-name "$USER"
+cli_qa_batch -f $ans questions_batch
+echo "Name: $(hash_get $ans first-name) $(hash_get $ans last-name)"
+echo "Nationality: $(hash_get $ans country)"
+echo
+hash_clear $answers
+
+

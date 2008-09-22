@@ -1,0 +1,83 @@
+#! /usr/bin/env butt
+
+use ui/cli
+
+
+test_optparse_short ()
+{
+    local args=$(hash_new)
+    local opts=( q:quiet false 'Be quiet' )
+    cli_optparse opts $args -q
+    assertSame true "$(hash_get $args quiet)"
+    hash_clear $args
+}
+
+
+test_optparse_long ()
+{
+    local args=$(hash_new)
+    local opts=( q:quiet false 'Be quiet' )
+    cli_optparse opts $args --quiet
+    assertSame true "$(hash_get $args quiet)"
+    hash_clear $args
+}
+
+
+test_optparse_long_only ()
+{
+    local args=$(hash_new)
+    local opts=( :quiet false 'Be quiet' )
+    cli_optparse opts $args --quiet
+    assertSame true "$(hash_get $args quiet)"
+    hash_clear $args
+}
+
+
+test_optparse_assign_short ()
+{
+    local args=$(hash_new)
+    local opts=(
+        f:foo fooOld Foo
+        b:bar barOld Bar
+    )
+    cli_optparse opts $args -f fooNew
+    assertSame fooNew "$(hash_get $args foo)"
+    assertSame barOld "$(hash_get $args bar)"
+    hash_clear $args
+
+    cli_optparse opts $args -f fooNew -b barNew -f newerFoo
+    assertSame newerFoo "$(hash_get $args foo)"
+    assertSame barNew "$(hash_get $args bar)"
+    hash_clear $args
+}
+
+
+test_optparse_assign_long ()
+{
+    local args=$(hash_new)
+    local opts=(
+        f:foo fooOld Foo
+        b:bar bzrOld Bar
+    )
+    cli_optparse opts $args --foo newFoo
+    assertSame newFoo "$(hash_get $args foo)"
+    hash_clear $args
+
+    cli_optparse opts $args --bar newBar --foo newFoo
+    assertSame newFoo "$(hash_get $args foo)"
+    assertSame newBar "$(hash_get $args bar)"
+    hash_clear $args
+}
+
+
+test_optparse_files ()
+{
+    local args=$(hash_new)
+    local opts=( q:quiet false 'Be Quiet' )
+    local argv=( "--quiet" "file1" "file2" )
+    cli_optparse opts $args "${argv[@]}"
+    assertSame file1 "${argv[$CLI_LAST_ARG]}"
+    assertSame file2 "${argv[$((CLI_LAST_ARG+1))]}"
+    hash_clear $args
+}
+
