@@ -7,6 +7,8 @@
 #   :Copyright: 2008 Igalia S.L.
 #   :License: GPL v2
 #   :Abstract: Parse configuration files in key-value pairs and INI-style.
+#
+#   .. contents::
 #--
 
 use data/hash
@@ -19,12 +21,14 @@ use text/string
 #   ``commentchar``, and blank lines as well. By default the command
 #   character is ``#`` (hash), but can be changed to any other string.
 #--
-config_filter_uneeded ()
+config_filter_unneeded ()
 {
+    local cchr=${1:-'#'}
     local line=
     while read line
     do
-        if [[ $line = \#* ]] || [[ -z $line ]]
+        if [[ -z $line ]] || \
+            string_startswith "$(string_lstrip <<< "$line")" "$cchr"
         then
             continue
         else
@@ -34,26 +38,122 @@ config_filter_uneeded ()
 }
 
 
-#++ config_keyval destination [ separator ]
+#++ config_keyval destination [ separator [ commentchar ] ]
+#
+#   Parses text in a key-value fashion, and stores key-value pairs in a hash
+#   table. Text input must be given as standard input. Arguments:
+#
+#   * ``destination``: Hash table where parsed values will be stored.
+#   * ``separator``: Character used to split key-value pairs. By default
+#     this is set to ``=``.
+#   * ``commentchar``: Character used as comment delimiter. By default this
+#     is set to ``#`` (hash).
+#
+#   The default settings will be able of parsing input like the following:
+#
+#   .. sourcecode:: ini
+#
+#       # This is a comment
+#       key1 = value1
+#       key2 = value2
+#       # ...
+#       keyN = valueN
+#
+#   Note that spaces around *both* keys and values will be strippped.
 #--
-config_keyval_parse ()
+config_keyval ()
 {
     local k v old_IFS=$IFS
 
     IFS=${2:-'='}
-    config_filter_uneeded | while read k v
-    do
+    while read k v ; do
         k=$(string_strip <<< "$k")
         [ "$k" ] || return 1
         hash_set "$1" "$k" "$(string_strip <<< "$v")"
-    done
+    done < <(config_filter_unneeded "${3:-'#'}")
     IFS=$old_IFS
 }
 
 
-#++ config_ini_parse destination
+#++ config_ini destination [ separator [ commentchar ] ]
+#
+#   Parses text from standard in a `INI-like`__ fashion. Read values are
+#   stored into a hash table which has a nested hash table for each section
+#   found. Helper functions for getting values and full sections
+#   (config_ini_get_). Arguments:
+#
+#   __ http://en.wikipedia.org/wiki/INI_file
+#
+#   * ``destination``: Hash table where parsed values will be stored.
+#   * ``separator``: Character used to split key-value pairs. By default
+#     this is set to ``=``.
+#   * ``commentchar``: Character used as comment delimiter. By default this
+#     is set to ``#`` (hash).
+#
+#   The default settings will be able of parsing input like the following:
+#
+#   .. sourcecode:: ini
+#
+#       # Comments are started like this line, with hash symbols
+#       # Sections are enclosed in brackets
+#       [section1]
+#       key1 = one
+#
+#       # This is another section
+#       [section2]
+#       key1 = uno
+#       anotherkey = another value
+#
+#   Note that spaces around *both* keys and values will be strippped.
 #--
-config_ini_parse ()
+config_ini ()
 {
-    :
+    local k v old_IFS=$IFS
+    local section='[]'
+
+    IFS=${2:-'='}
+    while read k v ; do
+        k=$(string_strip <<< "$k")
+        if string_startswith "$k" "["
+        then
+            section=$k
+            continue
+        fi
+        [ "$k" ] || return 1
+        hash_has "$1" "$section" || hash_set "$1" "$section" "$(hash_new)"
+        hash_set $(hash_get "$1" "$section") "$k" "$(string_strip <<< "$v")"
+    done < <(config_filter_unneeded "${3:-'#'}")
+    IFS=$old_IFS
 }
+
+
+#++ config_ini_get hash section [ key ]
+#
+#   Obtains a full section if ``key`` is not specified, or the value of
+#   a given key of the section otherwise. The given ``hash`` table must have
+#   the nested structure as the ones created by config_ini_.
+#--
+config_ini_get ()
+{
+    if [[ $# = 3 ]] ; then
+        hash_get $(hash_get "$1" "[$2]") "$3"
+    else
+        hash_get "$1" "[$2]"
+    fi
+}
+
+
+#++ config_ini_clear hash
+#
+#   Disposes keys and values in a hash table hierarchy as created by
+#   config_ini_.
+#--
+config_ini_clear ()
+{
+    local key keys=( $(hash_keys "$1" ) )
+    for key in "${keys[@]}" ; do
+        hash_clear "$key"
+    done
+    hash_clear "$1"
+}
+

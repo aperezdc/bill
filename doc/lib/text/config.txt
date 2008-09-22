@@ -6,6 +6,8 @@ Config file parsing
 :License: GPL v2
 :Abstract: Parse configuration files in key-value pairs and INI-style.
 
+.. contents::
+
 
 
 
@@ -29,18 +31,97 @@ config_keyval
 
 ::
 
-  config_keyval destination [ separator ]
+  config_keyval destination [ separator [ commentchar ] ]
+
+
+Parses text in a key-value fashion, and stores key-value pairs in a hash
+table. Text input must be given as standard input. Arguments:
+
+* ``destination``: Hash table where parsed values will be stored.
+* ``separator``: Character used to split key-value pairs. By default
+  this is set to ``=``.
+* ``commentchar``: Character used as comment delimiter. By default this
+  is set to ``#`` (hash).
+
+The default settings will be able of parsing input like the following:
+
+.. sourcecode:: ini
+
+    # This is a comment
+    key1 = value1
+    key2 = value2
+    # ...
+    keyN = valueN
+
+Note that spaces around *both* keys and values will be strippped.
 
 
 
 
+config_ini
+----------
 
-config_ini_parse
+::
+
+  config_ini destination [ separator [ commentchar ] ]
+
+
+Parses text from standard in a `INI-like`__ fashion. Read values are
+stored into a hash table which has a nested hash table for each section
+found. Helper functions for getting values and full sections
+(config_ini_get_). Arguments:
+
+__ http://en.wikipedia.org/wiki/INI_file
+
+* ``destination``: Hash table where parsed values will be stored.
+* ``separator``: Character used to split key-value pairs. By default
+  this is set to ``=``.
+* ``commentchar``: Character used as comment delimiter. By default this
+  is set to ``#`` (hash).
+
+The default settings will be able of parsing input like the following:
+
+.. sourcecode:: ini
+
+    # Comments are started like this line, with hash symbols
+    # Sections are enclosed in brackets
+    [section1]
+    key1 = one
+
+    # This is another section
+    [section2]
+    key1 = uno
+    anotherkey = another value
+
+Note that spaces around *both* keys and values will be strippped.
+
+
+
+
+config_ini_get
+--------------
+
+::
+
+  config_ini_get hash section [ key ]
+
+
+Obtains a full section if ``key`` is not specified, or the value of
+a given key of the section otherwise. The given ``hash`` table must have
+the nested structure as the ones created by config_ini_.
+
+
+
+
+config_ini_clear
 ----------------
 
 ::
 
-  config_ini_parse destination
+  config_ini_clear hash
 
+
+Disposes keys and values in a hash table hierarchy as created by
+config_ini_.
 
 

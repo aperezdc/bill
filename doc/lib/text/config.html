@@ -28,8 +28,18 @@
 <p class="topic-title first">Abstract</p>
 <p>Parse configuration files in key-value pairs and INI-style.</p>
 </div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#config-filter-uneeded" id="id2">config_filter_uneeded</a></li>
+<li><a class="reference internal" href="#config-keyval" id="id3">config_keyval</a></li>
+<li><a class="reference internal" href="#config-ini" id="id4">config_ini</a></li>
+<li><a class="reference internal" href="#config-ini-get" id="id5">config_ini_get</a></li>
+<li><a class="reference internal" href="#config-ini-clear" id="id6">config_ini_clear</a></li>
+</ul>
+</div>
 <div class="section" id="config-filter-uneeded">
-<h1>config_filter_uneeded</h1>
+<h1><a class="toc-backref" href="#id2">config_filter_uneeded</a></h1>
 <pre class="literal-block">
 config_filter_uneeded [ commentchar ]
 </pre>
@@ -38,16 +48,73 @@ config_filter_uneeded [ commentchar ]
 character is <tt class="docutils literal"><span class="pre">#</span></tt> (hash), but can be changed to any other string.</p>
 </div>
 <div class="section" id="config-keyval">
-<h1>config_keyval</h1>
+<h1><a class="toc-backref" href="#id3">config_keyval</a></h1>
 <pre class="literal-block">
-config_keyval destination [ separator ]
+config_keyval destination [ separator [ commentchar ] ]
 </pre>
+<p>Parses text in a key-value fashion, and stores key-value pairs in a hash
+table. Text input must be given as standard input. Arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">destination</span></tt>: Hash table where parsed values will be stored.</li>
+<li><tt class="docutils literal"><span class="pre">separator</span></tt>: Character used to split key-value pairs. By default
+this is set to <tt class="docutils literal"><span class="pre">=</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">commentchar</span></tt>: Character used as comment delimiter. By default this
+is set to <tt class="docutils literal"><span class="pre">#</span></tt> (hash).</li>
+</ul>
+<p>The default settings will be able of parsing input like the following:</p>
+<div class="highlight"><pre><span class="c"># This is a comment</span>
+<span class="na">key1</span> <span class="o">=</span> <span class="s">value1</span>
+<span class="na">key2</span> <span class="o">=</span> <span class="s">value2</span>
+<span class="c"># ...</span>
+<span class="na">keyN</span> <span class="o">=</span> <span class="s">valueN</span>
+</pre></div>
+<p>Note that spaces around <em>both</em> keys and values will be strippped.</p>
 </div>
-<div class="section" id="config-ini-parse">
-<h1>config_ini_parse</h1>
+<div class="section" id="config-ini">
+<h1><a class="toc-backref" href="#id4">config_ini</a></h1>
 <pre class="literal-block">
-config_ini_parse destination
+config_ini destination [ separator [ commentchar ] ]
 </pre>
+<p>Parses text from standard in a <a class="reference external" href="http://en.wikipedia.org/wiki/INI_file">INI-like</a> fashion. Read values are
+stored into a hash table which has a nested hash table for each section
+found. Helper functions for getting values and full sections
+(<a class="reference internal" href="#config-ini-get">config_ini_get</a>). Arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">destination</span></tt>: Hash table where parsed values will be stored.</li>
+<li><tt class="docutils literal"><span class="pre">separator</span></tt>: Character used to split key-value pairs. By default
+this is set to <tt class="docutils literal"><span class="pre">=</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">commentchar</span></tt>: Character used as comment delimiter. By default this
+is set to <tt class="docutils literal"><span class="pre">#</span></tt> (hash).</li>
+</ul>
+<p>The default settings will be able of parsing input like the following:</p>
+<div class="highlight"><pre><span class="c"># Comments are started like this line, with hash symbols</span>
+<span class="c"># Sections are enclosed in brackets</span>
+<span class="k">[section1]</span>
+<span class="na">key1</span> <span class="o">=</span> <span class="s">one</span>
+
+<span class="c"># This is another section</span>
+<span class="k">[section2]</span>
+<span class="na">key1</span> <span class="o">=</span> <span class="s">uno</span>
+<span class="na">anotherkey</span> <span class="o">=</span> <span class="s">another value</span>
+</pre></div>
+<p>Note that spaces around <em>both</em> keys and values will be strippped.</p>
+</div>
+<div class="section" id="config-ini-get">
+<h1><a class="toc-backref" href="#id5">config_ini_get</a></h1>
+<pre class="literal-block">
+config_ini_get hash section [ key ]
+</pre>
+<p>Obtains a full section if <tt class="docutils literal"><span class="pre">key</span></tt> is not specified, or the value of
+a given key of the section otherwise. The given <tt class="docutils literal"><span class="pre">hash</span></tt> table must have
+the nested structure as the ones created by <a class="reference internal" href="#config-ini">config_ini</a>.</p>
+</div>
+<div class="section" id="config-ini-clear">
+<h1><a class="toc-backref" href="#id6">config_ini_clear</a></h1>
+<pre class="literal-block">
+config_ini_clear hash
+</pre>
+<p>Disposes keys and values in a hash table hierarchy as created by
+<a class="reference internal" href="#config-ini">config_ini</a>.</p>
 </div>
 </div>
 </body>
