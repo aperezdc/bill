@@ -13,6 +13,8 @@
 #--
 set -e
 
+[ "$BILL_DEBUG" ] && set -x
+
 libdir=/usr/lib/bill
 if [ ! -d "$libdir" ]
 then

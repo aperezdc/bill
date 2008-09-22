@@ -1,0 +1,43 @@
+#! /usr/bin/env bill
+
+use text/config
+use ext/twiki
+use ui/cli
+
+
+f_common=(
+    c:config         "twiki-deploy.conf" $"Path to configuration file"
+    n:admin-name     ""                  $"Name of the wiki administrator"
+    s:admin-surname  ""                  $"Surname of the wiki administrator"
+    u:admin-userid   "$USER"             $"User identifier of administrator"
+    w:admin-wikiname ""                  $"Wiki name of the administrator"
+)
+q_common=(
+    admin-name       $"Name of the wiki administrator"    ''
+    admin-surname    $"Surname of the wiki administrator" ''
+    admin-userid     $"User identifier of administrator"  ':'
+    admin-wikiname
+)
+
+config=$(hash_new)
+
+
+apply_config ()
+{
+    local key cfg=$(hash_new)
+    config_keyval $cfg < "$1"
+}
+
+deploy_main ()
+{
+    cli_optparse -h f_common $config "$@"
+    local cfgfile=$(hash_get $config config)
+    [[ -r $cfgfile ]] \
+        && apply_config < "$cfgfile"
+    [[ -r /etc/twiki-deploy.conf ]] \
+        && apply_config < /etc/twiki-deploy.conf
+}
+
+
+main deploy_main "$@"
+
