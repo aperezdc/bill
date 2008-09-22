@@ -12,6 +12,16 @@ test_create ()
 }
 
 
+test_empty_key ()
+{
+    local h=$(hash_new)
+    hash_set $h "" value
+    assertSame value $(hash_get $h "")
+    hash_clear $h
+    assertNull "$(hash_keys $h)"
+}
+
+
 test_set_one ()
 {
     local h=$(hash_new)

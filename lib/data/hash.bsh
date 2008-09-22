@@ -104,11 +104,11 @@ hash_keys ()
 #   Empties a hash table. The ``hash_id`` parameter must be a valid
 #   identifier obtained with hash_new_.
 #--
-hash_clear () {
-    local keys=( $(hash_keys "$1") )
+hash_clear ()
+{
     local item
-    for item in "${keys[@]}" ; do
+    while read item ; do
         hash_del "$1" "$item"
-    done
+    done < <(hash_keys "$1")
 }
 
