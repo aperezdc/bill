@@ -113,6 +113,29 @@ Gathers all keys of a given hash table and print one key per line.
 
 
 
+hash_keys_escaped
+-----------------
+
+::
+
+  hash_keys_escaped hash_id
+
+
+Gathers all keys of a given hash table and print one key per line.
+Unlike hash_keys_, elements are escaped so you can reuse the output
+for gathering the key names into an array:
+
+.. sourcecode:: bash
+
+    h=$(hash_new)
+    for i in $(seq 10) ; do
+        hash_set $h "key $i" "value $i"
+    done
+    h_heys=( $(hash_keys_escaped $h) )
+
+
+
+
 hash_clear
 ----------
 

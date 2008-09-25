@@ -80,6 +80,9 @@ hash_has () {
 hash_keys_iter () {
     local _a _b _c _d key hl=${#1}
     while read _a _b _c _d key ; do
+        if [[ -z $key ]] && [[ -n $_d ]] ; then
+            key=$_d
+        fi
         [[ ${key::$hl} = $1 ]] && "$2" "$1" "${key:$hl}"
     done < <(builtin hash -l)
 }
@@ -93,7 +96,37 @@ hash_keys ()
 {
     local _a _b _c _d key hl=${#1}
     while read _a _b _c _d key ; do
+        if [[ -z $key ]] && [[ -n $_d ]] ; then
+            key=$_d
+        fi
         [[ ${key::$hl} = $1 ]] && echo "${key:$hl}"
+    done < <(builtin hash -l)
+}
+
+
+
+#++ hash_keys_escaped hash_id
+#
+#   Gathers all keys of a given hash table and print one key per line.
+#   Unlike hash_keys_, elements are escaped so you can reuse the output
+#   for gathering the key names into an array:
+#
+#   .. sourcecode:: bash
+#
+#       h=$(hash_new)
+#       for i in $(seq 10) ; do
+#           hash_set $h "key $i" "value $i"
+#       done
+#       h_heys=( $(hash_keys_escaped $h) )
+#--
+hash_keys_escaped ()
+{
+    local _a _b _c _d key hl=${#1}
+    while read _a _b _c _d key ; do
+        if [[ -z $key ]] && [[ -n $_d ]] ; then
+            key=$_d
+        fi
+        [[ ${key::$hl} = $1 ]] && printf "%q\n" "${key:$hl}"
     done < <(builtin hash -l)
 }
 
