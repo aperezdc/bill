@@ -68,6 +68,22 @@ div#wrap-outer {
 }
 
 
+img.align-right, div.figure.align-right {
+	float: right;
+	clear: right;
+	margin: 0 0 1em 1em;
+	border: 1px solid #eee;
+}
+
+
+div.figure p.caption {
+	font-style: italic;
+	color: #aaa;
+	text-align: center;
+	font-size: 80%;
+}
+
+
 div#wrap-inner {
 	min-width: 608px;
 	background: url(img/vshade-trans-black.png) 0 0 repeat-y;

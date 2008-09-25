@@ -25,10 +25,16 @@ The Bash Improved Leveraging Library
 Features
 ========
 
+.. class:: align-right
+.. figure:: img/architecture.png
+
+   Bill architecture
+
 As a quick summary, Bill brings to you:
 
 * Module system for shell code.
 * Standard `library <module-index.html>`__ (batteries included!)
+* `Billets <billets.html>`_ container.
 * Creation of `standalone <deploy.html>`__ scripts.
 * Tools for documentation_ generation.
 
@@ -62,16 +68,25 @@ Documentation
 * The `tutorial <tutorial.html>`__ is a quick reading to get started with
   the Bill framework.
 
-* `Code style guidelines <codestyle.html>`__. Contains tips on how to write
-  shell code.
-
-* How to `contribute with Bill <contribute.html>`__.
-
 * `Deploying Bill scripts <deploy.html>`__. A must if you plan to distribute
   your shell code and being nice to others not requiring them to have Bill
   installed.
 
 * Standard library `module index <module-index.html>`__
+
+* Billets_ manual. Covers set-up, administration and a quick tour on
+  developing billets.
+
+
+Development
+===========
+
+* How to `contribute with Bill <contribute.html>`__.
+
+* Development `road map <roadmap.html>`__.
+
+* `Code style guidelines <codestyle.html>`__. Contains tips on how to write
+  shell code.
 
 
 .. vim: expandtab filetype=rst shiftwidth=4 tabstop=4 spell spelllang=en
