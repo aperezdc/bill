@@ -1,0 +1,53 @@
+================
+ Billets Manual
+================
+:Author: Adrian Perez <aperez@igalia.com>
+:Copyright: 2008 Igalia S.L.
+:License: GPL v2
+:Abstract: Documents how to run *billets* over the HTTP protocol and
+  administrate the *billets container*, as well as a quick introduction
+  to *billet development* suitable for new developers.
+
+.. contents::
+
+
+Background
+==========
+
+Architecture
+------------
+
+.. class:: align-right
+.. figure:: img/architecture.png
+
+   Billets architecture
+
+
+Container
+---------
+
+Billets
+-------
+
+
+Managing the container
+======================
+
+Starting and stopping
+---------------------
+
+Adding a billet
+---------------
+
+Disabling a billet
+------------------
+
+Removing a billet
+-----------------
+
+
+Billet development
+==================
+
+
+.. vim: filetype=rst expandtab tabstop=2 shiftwidth=2

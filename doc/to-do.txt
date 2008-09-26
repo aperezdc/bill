@@ -11,6 +11,8 @@
 Important
 =========
 * Write notes on how to write unit tests and use ``butt`` to run them.
+* Change usage of shell expansions ``${var// ... }`` for quoting to ``printf
+  "%q"``.
 
 
 Not so-important

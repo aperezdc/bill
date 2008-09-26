@@ -413,6 +413,72 @@ bizarre characters inside, which would normally confuse the shell. Well, not
 the shell but you when trying to debug the problem.
 
 
+Built-in trick galore
+---------------------
+
+Some of the Bash built-in commands have some unusual features which may look
+as nonsense, but they serve very concrete purposes and you will be glad of
+knowing about them when the time to use them arrives. Some of the commands
+are only outlined, so make sure to have the `Bash manual`__ at hand.
+
+__ http://www.gnu.org/software/bash/manual/html_node/
+
+
+printf -v
+~~~~~~~~~
+Using the ``-v`` flag you output of ``printf`` will be assigned to a shell
+variable instead of printed to standard output. As an example, the following
+two sentences produce the same result, but the second one avoids doing an
+extra shell expansions and capturing output for assignment:
+
+.. sourcecode:: bash
+
+    version_string=$(printf "Bash %i.%02i" ${BASH_VERSINFO[0]} ${BASH_VERSINFO[1]})
+    printf -v version_string "Bash %i.%02i" ${BASH_VERSINFO[0]} ${BASH_VERSINFO[1]}
+
+This can be very useful in conjunction with `printf %q`_.
+
+
+printf %q
+~~~~~~~~~
+The ``%q`` specifier formats the given argument in a way that it is reusable
+as further shell code input, i.e. to be reused as input for the ``eval``
+command, by adding escape sequences to those characters which are interpreted
+by the shell. This is very useful with untrusted input supplied by the user
+or third party applications:
+
+.. sourcecode:: bash
+
+    read -p 'Text: ' line
+    eval "foo='$(printf %q "$line")'"
+
+
+caller
+~~~~~~
+This will output the line number and file name from which the current
+function was called. This can be used to craft your own debugging functions
+or printing backtraces when an error occurs.
+
+
+declare
+~~~~~~~
+Being declarative and using ``declare`` means that Bash will be able of
+producing better error messages and do some basic type checking.
+
+.. note:: When ``declare`` is used inside a function, it declares local
+    variables, like ``local`` does.
+
+Quick summary of available flags, which can be used with ``local`` as well:
+
+-a   Declare arrays.
+-f   Declare functions.
+-i   Declare integers.
+-r   Set variables as read-only. Assigning new values will produce an error.
+-t   Mark functions to trigger the ``DEBUG`` and ``RETURN`` traps when called.
+-x   Variables are exported to subshells. This is similar to use ``export``.
+
+
+
 Use the *source*, Luke
 ----------------------
 .. tip:: Use ``source`` as it is clearer than ``.`` (dot).

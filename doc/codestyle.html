@@ -29,34 +29,41 @@ code in general and when using the Bill library in particular.</p>
 <div class="contents topic">
 <p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference" href="#shell-independent-tips" id="id2" name="id2">Shell-independent tips</a><ul>
-<li><a class="reference" href="#quoting" id="id3" name="id3">Quoting</a><ul>
-<li><a class="reference" href="#exceptions" id="id4" name="id4">Exceptions</a></li>
-<li><a class="reference" href="#single-quotes" id="id5" name="id5">Single quotes</a></li>
+<li><a class="reference" href="#shell-independent-tips" id="id3" name="id3">Shell-independent tips</a><ul>
+<li><a class="reference" href="#quoting" id="id4" name="id4">Quoting</a><ul>
+<li><a class="reference" href="#exceptions" id="id5" name="id5">Exceptions</a></li>
+<li><a class="reference" href="#single-quotes" id="id6" name="id6">Single quotes</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#structured-programming" id="id6" name="id6">Structured programming</a></li>
-<li><a class="reference" href="#fork-exec" id="id7" name="id7">fork+exec</a></li>
-<li><a class="reference" href="#internal-commands" id="id8" name="id8">Internal commands</a></li>
-<li><a class="reference" href="#avoid-using-backticks" id="id9" name="id9">Avoid using backticks</a></li>
-<li><a class="reference" href="#last-things-occur-last" id="id10" name="id10">Last things occur... last</a></li>
+<li><a class="reference" href="#structured-programming" id="id7" name="id7">Structured programming</a></li>
+<li><a class="reference" href="#fork-exec" id="id8" name="id8">fork+exec</a></li>
+<li><a class="reference" href="#internal-commands" id="id9" name="id9">Internal commands</a></li>
+<li><a class="reference" href="#avoid-using-backticks" id="id10" name="id10">Avoid using backticks</a></li>
+<li><a class="reference" href="#last-things-occur-last" id="id11" name="id11">Last things occur... last</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#bashisms" id="id11" name="id11">“Bashisms”</a><ul>
-<li><a class="reference" href="#locality-is-good" id="id12" name="id12">Locality is good</a></li>
-<li><a class="reference" href="#cleaning-up" id="id13" name="id13">Cleaning up</a></li>
-<li><a class="reference" href="#reading-file-contents" id="id14" name="id14">Reading file contents</a></li>
-<li><a class="reference" href="#arrays" id="id15" name="id15">Arrays</a></li>
-<li><a class="reference" href="#use-the-source-luke" id="id16" name="id16">Use the <em>source</em>, Luke</a></li>
+<li><a class="reference" href="#bashisms" id="id12" name="id12">“Bashisms”</a><ul>
+<li><a class="reference" href="#locality-is-good" id="id13" name="id13">Locality is good</a></li>
+<li><a class="reference" href="#cleaning-up" id="id14" name="id14">Cleaning up</a></li>
+<li><a class="reference" href="#reading-file-contents" id="id15" name="id15">Reading file contents</a></li>
+<li><a class="reference" href="#arrays" id="id16" name="id16">Arrays</a></li>
+<li><a class="reference" href="#built-in-trick-galore" id="id17" name="id17">Built-in trick galore</a><ul>
+<li><a class="reference" href="#printf-v" id="id18" name="id18">printf -v</a></li>
+<li><a class="reference" href="#printf-q" id="id19" name="id19">printf %q</a></li>
+<li><a class="reference" href="#caller" id="id20" name="id20">caller</a></li>
+<li><a class="reference" href="#declare" id="id21" name="id21">declare</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#philosophy-basics" id="id17" name="id17">Philosophy basics</a></li>
+<li><a class="reference" href="#use-the-source-luke" id="id22" name="id22">Use the <em>source</em>, Luke</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#philosophy-basics" id="id23" name="id23">Philosophy basics</a></li>
 </ul>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id2" id="shell-independent-tips" name="shell-independent-tips">Shell-independent tips</a></h1>
+<h1><a class="toc-backref" href="#id3" id="shell-independent-tips" name="shell-independent-tips">Shell-independent tips</a></h1>
 <div class="section">
-<h2><a class="toc-backref" href="#id3" id="quoting" name="quoting">Quoting</a></h2>
+<h2><a class="toc-backref" href="#id4" id="quoting" name="quoting">Quoting</a></h2>
 <blockquote>
 <p>Just in terms of allocation of time resources, religion is not very
 efficient. There's a lot more I could be doing on a Sunday morning.</p>
@@ -96,7 +103,7 @@ print only a single line:</p>
 <p>Subtle may appear due to due to missing quotes, and in general you will
 <em>always</em> want to quote variable expansions.</p>
 <div class="section">
-<h3><a class="toc-backref" href="#id4" id="exceptions" name="exceptions">Exceptions</a></h3>
+<h3><a class="toc-backref" href="#id5" id="exceptions" name="exceptions">Exceptions</a></h3>
 <p>There are some cases where quoting is not necessary at all:</p>
 <ul>
 <li><p class="first">When assigning one variable the contents of another. The shell parser
@@ -154,7 +161,7 @@ print_list_items <span class="s1">&#39;:&#39;</span> <span class="s2">&quot;$PAT
 </pre></div>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id5" id="single-quotes" name="single-quotes">Single quotes</a></h3>
+<h3><a class="toc-backref" href="#id6" id="single-quotes" name="single-quotes">Single quotes</a></h3>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use single quotes to enclose string literals.</p>
@@ -166,7 +173,7 @@ makes them a great feature for defining multi-line strings.</p>
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id6" id="structured-programming" name="structured-programming">Structured programming</a></h2>
+<h2><a class="toc-backref" href="#id7" id="structured-programming" name="structured-programming">Structured programming</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use shell functions to organize your code, as you would do in
@@ -180,7 +187,7 @@ to write modular, reusable code.</p>
 avoiding calling <a class="reference" href="#fork-exec">fork+exec</a> when invoking them.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id7" id="fork-exec" name="fork-exec">fork+exec</a></h2>
+<h2><a class="toc-backref" href="#id8" id="fork-exec" name="fork-exec">fork+exec</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Avoid calling external commands when possible, especially
@@ -196,7 +203,7 @@ done quite efficiently in recent operating systems, it is far more work
 than calling <a class="reference" href="#internal-commands">internal commands</a> defined by the shell.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id8" id="internal-commands" name="internal-commands">Internal commands</a></h2>
+<h2><a class="toc-backref" href="#id9" id="internal-commands" name="internal-commands">Internal commands</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use shell built-in commands whenever possible.</p>
@@ -218,7 +225,7 @@ kill
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id9" id="avoid-using-backticks" name="avoid-using-backticks">Avoid using backticks</a></h2>
+<h2><a class="toc-backref" href="#id10" id="avoid-using-backticks" name="avoid-using-backticks">Avoid using backticks</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">$(command)</span></tt> (POSIX command expansion) instead of
@@ -239,7 +246,7 @@ you cannot nest them, like in the following example:</p>
 <p>In short: beware of backticks!</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id10" id="last-things-occur-last" name="last-things-occur-last">Last things occur... last</a></h2>
+<h2><a class="toc-backref" href="#id11" id="last-things-occur-last" name="last-things-occur-last">Last things occur... last</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">If the exit status of a function is the result of executing a
@@ -274,12 +281,12 @@ following:</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id11" id="bashisms" name="bashisms">“Bashisms”</a></h1>
+<h1><a class="toc-backref" href="#id12" id="bashisms" name="bashisms">“Bashisms”</a></h1>
 <p><a class="reference" href="http://www.gnu.org/software/bash">Bash</a> is a <em>better</em> <tt class="docutils literal"><span class="pre">sh</span></tt>, but it is more than that: it encourages some
 ways of doing things which use specific extensions provided by the shell.
 This is the reason why some people call them “bashisms”.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id12" id="locality-is-good" name="locality-is-good">Locality is good</a></h2>
+<h2><a class="toc-backref" href="#id13" id="locality-is-good" name="locality-is-good">Locality is good</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">local</span></tt> to define local variables inside functions.</p>
@@ -305,7 +312,7 @@ command:</p>
 </pre></div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id13" id="cleaning-up" name="cleaning-up">Cleaning up</a></h2>
+<h2><a class="toc-backref" href="#id14" id="cleaning-up" name="cleaning-up">Cleaning up</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">The <tt class="docutils literal"><span class="pre">unset</span></tt> built-in can be used to delete variables <em>and</em>
@@ -317,7 +324,7 @@ sometimes it may be needed to remove items from the environment. This
 command will also remove definitions of functions.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id14" id="reading-file-contents" name="reading-file-contents">Reading file contents</a></h2>
+<h2><a class="toc-backref" href="#id15" id="reading-file-contents" name="reading-file-contents">Reading file contents</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">$(&lt;</span> <span class="pre">...)</span></tt> instead of <tt class="docutils literal"><span class="pre">$(cat</span> <span class="pre">...)</span></tt> when possible.</p>
@@ -364,7 +371,7 @@ parse huge line-based text files:</p>
 </pre></div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id15" id="arrays" name="arrays">Arrays</a></h2>
+<h2><a class="toc-backref" href="#id16" id="arrays" name="arrays">Arrays</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Consider using arrays when handling lists of data insteads of lists
@@ -399,7 +406,77 @@ bizarre characters inside, which would normally confuse the shell. Well, not
 the shell but you when trying to debug the problem.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id16" id="use-the-source-luke" name="use-the-source-luke">Use the <em>source</em>, Luke</a></h2>
+<h2><a class="toc-backref" href="#id17" id="built-in-trick-galore" name="built-in-trick-galore">Built-in trick galore</a></h2>
+<p>Some of the Bash built-in commands have some unusual features which may look
+as nonsense, but they serve very concrete purposes and you will be glad of
+knowing about them when the time to use them arrives. Some of the commands
+are only outlined, so make sure to have the <a class="reference" href="http://www.gnu.org/software/bash/manual/html_node/">Bash manual</a> at hand.</p>
+<div class="section">
+<h3><a class="toc-backref" href="#id18" id="printf-v" name="printf-v">printf -v</a></h3>
+<p>Using the <tt class="docutils literal"><span class="pre">-v</span></tt> flag you output of <tt class="docutils literal"><span class="pre">printf</span></tt> will be assigned to a shell
+variable instead of printed to standard output. As an example, the following
+two sentences produce the same result, but the second one avoids doing an
+extra shell expansions and capturing output for assignment:</p>
+<div class="highlight"><pre><span class="nv">version_string</span><span class="o">=</span><span class="k">$(</span><span class="nb">printf</span> <span class="s2">&quot;Bash %i.%02i&quot;</span> <span class="k">${</span><span class="nv">BASH_VERSINFO</span><span class="p">[0]</span><span class="k">}</span> <span class="k">${</span><span class="nv">BASH_VERSINFO</span><span class="p">[1]</span><span class="k">})</span>
+<span class="nb">printf</span> -v version_string <span class="s2">&quot;Bash %i.%02i&quot;</span> <span class="k">${</span><span class="nv">BASH_VERSINFO</span><span class="p">[0]</span><span class="k">}</span> <span class="k">${</span><span class="nv">BASH_VERSINFO</span><span class="p">[1]</span><span class="k">}</span>
+</pre></div>
+<p>This can be very useful in conjunction with <a class="reference" href="#printf-q">printf %q</a>.</p>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id19" id="printf-q" name="printf-q">printf %q</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">%q</span></tt> specifier formats the given argument in a way that it is reusable
+as further shell code input, i.e. to be reused as input for the <tt class="docutils literal"><span class="pre">eval</span></tt>
+command, by adding escape sequences to those characters which are interpreted
+by the shell. This is very useful with untrusted input supplied by the user
+or third party applications:</p>
+<div class="highlight"><pre><span class="nb">read</span> -p <span class="s1">&#39;Text: &#39;</span> line
+<span class="nb">eval</span> <span class="s2">&quot;foo=&#39;$(printf %q &quot;</span><span class="nv">$line</span><span class="s2">&quot;)&#39;&quot;</span>
+</pre></div>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id20" id="caller" name="caller">caller</a></h3>
+<p>This will output the line number and file name from which the current
+function was called. This can be used to craft your own debugging functions
+or printing backtraces when an error occurs.</p>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id21" id="declare" name="declare">declare</a></h3>
+<p>Being declarative and using <tt class="docutils literal"><span class="pre">declare</span></tt> means that Bash will be able of
+producing better error messages and do some basic type checking.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">When <tt class="docutils literal"><span class="pre">declare</span></tt> is used inside a function, it declares local
+variables, like <tt class="docutils literal"><span class="pre">local</span></tt> does.</p>
+</div>
+<p>Quick summary of available flags, which can be used with <tt class="docutils literal"><span class="pre">local</span></tt> as well:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-a</span></kbd></td>
+<td>Declare arrays.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span></kbd></td>
+<td>Declare functions.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-i</span></kbd></td>
+<td>Declare integers.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-r</span></kbd></td>
+<td>Set variables as read-only. Assigning new values will produce an error.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-t</span></kbd></td>
+<td>Mark functions to trigger the <tt class="docutils literal"><span class="pre">DEBUG</span></tt> and <tt class="docutils literal"><span class="pre">RETURN</span></tt> traps when called.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-x</span></kbd></td>
+<td>Variables are exported to subshells. This is similar to use <tt class="docutils literal"><span class="pre">export</span></tt>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id22" id="use-the-source-luke" name="use-the-source-luke">Use the <em>source</em>, Luke</a></h2>
 <div class="tip">
 <p class="first admonition-title">Tip</p>
 <p class="last">Use <tt class="docutils literal"><span class="pre">source</span></tt> as it is clearer than <tt class="docutils literal"><span class="pre">.</span></tt> (dot).</p>
@@ -411,7 +488,7 @@ makes clear that one wants to read <em>source</em> code.</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id17" id="philosophy-basics" name="philosophy-basics">Philosophy basics</a></h1>
+<h1><a class="toc-backref" href="#id23" id="philosophy-basics" name="philosophy-basics">Philosophy basics</a></h1>
 <p>And now for something completely different: a quick tour on <a class="reference" href="http://www.faqs.org/docs/artu/ch01s06.html">The Unix
 Philosophy</a>. Having a quick
 summary of the basics at hand is, er, <em>handy</em>. As we are dealing with the

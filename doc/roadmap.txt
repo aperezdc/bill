@@ -1,0 +1,32 @@
+==============
+ Bill Roadmap
+==============
+:Author: Adrian Perez <aperez@igalia.com>
+:Abstract: Provides an overview on the future of Bill.
+
+.. contents::
+
+
+Releses
+=======
+
+  Release early, release often.
+
+  -- Eric S. Raymond
+
+.. class:: tabular
+
++-------+---------+-----------------------------------+
+|Release| Date    | Feature                           |
++=======+=========+===================================+
+|  0.1  | 11/2008 | Compliant HTTP 1.1 server library |
+|       |         +-----------------------------------+
+|       |         | Billets container                 |
+|       |         +-----------------------------------+
+|       |         | Billets API specification         |
++-------+---------+-----------------------------------+
+|  0.2  |         |                                   |
++-------+---------+-----------------------------------+
+
+
+.. vim: filetype=rst shiftwidth=2 tabstop=2 expandtab

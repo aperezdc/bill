@@ -5,7 +5,7 @@ body, html, h1, h2, h3, h4, h5, h6, ul, ol, dl, p {
 		"Lucida Sans Unicode", "Lucida", "Geneva", "Helvetica", sans-serif;
 }
 
-pre, tt {
+pre, tt, kbd {
 	font-family: "Droid Sans Mono", monospace;
 }
 
@@ -580,6 +580,14 @@ table.docinfo {
 	border-radius: 7px;
 	-moz-border-radius: 7px;
 	-webkit-border-radius: 7px;
+}
+
+table.option-list {
+	margin: 0.5em 2em;
+}
+
+table.option-list td {
+	padding:0 1em;
 }
 
 table.modules, table.tabular {
