@@ -12,7 +12,7 @@
 #   .. contents::
 #--
 
-export BILL_VERSION='0.1'
+declare -rx BILL_VERSION='0.1'
 
 
 #++ warn message
@@ -52,6 +52,8 @@ die ()
 #--
 need ()
 {
+    local tool
+
     for tool in "$@"
     do
         type -P "$tool" &> /dev/null || return 1
@@ -80,6 +82,8 @@ declare -ax bill_loaded_modules=( bill/builtins )
 #--
 use ()
 {
+    local modname path
+
     # Check whether the module is already loaded.
     for modname in "${bill_loaded_modules[@]}"
     do
@@ -148,3 +152,4 @@ main ()
 
 
 declare -xf use die warn need main
+

@@ -40,7 +40,7 @@ string_lower ()
 #--
 string_length ()
 {
-    local joined="$*"
+    local -r joined="$*"
     echo "${#joined}"
 }
 
@@ -52,7 +52,7 @@ string_length ()
 #--
 string_startswith ()
 {
-    local prefix_length=$(string_length "$2")
+    local -r prefix_length=$(string_length "$2")
     [[ ${1::$prefix_length} = $2 ]]
 }
 
@@ -64,7 +64,7 @@ string_startswith ()
 #--
 string_endswith ()
 {
-    local suffix_length=$(string_length "$2")
+    local -r suffix_length=$(string_length "$2")
     [[ ${1:$(( ${#1} - suffix_length))} = $2 ]]
 }
 
@@ -82,7 +82,7 @@ string_endswith ()
 #--
 string_ascii_code ()
 {
-    local format=${2:-d}
+    local -r format=${2:-d}
     printf "%${format::1}" "'${1::1}"
 }
 
@@ -97,9 +97,9 @@ string_ascii_code ()
 #--
 string_ascii ()
 {
+    local -r length=$(string_length "$1")
+    local -r sep=${2:-' '}
     local format=${3:-d}
-    local length=$(string_length "$1")
-    local sep=${2:-' '}
     local i
 
     printf "%${format::1}" "'${1:0:1}"
@@ -129,7 +129,7 @@ string_contains ()
 #--
 string_join ()
 {
-    local saved_IFS=$IFS
+    local -r saved_IFS=$IFS
     IFS=$1
     shift
     echo "$*"

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title>String manipulation</title>
 <meta name="author" content="Adrián Pérez &lt;aperez&#64;udc.es&gt;" />
 <meta name="copyright" content="Igalia S.L., 2008" />
@@ -17,7 +17,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrián Pérez &lt;<a class="reference external" href="mailto:aperez&#64;udc.es">aperez&#64;udc.es</a>&gt;</td></tr>
+<td>Adrián Pérez &lt;<a class="reference" href="mailto:aperez&#64;udc.es">aperez&#64;udc.es</a>&gt;</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>Igalia S.L., 2008</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
@@ -28,62 +28,62 @@
 <p class="topic-title first">Abstract</p>
 <p>Provides common functions used to manipulate text strings.</p>
 </div>
-<div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<div class="contents topic">
+<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference internal" href="#string-upper" id="id1">string_upper</a></li>
-<li><a class="reference internal" href="#string-lower" id="id2">string_lower</a></li>
-<li><a class="reference internal" href="#string-length" id="id3">string_length</a></li>
-<li><a class="reference internal" href="#string-startswith" id="id4">string_startswith</a></li>
-<li><a class="reference internal" href="#string-endswith" id="id5">string_endswith</a></li>
-<li><a class="reference internal" href="#string-ascii-code" id="id6">string_ascii_code</a></li>
-<li><a class="reference internal" href="#string-ascii" id="id7">string_ascii</a></li>
-<li><a class="reference internal" href="#string-contains" id="id8">string_contains</a></li>
-<li><a class="reference internal" href="#string-join" id="id9">string_join</a></li>
-<li><a class="reference internal" href="#string-lstrip" id="id10">string_lstrip</a></li>
-<li><a class="reference internal" href="#string-rstrip" id="id11">string_rstrip</a></li>
-<li><a class="reference internal" href="#string-strip" id="id12">string_strip</a></li>
+<li><a class="reference" href="#string-upper" id="id1" name="id1">string_upper</a></li>
+<li><a class="reference" href="#string-lower" id="id2" name="id2">string_lower</a></li>
+<li><a class="reference" href="#string-length" id="id3" name="id3">string_length</a></li>
+<li><a class="reference" href="#string-startswith" id="id4" name="id4">string_startswith</a></li>
+<li><a class="reference" href="#string-endswith" id="id5" name="id5">string_endswith</a></li>
+<li><a class="reference" href="#string-ascii-code" id="id6" name="id6">string_ascii_code</a></li>
+<li><a class="reference" href="#string-ascii" id="id7" name="id7">string_ascii</a></li>
+<li><a class="reference" href="#string-contains" id="id8" name="id8">string_contains</a></li>
+<li><a class="reference" href="#string-join" id="id9" name="id9">string_join</a></li>
+<li><a class="reference" href="#string-lstrip" id="id10" name="id10">string_lstrip</a></li>
+<li><a class="reference" href="#string-rstrip" id="id11" name="id11">string_rstrip</a></li>
+<li><a class="reference" href="#string-strip" id="id12" name="id12">string_strip</a></li>
 </ul>
 </div>
-<div class="section" id="string-upper">
-<h1><a class="toc-backref" href="#id1">string_upper</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id1" id="string-upper" name="string-upper">string_upper</a></h1>
 <pre class="literal-block">
 string_upper text
 </pre>
 <p>Converts a string to upper case.</p>
 </div>
-<div class="section" id="string-lower">
-<h1><a class="toc-backref" href="#id2">string_lower</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id2" id="string-lower" name="string-lower">string_lower</a></h1>
 <pre class="literal-block">
 string_lower text
 </pre>
 <p>Converts a string to lower case.</p>
 </div>
-<div class="section" id="string-length">
-<h1><a class="toc-backref" href="#id3">string_length</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id3" id="string-length" name="string-length">string_length</a></h1>
 <pre class="literal-block">
 string_length text
 </pre>
 <p>Obtains the length of a string.</p>
 </div>
-<div class="section" id="string-startswith">
-<h1><a class="toc-backref" href="#id4">string_startswith</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id4" id="string-startswith" name="string-startswith">string_startswith</a></h1>
 <pre class="literal-block">
 string_startswith text prefix
 </pre>
 <p>Checks whether a string starts with a given prefix. Exit status is
 non-zero if the condition is not met.</p>
 </div>
-<div class="section" id="string-endswith">
-<h1><a class="toc-backref" href="#id5">string_endswith</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id5" id="string-endswith" name="string-endswith">string_endswith</a></h1>
 <pre class="literal-block">
 string_endswith text suffix
 </pre>
 <p>Checks whether a string ends with a given suffix. Exit status is
 non-zero if the condition is not met.</p>
 </div>
-<div class="section" id="string-ascii-code">
-<h1><a class="toc-backref" href="#id6">string_ascii_code</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id6" id="string-ascii-code" name="string-ascii-code">string_ascii_code</a></h1>
 <pre class="literal-block">
 string_ascii_code text [ format ]
 </pre>
@@ -97,35 +97,35 @@ in decimal by default, but the behaviour can be changed by passing the
 <li><tt class="docutils literal"><span class="pre">o</span></tt> for octal output.</li>
 </ul>
 </div>
-<div class="section" id="string-ascii">
-<h1><a class="toc-backref" href="#id7">string_ascii</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id7" id="string-ascii" name="string-ascii">string_ascii</a></h1>
 <pre class="literal-block">
 string_ascii text [ separator ] [ format ]
 </pre>
 <p>Returns ASCII codes for <em>all</em> characters in a string. Output is in
 decimal by default, but format can be changed using the same specifiers
-as for the <a class="reference internal" href="#string-ascii-code">string_ascii_code</a> function. ASCII codes will be separated
+as for the <a class="reference" href="#string-ascii-code">string_ascii_code</a> function. ASCII codes will be separated
 using the given <tt class="docutils literal"><span class="pre">separator</span></tt> string. You can pass an empty string to
 join the ASCII codes.</p>
 </div>
-<div class="section" id="string-contains">
-<h1><a class="toc-backref" href="#id8">string_contains</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id8" id="string-contains" name="string-contains">string_contains</a></h1>
 <pre class="literal-block">
 string_contains text substring
 </pre>
 <p>Checks whether the given strings contains a substring inside it. Exit
 status is non-zero if the condition is not satisfied.</p>
 </div>
-<div class="section" id="string-join">
-<h1><a class="toc-backref" href="#id9">string_join</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id9" id="string-join" name="string-join">string_join</a></h1>
 <pre class="literal-block">
 string_join separator [ string1 [ string2 ... [ stringN ] ] ]
 </pre>
 <p>Concatenates all given strings into a single one using the specified
 separator.</p>
 </div>
-<div class="section" id="string-lstrip">
-<h1><a class="toc-backref" href="#id10">string_lstrip</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id10" id="string-lstrip" name="string-lstrip">string_lstrip</a></h1>
 <pre class="literal-block">
 string_lstrip
 </pre>
@@ -133,8 +133,8 @@ string_lstrip
 text. Works like a filter, using both standard input and
 output.</p>
 </div>
-<div class="section" id="string-rstrip">
-<h1><a class="toc-backref" href="#id11">string_rstrip</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id11" id="string-rstrip" name="string-rstrip">string_rstrip</a></h1>
 <pre class="literal-block">
 string_rstrip
 </pre>
@@ -142,8 +142,8 @@ string_rstrip
 text. Works like a filter, using both standard input and
 output.</p>
 </div>
-<div class="section" id="string-strip">
-<h1><a class="toc-backref" href="#id12">string_strip</a></h1>
+<div class="section">
+<h1><a class="toc-backref" href="#id12" id="string-strip" name="string-strip">string_strip</a></h1>
 <pre class="literal-block">
 string_strip
 </pre>

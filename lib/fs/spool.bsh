@@ -69,7 +69,7 @@
 #--
 spool_make_uid ()
 {
-    local uuidgen=$(type -P uuidgen | head -1)
+    local -r uuidgen=$(type -P uuidgen | head -1)
 
     if [ "$uuidgen" ] && [ -x "$uuidgen" ]
     then
@@ -89,7 +89,7 @@ spool_make_uid ()
 #--
 spool_mkdir ()
 {
-    local item="$1/t:$(spool_make_uid)"
+    local -r item="$1/t:$(spool_make_uid)"
     mkdir "$item"
     echo  "$item"
 }
@@ -102,7 +102,7 @@ spool_mkdir ()
 #--
 spool_touch ()
 {
-    local item="$1/t:$(spool_make_uid)"
+    local -r item="$1/t:$(spool_make_uid)"
     touch "$item"
     echo  "$item"
 }
@@ -115,7 +115,7 @@ spool_touch ()
 #--
 spool_state_get ()
 {
-    local item=${1##*/}
+    local -r item=${1##*/}
     echo "${item%%:*}"
 }
 
@@ -129,9 +129,9 @@ spool_state_get ()
 #--
 spool_state_set ()
 {
-    local item=${1##*/}
-    local sdir=${1%/*}
-    local newi="$2:${item#*:}"
+    local -r item=${1##*/}
+    local -r sdir=${1%/*}
+    local -r newi="$2:${item#*:}"
     mv "$1" "$sdir/$newi"
     echo "$sdir/$newi"
 }
@@ -168,8 +168,8 @@ spool_zap ()
 #--
 spool_items ()
 {
-    local kind=${2:-c}
-    local nullglob=$(shopt -q nullglob && echo true || echo false)
+    local -r kind=${2:-c}
+    local -r nullglob=$(shopt -q nullglob && echo true || echo false)
 
     shopt -q -s nullglob
     for item in "$1/$kind:"*
@@ -188,6 +188,8 @@ spool_items ()
 #--
 spool_cleanup ()
 {
+    local item
+
     for item in $(spool_items "$1" t)
     do
         spool_zap "$item"

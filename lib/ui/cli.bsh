@@ -71,6 +71,7 @@ cli_optparse ()
         showhelp=true
         shift
     fi
+    declare -r showhelp
 
     local applydefaults=true
     if [ "$1" = "-n" ]
@@ -78,10 +79,13 @@ cli_optparse ()
         applydefaults=false
         shift
     fi
+    declare -r applydefaults
 
-    local all="$1[@]" ; all=( "${!all}" )
-    local opt=$2
-    local arg= index= k= v=
+    local all="$1[@]"
+    local -ar all=( "${!all}" )
+
+    local -r opt=$2
+    local arg index k v
     shift 2
 
     $applydefaults && __cli_optparse_apply_defaults
@@ -119,7 +123,8 @@ cli_optparse ()
 
 __cli_optparse_help ()
 {
-    local o d t i l=${#all[@]}
+    local o d t i
+    local -r l=${#all[@]}
 
     printf "Command options:\n"
     for (( i = 0 ; i < l ; i += 3 ))
@@ -134,7 +139,8 @@ __cli_optparse_help ()
 
 __cli_optparse_apply_defaults ()
 {
-    local k v i l=${#all[@]}
+    local k v i
+    local -r l=${#all[@]}
 
     for (( i = 0 ; i < l ; i += 3 ))
     do
@@ -148,7 +154,8 @@ __cli_optparse_apply_defaults ()
 
 __cli_optparse_find_short ()
 {
-    local c i l=${#all[@]}
+    local c i
+    local -r l=${#all[@]}
 
     for (( i = 0 ; i < l ; i += 3 ))
     do
@@ -165,7 +172,8 @@ __cli_optparse_find_short ()
 
 __cli_optparse_find_long ()
 {
-    local c i l=${#all[@]}
+    local c i
+    local -r l=${#all[@]}
 
     for (( i = 0 ; i < l ; i += 3 ))
     do
@@ -230,9 +238,12 @@ cli_qa_batch ()
         forceask=true
         shift
     fi
+    declare -r forceask
 
-    local questions="$2[@]" ; questions=( "${!questions}" )
-    local val i tmp ql=${#questions[@]}
+    local questions="$2[@]"
+    local -ar questions=( "${!questions}" )
+    local -r ql=${#questions[@]}
+    local val i tmp
 
     for (( i = 0; i < ql; i += 3 ))
     do
@@ -253,8 +264,8 @@ cli_qa_batch ()
 
 __cli_optparse_demo ()
 {
-    local args=$(hash_new)
-    local opts=(
+    local -r args=$(hash_new)
+    local -ar opts=(
         q:quiet false 'Be quiet'
         f:file  '-'   'Input file'
     )

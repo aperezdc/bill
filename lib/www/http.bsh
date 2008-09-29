@@ -87,7 +87,7 @@ http_response_by_code ()
 }
 
 
-http_error_document_template='<html>
+declare -r http_error_document_template='<html>
   <head>
     <title>Error: ${err_text}</title>
     <style type="text/css">
@@ -108,10 +108,10 @@ http_error_document_template='<html>
 
 
 __http_CR=$(printf "\015")
-
 __http_server="bash/${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}"
 __http_server="${__http_server} bill-www-http/$BILL_VERSION"
 
+declare -r __http_CR __http_server
 
 
 #++ http_mimetype_guess path
@@ -165,9 +165,9 @@ fi
 #--
 http_error_document ()
 {
-    local mess=$(http_response_by_code $1)
+    local -r mess=$(http_response_by_code $1)
     shift
-    local desc=$(string_join $'\n' "$@")
+    local -r desc=$(string_join $'\n' "$@")
     [[ -z $desc ]] && desc='No additional information supplied'
 
     var_err_number=$1       \
@@ -203,8 +203,8 @@ http_response ()
 {
     $__HTTP_HEADER_SENT || die "Cannot reinit an HTTP reponse"
 
-    local code=${1:-200}
-    local mess=${2:-$(http_response_by_code "$code")}
+    local -r code=${1:-200}
+    local -r mess=${2:-$(http_response_by_code "$code")}
     printf "HTTP/1.1 %s %s\r\n" "$code" "$mess"
     __HTTP_HEADER_SENT=false
 }
@@ -252,7 +252,7 @@ http_error ()
 #--
 http_redirect ()
 {
-    local code=${2:-302}
+    local -r code=${2:-302}
     http_log_stderr "$code"
 
     http_response "$code"
@@ -274,13 +274,13 @@ http_redirect ()
 #--
 http_log_stderr ()
 {
-    local mess=$(string_join ' ' "$@")
+    local -r mess=$(string_join ' ' "$@")
     echo "$REQUEST_METHOD $PATH_INFO $HTTP_VERSION - $mess" 1>&2
 }
 
 
 
-http_directory_template='#! local var_i
+declare -r http_directory_template='#! local var_i
 <html>
   <head>
     <title>${path}</title>
@@ -377,7 +377,7 @@ http_handle_GET ()
 #--
 http_handle_request ()
 {
-    local prefix=${1:-'http_handle'}
+    local -r prefix=${1:-'http_handle'}
 
     # Use CGI variables as log as possible, so interfacing with external
     # CGIs will be easier.
@@ -393,7 +393,7 @@ http_handle_request ()
     QUERY_STRING=${PATH_INFO#*\?}
     PATH_INFO=${PATH_INFO%%\?*}
 
-    export REQUEST_METHOD PATH_INFO HTTP_VERSION QUERY_STRING
+    declare -x REQUEST_METHOD PATH_INFO HTTP_VERSION QUERY_STRING
 
     case $HTTP_VERSION in
         HTTP/1.0 | HTTP/1.1)
@@ -408,7 +408,7 @@ http_handle_request ()
             ;;
     esac
 
-    local handler="${prefix}_${REQUEST_METHOD}"
+    local -r handler="${prefix}_${REQUEST_METHOD}"
     if [[ $(type -t "$handler") != 'function' ]]
     then
         http_error 501 "Method $REQUEST_METHOD not implemented"

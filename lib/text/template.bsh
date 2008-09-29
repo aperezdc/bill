@@ -77,8 +77,8 @@ template_IFS='
 #--
 template_expand () {
 
-    local saved_IFS=${IFS}
-    local prefix=${1:-'var_'}
+    local -r saved_IFS=${IFS}
+    local -r prefix=${1:-'var_'}
     local line
     IFS=${template_IFS}
     while read line ; do
@@ -95,7 +95,7 @@ template_expand () {
 
 
 
-declare -a template_expand_cgi_vars=(
+declare -ra template_expand_cgi_vars=(
     CONTENT_LENGTH
     CONTENT_TYPE
     DOCUMENT_ROOT
@@ -134,20 +134,20 @@ declare -a template_expand_cgi_vars=(
 #--
 template_expand_cgi ()
 {
+    local -r prefix=${1:-'var_'}
     local varname
-    local prefix=${1:-'var_'}
 
     # Export CGI vars (in no particular order)
     if [ "$prefix" ]
     then
         for varname in "${template_expand_cgi_vars[@]}"
         do
-            eval "export ${prefix}${varname}='$varname'"
+            eval "declare -xr ${prefix}${varname}='$varname'"
         done
     else
         for varname in "${template_expand_cgi_vars[@]}"
         do
-            eval "export $varname"
+            eval "declare -xr $varname"
         done
     fi
 

@@ -29,7 +29,8 @@ need csplit head mkdir || die "One of csplit, head, or mkdir is missing"
 #--
 form_urldecode ()
 {
-    local saved_IFS=$IFS key= val= line= item=
+    local -r saved_IFS=$IFS
+    local key val line item
 
     while read line
     do
@@ -83,14 +84,16 @@ form_multipart_handle ()
     head -n -1 > "$1/pack"
 
     # Read back boundary marker string.
-    local marker=$(head -1 "$1/pack")
+    local -r marker=$(head -1 "$1/pack")
 
     # Split up parts in components
     csplit -q -z -f "$1/raw/" "$1/pack" "/^$marker/" '{*}'
 
+    local name
+
     for name in "$1/raw"/*
     do
-        local cook=${name##*/}
+        local -r cook=${name##*/}
         # XXX The head invocation is needed to remove the trailing "\r\n" of
         # the input as given in the multipart form data.
         head -c -2 "$name" | mime_decode "$1/headers/$cook" > "$1/body/$cook"

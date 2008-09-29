@@ -49,6 +49,7 @@ use ()
 {
     local old_IFS=$IFS
     local found=false
+    local path
 
     IFS=':'
     for path in $BILLPATH

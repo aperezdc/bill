@@ -18,9 +18,9 @@ need stat  || die "Utility 'stat' not found"
 #--
 twiki_attach ()
 {
-    local twiki=$1
-    local page=$2
-    local path=$3
+    local -r twiki=$1
+    local -r page=$2
+    local -r path=$3
 
     if [ ! -r "$twiki/data/$page.txt" ]
     then
@@ -68,8 +68,8 @@ twiki_attach ()
     chmod +w           "$twiki/pub/$page/$a_name"
 
     # Get file infos
-    local filesize=$(stat -c '%s' "$path")
-    local filedate=$(stat -c '%Y' "$path")
+    local -r filesize=$(stat -c '%s' "$path")
+    local -r filedate=$(stat -c '%Y' "$path")
 
     # Check out a locked copy of the page text, add the metainfo, commit the
     # changes and do a checkout to leave in-place.

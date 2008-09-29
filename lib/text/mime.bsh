@@ -16,6 +16,8 @@
 
 need sed grep cat || die "grep, sed or cat are missing"
 
+use text/string
+
 
 #++ mime_decode [ headersfile ]
 #
@@ -63,26 +65,28 @@ mime_decode ()
 {
     local line key value
     local headersfound=false
-    local metafile=${1:-/dev/stderr}
+    local -r metafile=${1:-/dev/stderr}
 
     # Empty up metafile.
     : > "$metafile"
 
     while read line
     do
-        line=$(echo "$line" | sed -e 's:\r::g')
+        # FIXME: Use a trick like __http_CR in www/http to strip trailing CR
+        # charcters
+        line=$(sed -e 's:\r::g' <<< "$line")
 
-        if echo "$line" | grep -E '^[^:]+:' > /dev/null
+        if "$line" | grep -E '^[^:]+:' <<< "$line" > /dev/null
         then
             # Line has a header name. If this is not the first one, print
             # the previous one to the metafile.
-            [ "$key" ] && echo "H_$key='${value//\'/\\\'}'" >> "$metafile"
+            [ "$key" ] && printf "H_$key=%q\n" "$value" >> "$metafile"
 
             # Now prepare to read the current header storing its initial
             # value.
             headersfound=true
             key=${line%:*}
-            key=$(echo "${key//[^A-Za-z_]/_}" | tr A-Z a-z)
+            key=$(string_lower "${key//[^A-Za-z_]/_}")
             value=$(echo "${line#*:}" | sed -e 's:^[[:space:]]*::')
         elif [ -z "$line" ]
         then
@@ -91,12 +95,12 @@ mime_decode ()
 
             # Input ended, stop the look and hand off output... but be careful
             # to output the last read header before!
-            [ "$key" ] && echo "H_$key='${value//\'/\\\'}'" >> "$metafile"
+            [ "$key" ] && printf "H_$key=%q\n" "$value" >> "$metafile"
             break
         else
             # Line is a continuation of the previous header value. Note that
             # we must remove trailing whitespace.
-            value="${value}$(echo "$line" | sed -e 's:^[[:space:]]*: :')"
+            value="${value}$(sed -e 's:^[[:space:]]*: :' <<< "$line")"
         fi
 
     done

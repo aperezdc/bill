@@ -51,15 +51,16 @@
 map_get ()
 {
     # Calculate the lenght of the map
-    local map_len="$(map_size "$1")"
-    local map_key="$2"
+    local -r map_len=$(map_size "$1")
+    local -r map_key=$2
+    local i
 
     # Loop over map keys.
     for (( i = 0; i < $map_len ; i += 2 ))
     do
         # Check if we founded specified key. In this case print value into
         # stdout and return true.
-        if [ "$(map_item "$1" "$i")" = "$map_key" ]
+        if [[ $(map_item "$1" "$i") = $map_key ]]
         then
             echo "$(map_item "$1" "$((i+1))")"
             return 0
@@ -78,13 +79,14 @@ map_get ()
 #--
 map_key ()
 {
-    local map_len="$(map_size "$1")"
-    local map_val="$2"
+    local -r map_len=$(map_size "$1")
+    local -r map_val=$2
+    local i
 
     # Loop over map keys.
     for (( i = 1; i < $map_len; i += 2 ))
     do
-        if [ "$(map_item "$1" "$i")" = "$map_val" ]
+        if [[ $(map_item "$1" "$i") = $map_val ]]
         then
             echo "$(map_item "$1" "$((i-1))")"
             return 0
@@ -101,8 +103,8 @@ map_key ()
 #--
 map_keys ()
 {
-    local map_len="$(map_size "$1")"
-    local list_out=
+    local -r map_len=$(map_size "$1")
+    local list_out i
 
     for (( i = 0; i < $map_len; i += 2 ))
     do
@@ -111,7 +113,7 @@ map_keys ()
 
     # Finally print result in stdout if list_out contains something.
     # If no result, then condition fails, and return value is automatically
-    # setted to *false*.
+    # set to *false*.
     [ "$list_out" ] && echo "$list_out"
 }
 
@@ -122,8 +124,7 @@ map_keys ()
 #--
 map_size ()
 {
-    local size="$( eval "echo \${#${1}[@]}" )"
-    echo "$size"
+    eval "echo \${#${1}[@]}"
 }
 
 
@@ -147,8 +148,8 @@ map_item ()
 #--
 map_values ()
 {
-    local map_len="$(map_size "$1")"
-    local list_out=
+    local -r map_len=$(map_size "$1")
+    local list_out i
 
     for (( i = 1; i < $map_len; i += 2 ))
     do

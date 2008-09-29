@@ -23,8 +23,9 @@ use text/string
 #--
 config_filter_unneeded ()
 {
-    local cchr=${1:-'#'}
-    local line=
+    local -r cchr=${1:-'#'}
+    local line
+
     while read line
     do
         if [[ -z $line ]] || \
@@ -63,7 +64,8 @@ config_filter_unneeded ()
 #--
 config_keyval ()
 {
-    local k v old_IFS=$IFS
+    local -r old_IFS=$IFS
+    local k v
 
     IFS=${2:-'='}
     while read k v ; do
@@ -108,8 +110,9 @@ config_keyval ()
 #--
 config_ini ()
 {
-    local k v old_IFS=$IFS
+    local -r old_IFS=$IFS
     local section='[]'
+    local k v
 
     IFS=${2:-'='}
     while read k v ; do
@@ -150,7 +153,9 @@ config_ini_get ()
 #--
 config_ini_clear ()
 {
-    local key keys=( $(hash_keys "$1" ) )
+    local -ar keys=( $(hash_keys "$1" ) )
+    local key
+
     for key in "${keys[@]}" ; do
         hash_clear "$key"
     done
