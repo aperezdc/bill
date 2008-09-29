@@ -1,0 +1,318 @@
+#! /usr/bin/env bill
+
+need patch || die "Sorry, 'patch' is not installed"
+
+cmdline=(
+    S:suffix  'patch.bz2'  'Patch suffix'
+    x:exclude ''           'List of patches to exclude'
+    f:force   false        'Force applying of bulk patches'
+    p:max-p   5            'Maximum for -p argument to patch'
+)
+
+patch_opts=(
+    # Remove empty files
+    -E
+
+    # Keep SCCS, ClearCase & RCS happy
+    -g0
+
+    # Do not leave stray .orig files
+    --no-backup-if-mismatch
+)
+
+
+use ui/cli
+use data/hash
+
+
+CFG=$(hash_new)
+cli_optparse -h cmdline $CFG "$@"
+
+WORKDIR=$(pwd)
+T=$WORKDIR
+
+# Default directory where patches are located
+EPATCH_SOURCE="patch"
+
+# Default extension for patches
+EPATCH_SUFFIX=$(hash_get $CFG suffix)
+
+# Default options for patch
+# Set -g0 to keep RCS, ClearCase, Perforce and SCCS happy. Bug #24571
+# Set --no-backup-if-mismatch so we don't leave '.orig' files behind.
+# Set -E to automatically remove empty files.
+EPATCH_OPTS=${patch_opts[*]}
+
+# List of patches not to apply.	 Note this is only file names,
+# and not the full path ..
+EPATCH_EXCLUDE=$(hash_get $CFG exclude)
+
+# Change the printed message for a single patch.
+EPATCH_SINGLE_MSG=""
+# Change the printed message for multiple patches.
+EPATCH_MULTI_MSG="Applying various patches ..."
+# Force applying bulk patches even if not following the style:
+#
+#	??_${ARCH}_foo.${EPATCH_SUFFIX}
+#
+EPATCH_FORCE="no"
+$(hash_get $CFG force) && EPATCH_FORCE="yes"
+
+# This function is for bulk patching, or in theory for just one
+# or two patches.
+#
+# It should work with .bz2, .gz, .zip and plain text patches.
+# Currently all patches should be the same format.
+#
+# You do not have to specify '-p' option to patch, as it will
+# try with -p0 to -p5 until it succeed, or fail at -p5.
+#
+# Above EPATCH_* variables can be used to control various defaults,
+# bug they should be left as is to ensure an ebuild can rely on
+# them for.
+#
+# Patches are applied in current directory.
+#
+# Bulk Patches should preferibly have the form of:
+#
+#	??_${ARCH}_foo.${EPATCH_SUFFIX}
+#
+# For example:
+#
+#	01_all_misc-fix.patch.bz2
+#	02_sparc_another-fix.patch.bz2
+#
+# This ensures that there are a set order, and you can have ARCH
+# specific patches.
+#
+# If you however give an argument to epatch(), it will treat it as a
+# single patch that need to be applied if its a file.  If on the other
+# hand its a directory, it will set EPATCH_SOURCE to this.
+#
+# <azarah@gentoo.org> (10 Nov 2002)
+#
+epatch() {
+	_epatch_draw_line() {
+		[[ -z $1 ]] && set "$(printf "%65s" '')"
+		echo "${1//?/=}"
+	}
+	_epatch_assert() { local _pipestatus=${PIPESTATUS[*]}; [[ ${_pipestatus// /} -eq 0 ]] ; }
+	local PIPE_CMD=""
+	local STDERR_TARGET="${T}/$$.out"
+	local PATCH_TARGET="${T}/$$.patch"
+	local PATCH_SUFFIX=""
+	local SINGLE_PATCH="no"
+	local x=""
+
+	unset P4CONFIG P4PORT P4USER # keep perforce at bay #56402
+
+	if [ "$#" -gt 1 ]
+	then
+		local m=""
+		for m in "$@" ; do
+			epatch "${m}"
+		done
+		return 0
+	fi
+
+	if [ -n "$1" -a -f "$1" ]
+	then
+		SINGLE_PATCH="yes"
+
+		local EPATCH_SOURCE="$1"
+		local EPATCH_SUFFIX="${1##*\.}"
+
+	elif [ -n "$1" -a -d "$1" ]
+	then
+		# Allow no extension if EPATCH_FORCE=yes ... used by vim for example ...
+		if [ "${EPATCH_FORCE}" = "yes" ] && [ -z "${EPATCH_SUFFIX}" ]
+		then
+			local EPATCH_SOURCE="$1/*"
+		else
+			local EPATCH_SOURCE="$1/*.${EPATCH_SUFFIX}"
+		fi
+	else
+		if [[ ! -d ${EPATCH_SOURCE} ]] || [[ -n $1 ]] ; then
+			if [ -n "$1" -a "${EPATCH_SOURCE}" = "${WORKDIR}/patch" ]
+			then
+				EPATCH_SOURCE="$1"
+			fi
+
+			warn "Cannot find \$EPATCH_SOURCE!  Value for \$EPATCH_SOURCE is:"
+			warn "  ${EPATCH_SOURCE}"
+			warn "  ( ${EPATCH_SOURCE##*/} )"
+			echo
+			die "Cannot find \$EPATCH_SOURCE!"
+		fi
+
+		local EPATCH_SOURCE="${EPATCH_SOURCE}/*.${EPATCH_SUFFIX}"
+	fi
+
+	case ${EPATCH_SUFFIX##*\.} in
+		lzma)
+		    need lzma || die "Program 'lzma' is not installed"
+			PIPE_CMD="lzma -dc"
+			PATCH_SUFFIX="lzma"
+			;;
+		bz2)
+		    need bzip2 || die "Program 'bzip2' is not installed"
+			PIPE_CMD="bzip2 -dc"
+			PATCH_SUFFIX="bz2"
+			;;
+		gz|Z|z)
+		    need gzip || die "Program 'gzip' is not installed"
+			PIPE_CMD="gzip -dc"
+			PATCH_SUFFIX="gz"
+			;;
+		ZIP|zip)
+		    need unzip || die "Program 'unzip' is not installed"
+			PIPE_CMD="unzip -p"
+			PATCH_SUFFIX="zip"
+			;;
+		*)
+		    need cat || die "Program 'cat' is not installed"
+			PIPE_CMD="cat"
+			PATCH_SUFFIX="patch"
+			;;
+	esac
+
+	if [ "${SINGLE_PATCH}" = "no" ]
+	then
+		warn "${EPATCH_MULTI_MSG}"
+	fi
+	for x in ${EPATCH_SOURCE}
+	do
+		# New ARCH dependant patch naming scheme ...
+		#
+		#	???_arch_foo.patch
+		#
+		if [ -f ${x} ] && \
+		   ([ "${SINGLE_PATCH}" = "yes" -o "${x/_all_}" != "${x}" -o "${x/_${ARCH}_}" != "${x}" ] || \
+			[ "${EPATCH_FORCE}" = "yes" ])
+		then
+			local count=0
+			local popts="${EPATCH_OPTS}"
+			local patchname=${x##*/}
+
+			if [ -n "${EPATCH_EXCLUDE}" ]
+			then
+				if [ "${EPATCH_EXCLUDE/${patchname}}" != "${EPATCH_EXCLUDE}" ]
+				then
+					continue
+				fi
+			fi
+
+			if [ "${SINGLE_PATCH}" = "yes" ]
+			then
+				if [ -n "${EPATCH_SINGLE_MSG}" ]
+				then
+					warn "${EPATCH_SINGLE_MSG}"
+				else
+					warn "Applying ${patchname} ..."
+				fi
+			else
+				warn "  ${patchname} ..."
+			fi
+
+			echo "***** ${patchname} *****" > ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+			echo >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+
+			# Decompress the patch if need be
+			if [[ ${PATCH_SUFFIX} != "patch" ]] ; then
+				echo -n "PIPE_COMMAND:	" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+				echo "${PIPE_CMD} ${x} > ${PATCH_TARGET}" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+
+				if ! (${PIPE_CMD} ${x} > ${PATCH_TARGET}) >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/} 2>&1 ; then
+					echo
+					warn "Could not extract patch!"
+					#die "Could not extract patch!"
+					count=5
+					break
+				fi
+			else
+				PATCH_TARGET="${x}"
+			fi
+
+			# Check for absolute paths in patches.  If sandbox is disabled,
+			# people could (accidently) patch files in the root filesystem.
+			# Or trigger other unpleasantries #237667.  So disallow -p0 on
+			# such patches.
+			local abs_paths=$(egrep -n '^[-+]{3} /' "${PATCH_TARGET}" | awk '$2 != "/dev/null" { print }')
+			if [[ -n ${abs_paths} ]] ; then
+				count=1
+				echo "NOTE: skipping -p0 due to absolute paths in patch:" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+				echo "${abs_paths}" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+			fi
+
+			# Allow for prefix to differ ... im lazy, so shoot me :/
+			while [ "${count}" -lt 5 ]
+			do
+				# Generate some useful debug info ...
+				_epatch_draw_line "***** ${patchname} *****" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+				echo >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+
+				echo -n "PATCH COMMAND:	 " >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+				echo "patch -p${count} ${popts} < ${PATCH_TARGET}" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+
+				echo >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+				_epatch_draw_line "***** ${patchname} *****" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+
+				if (cat ${PATCH_TARGET} | patch -p${count} ${popts} --dry-run -f ; _epatch_assert) >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/} 2>&1
+				then
+					_epatch_draw_line "***** ${patchname} *****" >	${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real
+					echo >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real
+					echo "ACTUALLY APPLYING ${patchname} ..." >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real
+					echo >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real
+					_epatch_draw_line "***** ${patchname} *****" >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real
+
+					cat ${PATCH_TARGET} | patch -p${count} ${popts} >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real 2>&1
+					_epatch_assert
+
+					if [ "$?" -ne 0 ]
+					then
+						cat ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real >> ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+						echo
+						eerror "A dry-run of patch command succeeded, but actually"
+						eerror "applying the patch failed!"
+						#die "Real world sux compared to the dreamworld!"
+						count=5
+					fi
+
+					rm -f ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}.real
+
+					break
+				fi
+
+				count=$((count + 1))
+			done
+
+			if [ "${PATCH_SUFFIX}" != "patch" ]
+			then
+				rm -f ${PATCH_TARGET}
+			fi
+
+			if [ "${count}" -eq $(hash_get $CFG max-p) ]
+			then
+				warn "Failed Patch: ${patchname} !"
+				warn " ( ${PATCH_TARGET} )"
+				warn
+				warn "Include in your bugreport the contents of:"
+			    warn
+				warn "  ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}"
+				warn
+				die "Failed Patch: ${patchname}!"
+			fi
+
+			rm -f ${STDERR_TARGET%/*}/${patchname}-${STDERR_TARGET##*/}
+		fi
+	done
+	if [ "${SINGLE_PATCH}" = "no" ]
+	then
+		warn "Done with patching"
+	fi
+}
+
+
+shift $(( $# - CLI_LAST_ARG ))
+main epatch "$@"
+
