@@ -1,0 +1,45 @@
+#! /usr/bin/env butt
+
+use data/map
+
+lookup_data=(
+    one   1
+    two   2
+    three 3
+)
+
+
+test_lookup ()
+{
+    assertSame 1 "$(map_get lookup_data one)"
+    assertSame 2 "$(map_get lookup_data two)"
+    assertSame 3 "$(map_get lookup_data three)"
+}
+
+
+test_lookup_key ()
+{
+    assertSame one "$(map_key lookup_data 1)"
+    assertSame two "$(map_key lookup_data 2)"
+    assertSame three "$(map_key lookup_data 3)"
+}
+
+
+test_values ()
+{
+    assertSame "1:2:3" "$(IFS=':' map_values lookup_data)"
+}
+
+
+test_keys ()
+{
+    assertSame "one:two:three" "$(IFS=':' map_keys lookup_data)"
+}
+
+
+test_size ()
+{
+    local empty=( )
+    assertSame 0 $(map_size empty)
+    assertSame 6 $(map_size lookup_data)
+}
