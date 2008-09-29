@@ -7,8 +7,8 @@
 .. contents::
 
 
-Releses
-=======
+Releases
+========
 
   Release early, release often.
 
@@ -16,17 +16,41 @@ Releses
 
 .. class:: tabular
 
-+-------+---------+-----------------------------------+
-|Release| Date    | Feature                           |
-+=======+=========+===================================+
-|  0.1  | 11/2008 | Compliant HTTP 1.1 server library |
-|       |         +-----------------------------------+
-|       |         | Billets container                 |
-|       |         +-----------------------------------+
-|       |         | Billets API specification         |
-+-------+---------+-----------------------------------+
-|  0.2  |         |                                   |
-+-------+---------+-----------------------------------+
++-------+----------+-----------------------------------+
+|Release| Date     | Features                          |
++=======+==========+===================================+
+|  0.1  |15/10/2008| HTTP 1.1 server library           |
+|       |          +-----------------------------------+
+|       |          | Billets container                 |
+|       |          +-----------------------------------+
+|       |          | Billets API specification         |
++-------+----------+-----------------------------------+
+|  0.2  |05/11/2008| Full compliant HTTP 1.1 support   |
+|       |          +-----------------------------------+
+|       |          | Administration tools for Billets, |
+|       |          | to help with enabling, disabling, |
+|       |          | deploying, removing billets, etc. |
+|       |          +-----------------------------------+
+|       |          | Support for usage of internal Bash|
+|       |          | ``/dev/tcp`` redirections         |
++-------+----------+-----------------------------------+
+|  0.3  |20/12/2008| Localization / gettext support    |
+|       |          +-----------------------------------+
+|       |          | Safe [#]_ template engine         |
++-------+----------+-----------------------------------+
+|  0.4  |24/12/2008| Easter egg as christmas present   |
+|       |          +-----------------------------------+
+|       |          | Speed-ups in C for speed critical |
+|       |          | code (``data/hash``, builtins,    |
+|       |          | and ``text/string`` look like     |
+|       |          | they are good candidates).        |
++-------+----------+-----------------------------------+
+|  0.5  |06/01/2009| Maintenance release, mostly bug   |
+|       |          | fixes and code clean-ups          |
++-------+----------+-----------------------------------+
 
+
+.. [#] Here “safe” means that it does not allow arbitrary execution
+    of user code.
 
 .. vim: filetype=rst shiftwidth=2 tabstop=2 expandtab
