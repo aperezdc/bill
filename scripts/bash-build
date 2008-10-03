@@ -1,0 +1,147 @@
+#! /usr/bin/env bill
+
+use ui/cli
+use dev/tty
+use data/hash
+
+
+cmdline=(
+    s:site       'http://ftp.gnu.org/gnu/bash' 'Download site for Bash'
+    p:patch      true                          'Apply official patches'
+    l:patchlevel '39'                          'Hightest patch number'
+    v:version    '3.2'                         'Bash version to build'
+    f:fetch      false                         'Fetch only'
+    d:workdir    'bash-build-tmp'              'Working directory'
+)
+options=$(hash_new)
+
+C=$(tty_color_fg yellow)
+R=$(tty_color_fg reset)
+
+have () {
+    need "$@"
+}
+
+
+fetch ()
+{
+    local -r dest=$(hash_get $options workdir)
+    local -r site=$(hash_get $options site)
+    local ret=0
+
+    [[ -d $dest ]] || mkdir "$dest"
+    pushd "$dest" > /dev/null
+
+    if have wget ; then
+        wget --quiet "$site/$1" || ret=1
+    elif have curl ; then
+        curl --silent --insecure --location \
+             --remote-name --progress-bar "$site/$1" || ret=1
+    else
+        die "None of 'curl' or 'wget' are available"
+    fi
+
+    popd > /dev/null
+    return $ret
+}
+
+
+fetch_source ()
+{
+    local -r src="$1"
+    local sig="$1.sig"
+
+    if ! [[ -r $src ]] ; then
+        fetch "$src"
+    fi
+    [[ -r $sig ]] || fetch "$sig"
+
+    sig=${sig##*/}
+}
+
+
+fetch_tarball ()
+{
+    local -r pkgname="bash-$(hash_get $options version).tar.gz"
+    fetch_source "$pkgname"
+}
+
+
+fetch_patches ()
+{
+    local -r version=$(hash_get $options version)
+    local -r format="bash-$version-patches/bash${version//./}-%03i"
+    local -r level=$(hash_get $options patchlevel)
+    local i
+
+    for (( i = 1; i <= level; i++ )) ; do
+        fetch_source "$(printf "$format" $i)"
+    done
+}
+
+
+gpg_verify ()
+{
+    :
+}
+
+
+prepare_gpg ()
+{
+    local -r workdir=$(hash_get $options workdir)
+
+    [[ -d $workdir ]] || mkdir "$workdir"
+    pushd "$workdir" > /dev/null
+
+    local lock_dir=_sh30595
+    local echo=echo
+    if test ! -d ${lock_dir}
+    then : ; else ${echo} 'lock directory '${lock_dir}' exists'
+        exit 1
+    fi
+    if mkdir ${lock_dir}
+    then : ; else ${echo} 'failed to create lock directory'
+        exit 1
+    fi
+    # ============= trustedkeys.gpg ==============
+    sed 's/^X//' << 'SHAR_EOF' > 'trustedkeys.gpg' &&
+X¢A°l
+XyëÍ\Â ;ÛÆIÑÔË*G¢åtÆ°ºFê©rÉ¶>¢@Tª±IüÁØ¹û¦gr³WÉÈ)ýÕ`£weÉO
+XªU¡ íK+}"Oñã8ô4À	;-£ÙlÞ>9ù¦¡_×ìC
+Xì®¶Í[rÿhÈ«ÓxC	ìÐ7TVriûë´&HØR¡]SâóöÕgûâ$J@³rS-0
+XPRÊÇsøàÍý±ØW2Úã¶@Ómûx6neà¦[ì÷bçA¦Ö]Mk­ÝÝtÑ'B:XLPqÓ*z)yn\²Èf+D$´Chet Ramey <chet@cwru.edu>F
+X	%à,B¸y 
+X	»Xiðdêt«ÎÍ
+X	»Xiðdêt«ãp
+SHAR_EOF
+    :
+    if test $? -ne 0
+    then ${echo} 'restore of trustedkeys.gpg failed'
+    fi
+    if ! rm -fr ${lock_dir}
+    then
+        popd > /dev/null
+        return 1
+    fi
+
+    popd > /dev/null
+}
+
+
+run_build ()
+{
+    cli_optparse -h cmdline $options "$@"
+
+    prepare_gpg
+    fetch_tarball
+    if $(hash_get $options patch) ; then
+        fetch_patches
+    fi
+    if $(hash_get $options fetch) ; then
+        return
+    fi
+}
+
+main run_build
+
+

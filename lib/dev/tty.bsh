@@ -160,3 +160,19 @@ tty_color_bg ()
     done
 }
 
+
+tty_begin () {
+    echo -n "${__tty_green} *${__tty_reset} %s ... "
+} > /dev/tty
+
+
+tty_end () {
+    local ret=${1:-$?}
+
+    if [[ $ret -eq 0 ]]
+    then ret="${__tty_green}done"
+    else ret="fail"
+    fi
+    echo "${ret}${__tty_reset}\n"
+} > /dev/tty
+
