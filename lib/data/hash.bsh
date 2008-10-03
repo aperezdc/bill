@@ -33,7 +33,7 @@ hash_new () {
 #--
 hash_set () {
     builtin hash -d "$1$2" 2> /dev/null || true
-    builtin hash -p "$3" "$1$2"
+    builtin hash -p ":$3" "$1$2"
 }
 
 
@@ -44,7 +44,9 @@ hash_set () {
 #   when an element is not found.
 #--
 hash_get () {
-    builtin hash -t "$1$2" 2> /dev/null
+    builtin hash -t "$1$2" &> /dev/null || return 1
+    local -r value=$(builtin hash -t "$1$2" 2> /dev/null)
+    echo -n "${value:1}"
 }
 
 
