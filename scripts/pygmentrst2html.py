@@ -76,7 +76,8 @@ try:
 except ImportError:
     def pygments_directive(name, arguments, options, content, lineno,
                            content_offset, block_text, state, state_machine):
-        return [nodes.raw('', u'\n'.join(content), format='html')]
+        content = u'\n'.join(content)
+        return [nodes.literal_block(content, content)]
 
     pygments_directive.arguments = (1, 0, 1)
     pygments_directive.content = 1
