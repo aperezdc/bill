@@ -10,5 +10,156 @@
 .. contents::
 
 
-.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4
+Introduction
+============
 
+Bill modules are documented using reStructuredText_, with help from a number
+of scripts which assemble all the documentation together. The following
+tools are included in the ``scripts/`` subdirectory of the Bill source
+distribution:
+
+docextract.awk
+    This is a simple AWK script which extracts docmentation strings from
+    files and writes them to standard output. The generated text is valid
+    reStructuredText_.
+
+gen-module-index
+    Generates reStructuredText_ output used for the global module index.
+    This will generate a table for each module category with the description
+    of the category found in its ``README`` file at the top. Module names
+    are accompanied with the first line of the ``:Abstract:`` tag.
+
+pygmentsrst2html.py
+    Wrapper around docutils' ``rst2html.py`` script which adds the
+    ``sourcecode`` directive, and the ability of adding syntax highlighting
+    to it when Pygments_ is installed in the system.
+
+
+Output generation
+=================
+
+Plain text
+----------
+
+You can extract plain text documentation by using the supplied AWK script.
+Let us suppose you have a ``module.bsh`` file, then you can do:
+
+.. sourcecode:: bash
+
+    awk -f path/to/docextract.awk module.bsh > module.txt
+
+Although reStructuredText_ can be read as plain text, it can be converted
+into HTML_ as well.
+
+
+HTML
+----
+
+Once you have extracted `plain text`_ from your source file, you can turn it
+into HTML by using the included script:
+
+.. sourcecode:: bash
+
+    path/to/pygmentsrst2html.py module.txt module.html
+
+You can combine both commands with a pipe in order to directly generate HTML
+without storing the temporary plain text version:
+
+.. sourcecode:: bash
+
+    awk -f path/to/docextract.awk module.bsh \
+         | path/to/pygmentsrst2html.py - module.html
+
+
+.. tip:: If you want to reuse the stylesheet used in the official
+   documentation, you can pick the full ``doc/img/`` drectory and the
+   ``doc/style.css`` stylesheet and pass
+   ``--link-stylesheet --stylesheet-path=style.css``
+   when converting documentation into HTML.
+
+
+.. _reStructuredText: http://docutils.sf.net/rst.html
+.. _pygments: http://pygments.org
+
+
+Writing documentation
+=====================
+
+Documentation comments in source code are enclosed between the ``#++`` and
+``#--`` markers. All documentation comments **must** be indented with four
+spaces. Any other kind of indentation will not work. You can write arbitrary
+reStructuredText_ in the comments, but there are some guidelines you *should*
+follow in order to make your documentation coherent with the rest.
+
+How to document a module will be explaining using the simple
+``examples/hello.bsh`` module included in the Bill source distribution.
+
+
+Module header
+-------------
+
+The first line in the module is a *she-bang* which refers to the Bill
+executable:
+
+.. sourcecode:: bash
+
+    #! /usr/bin/env bill
+
+This line is not needed in practice, but it is desirable to add it to the
+start of every source file, so editors and other tools can recognize it and
+provide a better environment for editing the code.
+
+The next lines are inside documentation markers, and describe the module
+itself:
+
+.. sourcecode:: bash
+
+    #++
+    #   ==============
+    #   Example module
+    #   ==============
+    #   :Author: Adrián Pérez <aperez@igalia.com>
+    #   :Copyright: Igalia S.L, 2008
+    #   :Abstract: Provides an example ``hello`` function.
+    #       This module is used by the ``hello`` test script.
+    #--
+
+Mandatory components in module headers are the title (``Example module``
+here) and the first line of summary in the ``:Abstract:`` field if you plan
+to use the script included for generating the global module index.
+
+You can use any documentation information fields provided by docutils_. It
+is recommended to add at least the ``:Author:`` tag.
+
+
+.. _docutils: http://docutils.sf.net
+
+
+Functions
+---------
+
+Functions can be documented by appending the function name and its
+arguments [#]_ after the ``#++`` documentation comment delimiter. This will
+create a new section in the output document with the name of the function
+and add a box with the function argument details. The text after the marker
+will be added inside the section:
+
+
+.. sourcecode:: bash
+
+    #++ hello [ name ]
+    #
+    #   The (in)famous “Hello, world!” example, as a Bill module.
+    #   Pass ``name`` to greet someone, otherwise the full world will be greeted
+    #   instead.
+    #
+    #--
+    hello () {
+        echo "Hello ${1:-world}!"
+    }
+
+.. [#] This is not really needed, but it is desirable for the sake of
+       clarity.
+
+
+.. vim: expandtab filetype=rst shiftwidth=4 tabstop=4

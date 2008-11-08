@@ -1,3 +1,8 @@
+bash-build
+    Script which automatically downloads Bash source code for a particular
+    version, its official patches and builds Bash with options appropriate
+    to use it in conjunction with Bill.
+
 bill
     The Bill "interpreter", capable of setting up a suitable environment for
     running scripts. It may also act as interactive interpreter.
@@ -6,8 +11,8 @@ unbill
     Assembles modules and a script into something with can be run standalone
     without needing an installed copy of Bill.
 
-example-hello
-    Example script which uses the "hello" module.
+butt
+    Runner for unit tests.
 
 bill.vim
     Vim plugin which adds filetype detection and extra syntax highlighting
@@ -24,3 +29,8 @@ docextract.awk
 gen-module-index
     Generates a reStructuredText with a list of modules and a one-line
     description taken from the "Abstract" field of the module documentation
+
+pygmentsrst2html.py
+    Wrapper for docutils's ``rst2html.py`` script which adds the ability of
+    using syntax highlighting in ``sourcecode`` directives when Pygments is
+    available on the system.

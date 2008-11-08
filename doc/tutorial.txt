@@ -67,7 +67,9 @@ The *primary prompt* will greet you::
     (bill)
 
 When entering multi-line commands, the *secondary prompt* will be shown until
-all input lines have been read::
+all input lines have been read:
+
+.. sourcecode:: bash
 
     (bill) the_world_is_flat=true
     (bill) if $the_world_is_flat ; then
@@ -79,7 +81,9 @@ all input lines have been read::
 Executable scripts
 ------------------
 On Unix systems, Bill scripts can be made directly executable, like regular
-shell scripts, by adding the line::
+shell scripts, by adding the line:
+
+.. sourcecode:: bash
 
     #! /usr/bin/env bill
 
@@ -181,10 +185,12 @@ Crafting your own
 -----------------
 Modules are regular text files with ``.bsh`` suffix. Categories are no more
 than directories in the file system. If you wanted to create a module named
-``bar`` inside category ``foo`` just create a ``foo/bar.bsh`` text file::
+``bar`` inside category ``foo`` just create a ``foo/bar.bsh`` text file:
 
-    aperez ~ $ mkdir foo
-    aperez ~ $ echo 'echo "Hello module..."' > foo/bar.bsh
+.. sourcecode:: bash
+
+    mkdir foo
+    echo 'echo "Hello module..."' > foo/bar.bsh
 
 Now you can start the interpreter and import the module::
 

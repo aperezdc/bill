@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Documenting Bill modules</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -16,7 +16,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
 </tr>
 </tbody>
@@ -26,7 +26,140 @@
 <p>Explains how to document Bill modules used the tools bundled with
 Bill itself.</p>
 </div>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id3">Introduction</a></li>
+<li><a class="reference internal" href="#output-generation" id="id4">Output generation</a><ul>
+<li><a class="reference internal" href="#plain-text" id="id5">Plain text</a></li>
+<li><a class="reference internal" href="#html" id="id6">HTML</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#writing-documentation" id="id7">Writing documentation</a><ul>
+<li><a class="reference internal" href="#module-header" id="id8">Module header</a></li>
+<li><a class="reference internal" href="#functions" id="id9">Functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h1><a class="toc-backref" href="#id3">Introduction</a></h1>
+<p>Bill modules are documented using <a class="reference external" href="http://docutils.sf.net/rst.html">reStructuredText</a>, with help from a number
+of scripts which assemble all the documentation together. The following
+tools are included in the <tt class="docutils literal"><span class="pre">scripts/</span></tt> subdirectory of the Bill source
+distribution:</p>
+<dl class="docutils">
+<dt>docextract.awk</dt>
+<dd>This is a simple AWK script which extracts docmentation strings from
+files and writes them to standard output. The generated text is valid
+<a class="reference external" href="http://docutils.sf.net/rst.html">reStructuredText</a>.</dd>
+<dt>gen-module-index</dt>
+<dd>Generates <a class="reference external" href="http://docutils.sf.net/rst.html">reStructuredText</a> output used for the global module index.
+This will generate a table for each module category with the description
+of the category found in its <tt class="docutils literal"><span class="pre">README</span></tt> file at the top. Module names
+are accompanied with the first line of the <tt class="docutils literal"><span class="pre">:Abstract:</span></tt> tag.</dd>
+<dt>pygmentsrst2html.py</dt>
+<dd>Wrapper around docutils' <tt class="docutils literal"><span class="pre">rst2html.py</span></tt> script which adds the
+<tt class="docutils literal"><span class="pre">sourcecode</span></tt> directive, and the ability of adding syntax highlighting
+to it when <a class="reference external" href="http://pygments.org">Pygments</a> is installed in the system.</dd>
+</dl>
+</div>
+<div class="section" id="output-generation">
+<h1><a class="toc-backref" href="#id4">Output generation</a></h1>
+<div class="section" id="plain-text">
+<h2><a class="toc-backref" href="#id5">Plain text</a></h2>
+<p>You can extract plain text documentation by using the supplied AWK script.
+Let us suppose you have a <tt class="docutils literal"><span class="pre">module.bsh</span></tt> file, then you can do:</p>
+<div class="highlight"><pre>awk -f path/to/docextract.awk module.bsh &gt; module.txt
+</pre></div>
+<p>Although <a class="reference external" href="http://docutils.sf.net/rst.html">reStructuredText</a> can be read as plain text, it can be converted
+into <a class="reference internal" href="#html">HTML</a> as well.</p>
+</div>
+<div class="section" id="html">
+<h2><a class="toc-backref" href="#id6">HTML</a></h2>
+<p>Once you have extracted <a class="reference internal" href="#plain-text">plain text</a> from your source file, you can turn it
+into HTML by using the included script:</p>
+<div class="highlight"><pre>path/to/pygmentsrst2html.py module.txt module.html
+</pre></div>
+<p>You can combine both commands with a pipe in order to directly generate HTML
+without storing the temporary plain text version:</p>
+<div class="highlight"><pre>awk -f path/to/docextract.awk module.bsh <span class="se">\</span>
+     | path/to/pygmentsrst2html.py - module.html
+</pre></div>
+<div class="tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If you want to reuse the stylesheet used in the official
+documentation, you can pick the full <tt class="docutils literal"><span class="pre">doc/img/</span></tt> drectory and the
+<tt class="docutils literal"><span class="pre">doc/style.css</span></tt> stylesheet and pass
+<tt class="docutils literal"><span class="pre">--link-stylesheet</span> <span class="pre">--stylesheet-path=style.css</span></tt>
+when converting documentation into HTML.</p>
+</div>
+</div>
+</div>
+<div class="section" id="writing-documentation">
+<h1><a class="toc-backref" href="#id7">Writing documentation</a></h1>
+<p>Documentation comments in source code are enclosed between the <tt class="docutils literal"><span class="pre">#++</span></tt> and
+<tt class="docutils literal"><span class="pre">#--</span></tt> markers. All documentation comments <strong>must</strong> be indented with four
+spaces. Any other kind of indentation will not work. You can write arbitrary
+<a class="reference external" href="http://docutils.sf.net/rst.html">reStructuredText</a> in the comments, but there are some guidelines you <em>should</em>
+follow in order to make your documentation coherent with the rest.</p>
+<p>How to document a module will be explaining using the simple
+<tt class="docutils literal"><span class="pre">examples/hello.bsh</span></tt> module included in the Bill source distribution.</p>
+<div class="section" id="module-header">
+<h2><a class="toc-backref" href="#id8">Module header</a></h2>
+<p>The first line in the module is a <em>she-bang</em> which refers to the Bill
+executable:</p>
+<div class="highlight"><pre><span class="c">#! /usr/bin/env bill</span>
+</pre></div>
+<p>This line is not needed in practice, but it is desirable to add it to the
+start of every source file, so editors and other tools can recognize it and
+provide a better environment for editing the code.</p>
+<p>The next lines are inside documentation markers, and describe the module
+itself:</p>
+<div class="highlight"><pre><span class="c">#++</span>
+<span class="c">#   ==============</span>
+<span class="c">#   Example module</span>
+<span class="c">#   ==============</span>
+<span class="c">#   :Author: Adrián Pérez &lt;aperez@igalia.com&gt;</span>
+<span class="c">#   :Copyright: Igalia S.L, 2008</span>
+<span class="c">#   :Abstract: Provides an example ``hello`` function.</span>
+<span class="c">#       This module is used by the ``hello`` test script.</span>
+<span class="c">#--</span>
+</pre></div>
+<p>Mandatory components in module headers are the title (<tt class="docutils literal"><span class="pre">Example</span> <span class="pre">module</span></tt>
+here) and the first line of summary in the <tt class="docutils literal"><span class="pre">:Abstract:</span></tt> field if you plan
+to use the script included for generating the global module index.</p>
+<p>You can use any documentation information fields provided by <a class="reference external" href="http://docutils.sf.net">docutils</a>. It
+is recommended to add at least the <tt class="docutils literal"><span class="pre">:Author:</span></tt> tag.</p>
+</div>
+<div class="section" id="functions">
+<h2><a class="toc-backref" href="#id9">Functions</a></h2>
+<p>Functions can be documented by appending the function name and its
+arguments <a class="footnote-reference" href="#id2" id="id1">[1]</a> after the <tt class="docutils literal"><span class="pre">#++</span></tt> documentation comment delimiter. This will
+create a new section in the output document with the name of the function
+and add a box with the function argument details. The text after the marker
+will be added inside the section:</p>
+<div class="highlight"><pre><span class="c">#++ hello [ name ]</span>
+<span class="c">#</span>
+<span class="c">#   The (in)famous “Hello, world!” example, as a Bill module.</span>
+<span class="c">#   Pass ``name`` to greet someone, otherwise the full world will be greeted</span>
+<span class="c">#   instead.</span>
+<span class="c">#</span>
+<span class="c">#--</span>
+hello <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Hello ${1:-world}!&quot;</span>
+<span class="o">}</span>
+</pre></div>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>This is not really needed, but it is desirable for the sake of
+clarity.</td></tr>
+</tbody>
+</table>
 <!-- vim: expandtab filetype=rst shiftwidth=4 tabstop=4 -->
+</div>
+</div>
 </div>
 </body>
 </html>
