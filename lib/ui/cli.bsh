@@ -132,7 +132,11 @@ __cli_optparse_help ()
         o=${all[$i]}
         d=${all[$((i+1))]}
         t=${all[$((i+2))]}
-        printf "  -%1s,  --%-20s  %s [default: %s]\n" ${o%%:*} ${o#*:} "$t" "$d"
+        if [ -n "${o%%:*}" ] ; then
+            printf "  -%1s,  --%-20s  %s [default: %s]\n" ${o%%:*} ${o#*:} "$t" "$d"
+        else
+            printf "       --%-20s  %s [default: %s]\n" ${o#*:} "$t" "$d"
+        fi
     done
 }
 

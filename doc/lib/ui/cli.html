@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Command Line Interface</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <meta name="copyright" content="2008 Igalia S.L." />
@@ -17,7 +17,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>2008 Igalia S.L.</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
@@ -28,15 +28,15 @@
 <p class="topic-title first">Abstract</p>
 <p>User interaction using a command, line-oriented interface.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#cli-optparse" id="id1" name="id1">cli_optparse</a></li>
-<li><a class="reference" href="#cli-qa-batch" id="id2" name="id2">cli_qa_batch</a></li>
+<li><a class="reference internal" href="#cli-optparse" id="id1">cli_optparse</a></li>
+<li><a class="reference internal" href="#cli-qa-batch" id="id2">cli_qa_batch</a></li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id1" id="cli-optparse" name="cli-optparse">cli_optparse</a></h1>
+<div class="section" id="cli-optparse">
+<h1><a class="toc-backref" href="#id1">cli_optparse</a></h1>
 <pre class="literal-block">
 cli_optparse [ -h ] [ -n ] options destination
 </pre>
@@ -52,7 +52,7 @@ otherwise the next argument will be consumed.</li>
 <li>Descriptive text for the option. This is only used to generate help
 messages.</li>
 </ul>
-<p>The <em>destination</em> parameter should be a <a class="reference" href="../data/hash.html">hash table</a> in which values for options will be stored. Make
+<p>The <em>destination</em> parameter should be a <a class="reference external" href="../data/hash.html">hash table</a> in which values for options will be stored. Make
 sure it is initialized before calling this function.</p>
 <p>As an example:</p>
 <div class="highlight"><pre><span class="nv">opts</span><span class="o">=(</span>
@@ -75,8 +75,8 @@ printed, but the function will have a non-zero exit status.</p>
 <tt class="docutils literal"><span class="pre">CLI_LAST_ARG</span></tt> variable will be set to the index of the last proper
 option.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id2" id="cli-qa-batch" name="cli-qa-batch">cli_qa_batch</a></h1>
+<div class="section" id="cli-qa-batch">
+<h1><a class="toc-backref" href="#id2">cli_qa_batch</a></h1>
 <pre class="literal-block">
 cli_qa_batch [ -f | --force-ask ] values questions
 </pre>
