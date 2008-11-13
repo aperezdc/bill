@@ -110,9 +110,17 @@ cli_optparse ()
         k=${all[$index]}
         v=${all[$((index+1))]}
         case $v in
-            false) v=true ;;
-            true ) v=false ;;
-            *) v=$1 ; shift ;;
+        false)
+            v=true
+            ;;
+        true)
+            v=false
+            ;;
+        *)
+            v=$1
+            (( CLI_LAST_ARG++ ))
+            shift
+            ;;
         esac
         hash_set $opt "${k#*:}" "$v"
         (( CLI_LAST_ARG++ ))
