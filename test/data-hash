@@ -167,3 +167,15 @@ test_has ()
     hash_has $h one || fail "key not in hashtable"
     hash_clear $h
 }
+
+
+test_set_twice ()
+{
+    local h=$(hash_new)
+
+    hash_set $h k v1
+    assertSame v1 $(hash_get $h k)
+    hash_set $h k v2
+    assertSame v2 $(hash_get $h k)
+    hash_clear $h
+}
