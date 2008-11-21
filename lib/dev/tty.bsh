@@ -118,8 +118,7 @@ __tty_color_alias=(
 tty_color_alias ()
 {
     local -r name=$(map_get __tty_color_alias "$1")
-    [ "$name" ] || name=$1
-    echo "$name"
+    echo "${name:-$1}"
 }
 
 
