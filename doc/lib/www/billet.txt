@@ -1,41 +1,25 @@
-=============
-Billet Engine
-=============
-:Author: Adrian Perez <aperez@igalia.com>
-:Copyright: 2008 Igalia S.L.
+=================
+Billet client API
+=================
+:Author: Adrian Perez de Castro <aperez@igalia.com>
+:Copyright: Igalia, 2008
 :License: GPL v2
+:Abstract: Provides support functions for implementing Billets.
+
+.. contents::
+
+Functions
+=========
 
 
 
 
-billet_handle_http_GET
-----------------------
-
-::
-
-  billet_handle_http_GET
-
-
-
-
-
-billet_handle_http_POST
------------------------
+billet_url
+----------
 
 ::
 
-  billet_handle_http_POST
-
-
-
-
-
-billet_server_run
------------------
-
-::
-
-  billet_server_run handlers
+  billet_url relative_uri
 
 
 

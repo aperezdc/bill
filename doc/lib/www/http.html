@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Simple HTTP server</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <meta name="copyright" content="2008 Igalia S.L." />
@@ -17,7 +17,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
 </tr>
 <tr><th class="docinfo-name">Copyright:</th>
@@ -31,47 +31,48 @@ Socket functionality is <strong>not</strong> provided. Requests are
 read from standard input, responses are sent to standard
 output and logging is done the standard error stream.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#running-a-webserver" id="id3" name="id3">Running a webserver</a><ul>
-<li><a class="reference" href="#using-auxiliar-tools" id="id4" name="id4">Using auxiliar tools</a></li>
+<li><a class="reference internal" href="#running-a-webserver" id="id4">Running a webserver</a><ul>
+<li><a class="reference internal" href="#using-auxiliar-tools" id="id5">Using auxiliar tools</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#functions" id="id5" name="id5">Functions</a><ul>
-<li><a class="reference" href="#http-mimetype-guess" id="id6" name="id6">http_mimetype_guess</a></li>
-<li><a class="reference" href="#http-error-document" id="id7" name="id7">http_error_document</a></li>
-<li><a class="reference" href="#http-header" id="id8" name="id8">http_header</a></li>
-<li><a class="reference" href="#http-header-start" id="id9" name="id9">http_header_start</a></li>
-<li><a class="reference" href="#http-error" id="id10" name="id10">http_error</a></li>
-<li><a class="reference" href="#http-redirect" id="id11" name="id11">http_redirect</a></li>
-<li><a class="reference" href="#http-log-stderr" id="id12" name="id12">http_log_stderr</a></li>
-<li><a class="reference" href="#http-handle-get" id="id13" name="id13">http_handle_GET</a></li>
-<li><a class="reference" href="#http-handle-request" id="id14" name="id14">http_handle_request</a></li>
+<li><a class="reference internal" href="#functions" id="id6">Functions</a><ul>
+<li><a class="reference internal" href="#http-mimetype-guess" id="id7">http_mimetype_guess</a></li>
+<li><a class="reference internal" href="#http-error-document" id="id8">http_error_document</a></li>
+<li><a class="reference internal" href="#http-header" id="id9">http_header</a></li>
+<li><a class="reference internal" href="#http-header-start" id="id10">http_header_start</a></li>
+<li><a class="reference internal" href="#http-date-now" id="id11">http_date_now</a></li>
+<li><a class="reference internal" href="#http-error" id="id12">http_error</a></li>
+<li><a class="reference internal" href="#http-redirect" id="id13">http_redirect</a></li>
+<li><a class="reference internal" href="#http-log-stderr" id="id14">http_log_stderr</a></li>
+<li><a class="reference internal" href="#http-handle-get" id="id15">http_handle_GET</a></li>
+<li><a class="reference internal" href="#http-handle-request" id="id16">http_handle_request</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id3" id="running-a-webserver" name="running-a-webserver">Running a webserver</a></h1>
-<p>Fortunately, dealing with sockets can be done in pure Bash <a class="footnote-reference" href="#id2" id="id1" name="id1">[1]</a>.
+<div class="section" id="running-a-webserver">
+<h1><a class="toc-backref" href="#id4">Running a webserver</a></h1>
+<p>Fortunately, dealing with sockets can be done in pure Bash <a class="footnote-reference" href="#id2" id="id1">[1]</a>.
 Unfortunately enough, some distributors choose not to enable support for
-this feature. This is the case of the Bash builds included with <a class="reference" href="http://debian.org">Debian</a>
-and <a class="reference" href="http://ubuntulinux.org">Ubuntu</a>.</p>
+this feature. This is the case of the Bash builds included with <a class="reference external" href="http://debian.org">Debian</a>
+and <a class="reference external" href="http://ubuntulinux.org">Ubuntu</a>.</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1" name="id2">[1]</a></td><td><a class="reference" href="http://unixjunkie.blogspot.com/2006/01/two-cool-bash-tricks.html">http://unixjunkie.blogspot.com/2006/01/two-cool-bash-tricks.html</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://unixjunkie.blogspot.com/2006/01/two-cool-bash-tricks.html">http://unixjunkie.blogspot.com/2006/01/two-cool-bash-tricks.html</a></td></tr>
 </tbody>
 </table>
-<div class="section">
-<h2><a class="toc-backref" href="#id4" id="using-auxiliar-tools" name="using-auxiliar-tools">Using auxiliar tools</a></h2>
+<div class="section" id="using-auxiliar-tools">
+<h2><a class="toc-backref" href="#id5">Using auxiliar tools</a></h2>
 <p>Some utilities exist which allow nearly all program
 using the standard input and output streams to use sockets. It is likely
 that at least one of these is available for your operating system of
 choice. All those examples run a simple web server listening in port
 <tt class="docutils literal"><span class="pre">8000</span></tt> at <tt class="docutils literal"><span class="pre">127.0.0.1</span></tt> (the loopback network address). Once you try
-one of those command lines, point a browser to <a class="reference" href="http://localhost:8000/doc">http://localhost:8000/doc</a>
+one of those command lines, point a browser to <a class="reference external" href="http://localhost:8000/doc">http://localhost:8000/doc</a>
 and you will be able of browsing the Bill documentation using the simple
 built-in web server.</p>
 <table border="1" class="tabular docutils">
@@ -85,16 +86,16 @@ built-in web server.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference" href="http://smarden.org/ipsvd/">ipsvd</a></td>
+<tr><td><a class="reference external" href="http://smarden.org/ipsvd/">ipsvd</a></td>
 <td><tt class="docutils literal"><span class="pre">tcpsvd</span> <span class="pre">127.0.0.1</span> <span class="pre">8000</span> <span class="pre">./scripts/bill</span> <span class="pre">lib/www/http.bsh</span></tt></td>
 </tr>
-<tr><td><a class="reference" href="http://cr.yp.to/ucspi-tcp.html">ucspi-tcp</a></td>
+<tr><td><a class="reference external" href="http://cr.yp.to/ucspi-tcp.html">ucspi-tcp</a></td>
 <td><tt class="docutils literal"><span class="pre">tcpserver</span> <span class="pre">-q</span> <span class="pre">127.0.0.1</span> <span class="pre">8000</span> <span class="pre">./scripts/bill</span> <span class="pre">lib/www/http.bsh</span></tt></td>
 </tr>
-<tr><td><a class="reference" href="http://netcat.sourceforge.net/">netcat</a></td>
+<tr><td><a class="reference external" href="http://netcat.sourceforge.net/">netcat</a></td>
 <td><tt class="docutils literal"><span class="pre">(while</span> <span class="pre">true</span> <span class="pre">;</span> <span class="pre">do</span> <span class="pre">nc</span> <span class="pre">-l</span> <span class="pre">-p</span> <span class="pre">8000</span> <span class="pre">-c</span> <span class="pre">'./scripts/bill</span> <span class="pre">lib/www/http.bsh';</span> <span class="pre">done)</span></tt></td>
 </tr>
-<tr><td><a class="reference" href="http://web.purplefrog.com/~thoth/netpipes/netpipes.html">netpipes</a></td>
+<tr><td><a class="reference external" href="http://web.purplefrog.com/~thoth/netpipes/netpipes.html">netpipes</a></td>
 <td><tt class="docutils literal"><span class="pre">faucet</span> <span class="pre">8000</span> <span class="pre">-H</span> <span class="pre">127.0.0.1</span> <span class="pre">-i</span> <span class="pre">-o</span> <span class="pre">./scripts/bill</span> <span class="pre">lib/www/http.bsh</span></tt></td>
 </tr>
 </tbody>
@@ -106,15 +107,15 @@ directory, otherwise they may not work.</p>
 </div>
 <div class="warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">The <a class="reference" href="http://netcat.sourceforge.net/">netcat</a> command is very flaky, it will not accept
+<p class="last">The <a class="reference external" href="http://netcat.sourceforge.net/">netcat</a> command is very flaky, it will not accept
 concurrent connections, and in general will perform poorly.</p>
 </div>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id5" id="functions" name="functions">Functions</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id6" id="http-mimetype-guess" name="http-mimetype-guess">http_mimetype_guess</a></h2>
+<div class="section" id="functions">
+<h1><a class="toc-backref" href="#id6">Functions</a></h1>
+<div class="section" id="http-mimetype-guess">
+<h2><a class="toc-backref" href="#id7">http_mimetype_guess</a></h2>
 <pre class="literal-block">
 http_mimetype_guess path
 </pre>
@@ -127,8 +128,8 @@ pointed by <tt class="docutils literal"><span class="pre">path</span></tt> is us
 text/plain
 </pre></div>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id7" id="http-error-document" name="http-error-document">http_error_document</a></h2>
+<div class="section" id="http-error-document">
+<h2><a class="toc-backref" href="#id8">http_error_document</a></h2>
 <pre class="literal-block">
 http_error_document [ code [ description ... ] ]
 </pre>
@@ -139,30 +140,38 @@ http_error_document [ code [ description ... ] ]
 pre-formatted in the output.</li>
 </ul>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id8" id="http-header" name="http-header">http_header</a></h2>
+<div class="section" id="http-header">
+<h2><a class="toc-backref" href="#id9">http_header</a></h2>
 <pre class="literal-block">
 http_header name value
 </pre>
 <p>Sends an HTTP header.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id9" id="http-header-start" name="http-header-start">http_header_start</a></h2>
+<div class="section" id="http-header-start">
+<h2><a class="toc-backref" href="#id10">http_header_start</a></h2>
 <pre class="literal-block">
 http_header_start [ code [ description ] ]
 </pre>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id10" id="http-error" name="http-error">http_error</a></h2>
+<div class="section" id="http-date-now">
+<h2><a class="toc-backref" href="#id11">http_date_now</a></h2>
+<pre class="literal-block">
+http_date_now
+</pre>
+<p>Returns the current GMT time in RFC 1123 format, as needed for
+response HTTP headers.</p>
+</div>
+<div class="section" id="http-error">
+<h2><a class="toc-backref" href="#id12">http_error</a></h2>
 <pre class="literal-block">
 http_error [ code [ description ... ] ]
 </pre>
 <p>Sends an HTTP error status code and an accompanying HTML document
 explaining the error. Error document is formatted using
-<a class="reference" href="#http-error-document">http_error_document</a>.</p>
+<a class="reference internal" href="#http-error-document">http_error_document</a>.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id11" id="http-redirect" name="http-redirect">http_redirect</a></h2>
+<div class="section" id="http-redirect">
+<h2><a class="toc-backref" href="#id13">http_redirect</a></h2>
 <pre class="literal-block">
 http_redirect uri [ code ]
 </pre>
@@ -171,22 +180,22 @@ http_redirect uri [ code ]
 for temporary redirects. Keep in mind that using absolute paths in
 redirects is recommended.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id12" id="http-log-stderr" name="http-log-stderr">http_log_stderr</a></h2>
+<div class="section" id="http-log-stderr">
+<h2><a class="toc-backref" href="#id14">http_log_stderr</a></h2>
 <pre class="literal-block">
-http_log_stderr [ arg1 [ arg2 ... [ argN ] ] ]
+http_log_stderr status
 </pre>
-<p>Logs a line of output to standard error. Log format is as follows:</p>
+<p>Logs a line of output to standard error in <a class="reference external" href="http://en.wikipedia.org/wiki/Common_Log_Format">CLF</a> format:</p>
 <pre class="literal-block">
-&lt;method&gt; &lt;path&gt; HTTP/&lt;version&gt; - arg1 arg2 ... argN
+host ident authuser date request status bytes
 </pre>
-<p>Note that timestamps are not added to output. This is left as is
-intentionally: it is nicer to add a filter in standard output which
-does further formatting of logged text, and we do not have to mess
-with date formatting.</p>
+<p>Note that the “ident” field will always be empty. The field
+“address” will be empty when the remote IP cannot be guessed.
+The field “bytes” will be empty as well unless the
+<tt class="docutils literal"><span class="pre">Content-Length</span></tt> is set with <a class="reference internal" href="#http-header">http_header</a>.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id13" id="http-handle-get" name="http-handle-get">http_handle_GET</a></h2>
+<div class="section" id="http-handle-get">
+<h2><a class="toc-backref" href="#id15">http_handle_GET</a></h2>
 <pre class="literal-block">
 http_handle_GET
 </pre>
@@ -195,15 +204,15 @@ serving static files and producing directory listings. Also, if path
 resolves to a directory which contains a file named <tt class="docutils literal"><span class="pre">index.html</span></tt> it
 will be served instead.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id14" id="http-handle-request" name="http-handle-request">http_handle_request</a></h2>
+<div class="section" id="http-handle-request">
+<h2><a class="toc-backref" href="#id16">http_handle_request</a></h2>
 <pre class="literal-block">
 http_handle_request [ handler_prefix ]
 </pre>
 <p>Serves a single HTTP request. The following variables are set by the
 function and their values <strong>will be clamped</strong> if already defined. Note
 that most of them start with the <tt class="docutils literal"><span class="pre">HTTP_</span></tt> prefix or have names of the
-variables used by the <a class="reference" href="http://www.w3.org/CGI/">CGI interface</a>:</p>
+variables used by the <a class="reference external" href="http://www.w3.org/CGI/">CGI interface</a>:</p>
 <ul class="simple">
 <li>REQUEST_METHOD</li>
 <li>PATH_INFO</li>

@@ -1,0 +1,259 @@
+#! /usr/bin/env bill
+#
+# WARNING: On daemonization
+# =========================
+# Relevant functions:
+#    * billetd_start_daemon
+#    * billetd_stop_daemon
+#
+# Getting daemonization + pidfile + logfile combo to work correctly in
+# proved to be harder than expected. The main complexity is properly
+# handling processes because we have the following chain of invocations:
+#
+#   billetd (script)
+#      \
+#     bill (script)
+#        \
+#       tcpserver/faucet/tcpsvd (binary)
+#          \
+#           `--- billetd* (script)
+#                  \
+#                  bill (script)
+#
+#  Items marked with '*' are spawned for each incoming connection. Also
+#  each item tagged as '(script)' is really run by Bash (although not
+#  neccessarily in a different process!).
+#
+#  The final solution is annotatting the PID of the TCP wrapper in the
+#  PID file and exec'ing it from billetd, but all the environment must
+#  be set up in advance, so some tricks with temporary subshells are
+#  needed to being able of knowing the wrapper's PID.
+#
+
+need rm || die "Program 'rm' is not installed"
+
+use ui/cli
+
+
+declare -ar cmdline=(
+    d:daemon
+        false
+        'Run the billetd as a daemon'
+    p:pid-file
+        billetd.pid
+        'File name to write the PID number to'
+    k:kill
+        false
+        'Stop a running billetd daemon'
+    v:verbose
+        false
+        'Print information about what is being done'
+    b:path
+        "$(pwd)"
+        'Base path of served Billets'
+    p:port
+        8000
+        'TCP port on which to listen for connections'
+    a:address
+        '0.0.0.0'
+        'Host address on which to listen for connections'
+    l:log-file
+        billetd.log
+        'Location of log file when running as daemon'
+    t:tcp-sockets
+        auto
+        'Implementation of TCP sockets to use'
+    s:simple-server
+        false
+        'Run as plain HTTP server (no Billets container)'
+)
+
+
+options=$(hash_new)
+cli_optparse -h cmdline $options "$@"
+
+__verbose=$(hash_get $options verbose)
+
+verbose () {
+    $__verbose && printf "$@"
+} 1>&2
+
+
+declare -a tcp_wrapper=( )
+
+guess_tcp_wrapper ()
+{
+    hash_get $options port    &> /dev/null || die 'No port to bind to given'
+    hash_get $options address &> /dev/null || die 'No address to bind to given'
+
+    local which
+    which=$(hash_get $options tcp-sockets)
+
+    if [[ $? != 0 ]] || [ "$which" = auto ] ; then
+        need faucet    && which='netpipes'
+        need tcpserver && which='ucspi'
+        need tcpsvd    && which='ipsvd'
+    fi
+
+    case $which in
+    ipsvd | tcpsvd)
+        tcp_wrapper=( tcpsvd )
+        $__verbose && tcp_wrapper=( "${tcp_wrapper[@]}" -vv )
+        tcp_wrapper=( "${tcp_wrapper[@]}"
+            $(hash_get $options address)
+            $(hash_get $options port)
+        )
+        ;;
+    ucspi | tcpserver)
+        if $__verbose ; then
+            tcp_wrapper=( tcpserver -v )
+        else
+            tcp_wrapper=( tcpserver -q )
+        fi
+        tcp_wrapper=( "${tcp_wrapper[@]}"
+            $(hash_get $options address)
+            $(hash_get $options port)
+        )
+        ;;
+    netpipes | faucet)
+        tcp_wrapper=( faucet $(hash_get $options port) --in --out )
+        $__verbose && tcp_wrapper=( "${tcp_wrapper[@]}" --verbose )
+        tcp_wrapper=( "${tcp_wrapper[@]}"
+            --localhost $(hash_get $options address)
+        )
+        ;;
+    internal)
+        die "Internal sockets are not (yet) available as an option"
+        ;;
+    *)
+        die <<-EOF
+            No suitable TCP wrapper was found. Please install
+            one of tcpsvd, daemontools or netpipes.
+EOF
+        ;;
+    esac
+}
+
+
+billetd_stop_daemon ()
+{
+
+    local pidfile pid
+    pidfile=$(hash_get $options pid-file)
+    if [[ $? != 0 ]] || [ ! -r "$pidfile" ] ; then
+        die "Cannot read PID file '$pidfile'"
+    fi
+
+    pid=$(< "$pidfile")
+    [ "$pid" ] || die "PID file empty?"
+    verbose "Waiting for process $pid to stop... "
+    kill "$pid" ; true
+    rm -f "$pidfile"
+    verbose "done\n"
+}
+
+
+billetd_start_daemon ()
+{
+    local pidfile pid logfile path
+
+    # Billets expect being run from the base container directory. We can
+    # 'cd' into it here and leave the setting for all our child processes.
+    path=$(hash_get $options path)
+    if [[ $? != 0 ]] || [ ! -d "$path" ] ; then
+        die "Cannot set path to '$path'"
+    fi
+    cd "$path" &> /dev/null || die "Cannot set path to '$path'"
+
+    # Check whether the PID file is set-up
+    pidfile=$(hash_get $options pid-file)
+
+    if [[ $? != 0 ]] || [ -z "$pidfile" ] ; then
+        die "PID file not configured!"
+    fi
+
+    # If the PID file exists, bail out after checking if the
+    # process referenced by it is still alive.
+    if [ -r "$pidfile" ] ; then
+        pid=$(< "$pidfile")
+        if [ "$pid" ] && kill -0 "$pid" &> /dev/null ; then
+            die "PID file already exists and process $pid is up"
+        else
+            die "PID file already exists (possibly stalled)"
+        fi
+    fi
+
+    # Check whether we can write to the PID file
+    true 2> /dev/null > "$pidfile" || die "Cannot write PID file '$pidfile'"
+
+    # Check whether we can write to the log file
+    logfile=$(hash_get $options log-file)
+
+    if [[ $? != 0 ]] || [ -z "$logfile" ] ; then
+        die "Log file not configured"
+    fi
+    true 2> /dev/null > "$logfile" || die "Cannot write log file '$logfile'"
+
+    # Let's dance!
+    guess_tcp_wrapper
+    verbose "Starting billetd... "
+
+    # XXX Daemonize the process: close FDs
+    #
+    # Close file descriptors. BUT we do *only* close standard input because
+    # we want to redirect both standard output and error streams of the
+    # children. If they inherit closed descriptors they would need to be
+    # re-opened from the childs. Redirecting in the cihlds will effectively
+    # close stock streams.
+    exec 0<&- # Only STDIN!
+
+    # XXX Daemonize the process: Run in background and write PID to file
+    #
+    # This one is tricky. The first line sets the __BILLETD_MASTER and
+    # __BILLETD_SIMPLE variables, which instruct worker childrens to attend
+    # connections instead of acting as command line tool. Then we exec(2)
+    # the TCP wrapper, passing ourselves as connection handler,*both*
+    # standard and error outputs to the logfile (using '&>'). The trick is
+    # that the exec(2) runs *in a subshell* (note the lone ampersand on the
+    # last line), this way we can get the PID of the spawned process in the
+    # parent *AND* the PID is from the wrapper because of the exec(2).
+
+    # Let's sway!
+    __BILLETD_MASTER="$$" __BILLETD_SIMPLE=$(hash_get $options simple-server) \
+        exec "${tcp_wrapper[@]}" "$BILL_SCRIPT" --path "$(hash_get $options path)" \
+        &> "$logfile" &
+    pid=$!
+    echo "$pid" > "$pidfile"
+    verbose "running at PID $pid\n"
+    disown -h
+}
+
+
+if [ -n "$__BILLETD_MASTER" ]
+then
+    if [ "$__BILLETD_SIMPLE" = true ] ; then
+        http_handle_request
+    else
+        use www/billetd
+        billetd_handle_request
+    fi
+    exit $?
+fi
+
+
+if $(hash_get $options kill) ; then
+    billetd_stop_daemon
+elif $(hash_get $options daemon) ; then
+    billetd_start_daemon
+else
+    path=$(hash_get $options path)
+    if [[ $? != 0 ]] || [ ! -d "$path" ] ; then
+        die "Cannot set path to '$path'"
+    fi
+    cd "$path" &> /dev/null || die "Cannot set path to '$path'"
+
+    guess_tcp_wrapper
+    __BILLETD_MASTER="$$" __BILLETD_SIMPLE=$(hash_get $options simple-server) \
+        "${tcp_wrapper[@]}" "$BILL_SCRIPT" --path "$(hash_get $options path)"
+fi
+

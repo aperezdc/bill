@@ -130,6 +130,20 @@ http_header_start
 
 
 
+http_date_now
+-------------
+
+::
+
+  http_date_now
+
+
+Returns the current GMT time in RFC 1123 format, as needed for
+response HTTP headers.
+
+
+
+
 http_error
 ----------
 
@@ -166,17 +180,19 @@ http_log_stderr
 
 ::
 
-  http_log_stderr [ arg1 [ arg2 ... [ argN ] ] ]
+  http_log_stderr status
 
 
-Logs a line of output to standard error. Log format is as follows::
+Logs a line of output to standard error in CLF__ format::
 
-    <method> <path> HTTP/<version> - arg1 arg2 ... argN
+   host ident authuser date request status bytes
 
-Note that timestamps are not added to output. This is left as is
-intentionally: it is nicer to add a filter in standard output which
-does further formatting of logged text, and we do not have to mess
-with date formatting.
+__ http://en.wikipedia.org/wiki/Common_Log_Format
+
+Note that the “ident” field will always be empty. The field
+“address” will be empty when the remote IP cannot be guessed.
+The field “bytes” will be empty as well unless the
+``Content-Length`` is set with http_header_.
 
 
 

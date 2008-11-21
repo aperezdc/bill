@@ -25,7 +25,7 @@ bash_path=$(which bash)
 deb_version="${BILL_VERSION}-${deb_count}"
 deb_name="bill_${deb_version}_all"
 bash_scripts=( bill )
-bill_scripts=( unbill butt )
+bill_scripts=( unbill butt billetd )
 
 
 make_clean ()

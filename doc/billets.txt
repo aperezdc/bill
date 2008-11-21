@@ -26,28 +26,190 @@ Architecture
 Container
 ---------
 
+The billets container is responsible for providing a suitable environment
+for a number of billets to run. It *must* have a fairly complete HTTP 1.0
+[#]_, although some HTTP 1.1 [#]_ features are desirable to have.
+
+Mandatory features:
+
+* HTTP methods: ``GET``, ``POST``.
+
+Optional (desirable) features:
+
+* HTTP keep-alive support.
+
+* Optimizations for static content:
+
+  * Honor ``If-Modified-Since`` header.
+  * Implement the ``HEAD`` method.
+  * Generate ``ETag`` headers.
+
+.. [#] As specified in `RFC 1945 <http://www.ietf.org/rfc/rfc1945>`__.
+.. [#] As specified in `RFC 2616 <http://www.ietf.org/rfc/rfc2616>`__.
+
+
 Billets
 -------
+
+Billets are composed of a mandatory launcher script, which can contain:
+
+* The full application. This is useful for simple ones.
+
+* A trampoline which loads the Bill modules which implement the Billet,
+  and then calls its main entry point.
+
+The launcher script must be named after the *context name* using the
+``.b`` extension, e.g. ``${context}.b`` The name of the context will
+be the first component of the URLs used to access the application.
+Each context name can have associated resources (place the name of
+your context instead of the ``${context}`` string of the examples):
+
+Library modules
+  If you do not want to install the modules needed for running a Billet
+  site-wide, they can be deployed inside a directory named
+  ``${context}/libs`` inside the container's base path. This directory will
+  be added by the container to the Bill module search path when loading the
+  Billet.
+
+Resources
+  Resources needed for running an application can be provided by storing
+  them in a directory named ``${context}/rsrc``. Those can be any kind of
+  files which need to be handed over to clients using *plain HTTP*. The
+  container will automatically handle ``GET`` and ``HEAD`` HTTP request
+  of URLs pointing to application resources.
+
+Application data
+  Persistent application data must be stored into ``${context}/data``;
+  transient application data should be stored into ``${context}/temp``,
+  although it is not enforced. The container will protect those two
+  directories from being accessed via HTTP. It is recommended to keep
+  temporary stuff in a separate directory to ease administration tasks.
 
 
 Managing the container
 ======================
 
+The reference Billets container daemon, ``billetd`` is a pure-Bash
+implementation included with every Bill installation. It will serve
+a number of applications from a directory structure in the filesystem.
+
+
 Starting and stopping
 ---------------------
+
+For the sake of simplicity, the reference container does not need
+a configuration file. All configuration is done using command line switches.
+Note that reasonable defaults are provided for most options: for example,
+the path from where Billets are served from the current working directory
+unless otherwise specified.
+
+The usual options to ``billetd`` are the following:
+
+-p, --port     Set the TCP port in which requests are to be served.
+-a, --address  Set the IP address to which the TCP socket will be bound.
+-b, --path     Specifies from which directory Billets and their associated
+               content is to be served.
+-d, --daemon   Daemonize the Billets container. You may want to set the path
+               to the PID-file and the log file.
+-k, --kill     Kill a running daemon. Make sure you specify the PID-file of
+               the instance you want to stop.
+
+Let us suppose that the Billets to be served reside in ``/var/lib/billets``,
+we can just launch the daemon by using the following command:
+
+.. sourcecode:: bash
+
+  billetd --path /var/lib/billets
+
+This will run the process in foreground, logging to the standard error
+output. The server can also be ran as a daemon. If we want to use standard
+Unix paths to store the PID-file and the log. We would start the container
+with:
+
+.. sourcecode:: bash
+
+  billetd --path     /var/lib/billets     \
+          --log-file /var/log/billetd.log \
+          --pid-file /var/run/billetd.pid \
+          --daemon
+
+In order to stop the container we would need to use the following:
+
+.. sourcecode:: bash
+
+  billetd --kill --pid-file /var/run/billetd.pid
+
+
 
 Adding a billet
 ---------------
 
+In order to add a Billet it should suffice placing it (and its associated
+resources) inside the base directory of the container. The launcher script
+**must** be marked as executable (e.g. with ``chmod +x``), because the
+container will refuse requests for billets not marked as executable.
+
+It *should not* be neccessary to restart the container in order for the
+change to take effect. The shipped ``billetd`` will load the billet the
+first time it is accessed.
+
+
 Disabling a billet
 ------------------
 
+Because launchers scripts must be marked executable to work, you can disable
+a particular billet by just removing the execution bit of it, e.g. using
+``chmod -x``.
+
+Disabling a billet *should not* require a restart of the container. This is
+true for the shipped ``billetd`` container.
+
+
 Removing a billet
 -----------------
+
+In order to remove a billet it *should* suffice to remove the launcher
+script and the associated context directory from the file system. The
+container *might* need to be restarted in order to free used memory, but
+requests for the application will stop being served just after the files are
+deleted.
 
 
 Billet development
 ==================
 
+Environment
+-----------
+
+Along with the variables of the CGI environment which are defined by the
+`www/http <lib/www/http.html>`_ module, the container defines a set of
+variables in the environment of the running billets:
+
+.. class:: modules
+
+=============== =======================================================
+Variable        Content
+=============== =======================================================
+BILLET_BASE     Base container directory where launcher scripts are
+                stored.
+--------------- -------------------------------------------------------
+BILLET_CONTEXT  Name of the context of the active billet.
+--------------- -------------------------------------------------------
+BILLET_PATH     Additional URL path components given *after* the name
+                of the context.
+--------------- -------------------------------------------------------
+BILLET_TRAIL    Array containing all the URL segments, including the
+                context name.
+--------------- -------------------------------------------------------
+BILLET_DATA     Path to the current billet data directory.
+--------------- -------------------------------------------------------
+BILLET_RSRC     Path to the current billet resources directory.
+--------------- -------------------------------------------------------
+BILLET_LIBS     Path to the current billet local library modules
+                directory.
+--------------- -------------------------------------------------------
+BILLET_TEMP     Path to the current billet temporary data storage
+                directory.
+=============== =======================================================
 
 .. vim: filetype=rst expandtab tabstop=2 shiftwidth=2

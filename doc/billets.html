@@ -33,56 +33,233 @@ to <em>billet development</em> suitable for new developers.</p>
 <div class="contents topic">
 <p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference" href="#background" id="id1" name="id1">Background</a><ul>
-<li><a class="reference" href="#architecture" id="id2" name="id2">Architecture</a></li>
-<li><a class="reference" href="#container" id="id3" name="id3">Container</a></li>
-<li><a class="reference" href="#billets" id="id4" name="id4">Billets</a></li>
+<li><a class="reference" href="#background" id="id5" name="id5">Background</a><ul>
+<li><a class="reference" href="#architecture" id="id6" name="id6">Architecture</a></li>
+<li><a class="reference" href="#container" id="id7" name="id7">Container</a></li>
+<li><a class="reference" href="#billets" id="id8" name="id8">Billets</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#managing-the-container" id="id5" name="id5">Managing the container</a><ul>
-<li><a class="reference" href="#starting-and-stopping" id="id6" name="id6">Starting and stopping</a></li>
-<li><a class="reference" href="#adding-a-billet" id="id7" name="id7">Adding a billet</a></li>
-<li><a class="reference" href="#disabling-a-billet" id="id8" name="id8">Disabling a billet</a></li>
-<li><a class="reference" href="#removing-a-billet" id="id9" name="id9">Removing a billet</a></li>
+<li><a class="reference" href="#managing-the-container" id="id9" name="id9">Managing the container</a><ul>
+<li><a class="reference" href="#starting-and-stopping" id="id10" name="id10">Starting and stopping</a></li>
+<li><a class="reference" href="#adding-a-billet" id="id11" name="id11">Adding a billet</a></li>
+<li><a class="reference" href="#disabling-a-billet" id="id12" name="id12">Disabling a billet</a></li>
+<li><a class="reference" href="#removing-a-billet" id="id13" name="id13">Removing a billet</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#billet-development" id="id10" name="id10">Billet development</a></li>
+<li><a class="reference" href="#billet-development" id="id14" name="id14">Billet development</a><ul>
+<li><a class="reference" href="#environment" id="id15" name="id15">Environment</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id1" id="background" name="background">Background</a></h1>
+<h1><a class="toc-backref" href="#id5" id="background" name="background">Background</a></h1>
 <div class="section">
-<h2><a class="toc-backref" href="#id2" id="architecture" name="architecture">Architecture</a></h2>
+<h2><a class="toc-backref" href="#id6" id="architecture" name="architecture">Architecture</a></h2>
 <div class="align-right figure">
 <img alt="img/architecture.png" src="img/architecture.png" />
 <p class="caption">Billets architecture</p>
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id3" id="container" name="container">Container</a></h2>
+<h2><a class="toc-backref" href="#id7" id="container" name="container">Container</a></h2>
+<p>The billets container is responsible for providing a suitable environment
+for a number of billets to run. It <em>must</em> have a fairly complete HTTP 1.0
+<a class="footnote-reference" href="#id3" id="id1" name="id1">[1]</a>, although some HTTP 1.1 <a class="footnote-reference" href="#id4" id="id2" name="id2">[2]</a> features are desirable to have.</p>
+<p>Mandatory features:</p>
+<ul class="simple">
+<li>HTTP methods: <tt class="docutils literal"><span class="pre">GET</span></tt>, <tt class="docutils literal"><span class="pre">POST</span></tt>.</li>
+</ul>
+<p>Optional (desirable) features:</p>
+<ul class="simple">
+<li>HTTP keep-alive support.</li>
+<li>Optimizations for static content:<ul>
+<li>Honor <tt class="docutils literal"><span class="pre">If-Modified-Since</span></tt> header.</li>
+<li>Implement the <tt class="docutils literal"><span class="pre">HEAD</span></tt> method.</li>
+<li>Generate <tt class="docutils literal"><span class="pre">ETag</span></tt> headers.</li>
+</ul>
+</li>
+</ul>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1" name="id3">[1]</a></td><td>As specified in <a class="reference" href="http://www.ietf.org/rfc/rfc1945">RFC 1945</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2" name="id4">[2]</a></td><td>As specified in <a class="reference" href="http://www.ietf.org/rfc/rfc2616">RFC 2616</a>.</td></tr>
+</tbody>
+</table>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id4" id="billets" name="billets">Billets</a></h2>
+<h2><a class="toc-backref" href="#id8" id="billets" name="billets">Billets</a></h2>
+<p>Billets are composed of a mandatory launcher script, which can contain:</p>
+<ul class="simple">
+<li>The full application. This is useful for simple ones.</li>
+<li>A trampoline which loads the Bill modules which implement the Billet,
+and then calls its main entry point.</li>
+</ul>
+<p>The launcher script must be named after the <em>context name</em> using the
+<tt class="docutils literal"><span class="pre">.b</span></tt> extension, e.g. <tt class="docutils literal"><span class="pre">${context}.b</span></tt> The name of the context will
+be the first component of the URLs used to access the application.
+Each context name can have associated resources (place the name of
+your context instead of the <tt class="docutils literal"><span class="pre">${context}</span></tt> string of the examples):</p>
+<dl class="docutils">
+<dt>Library modules</dt>
+<dd>If you do not want to install the modules needed for running a Billet
+site-wide, they can be deployed inside a directory named
+<tt class="docutils literal"><span class="pre">${context}/libs</span></tt> inside the container's base path. This directory will
+be added by the container to the Bill module search path when loading the
+Billet.</dd>
+<dt>Resources</dt>
+<dd>Resources needed for running an application can be provided by storing
+them in a directory named <tt class="docutils literal"><span class="pre">${context}/rsrc</span></tt>. Those can be any kind of
+files which need to be handed over to clients using <em>plain HTTP</em>. The
+container will automatically handle <tt class="docutils literal"><span class="pre">GET</span></tt> and <tt class="docutils literal"><span class="pre">HEAD</span></tt> HTTP request
+of URLs pointing to application resources.</dd>
+<dt>Application data</dt>
+<dd>Persistent application data must be stored into <tt class="docutils literal"><span class="pre">${context}/data</span></tt>;
+transient application data should be stored into <tt class="docutils literal"><span class="pre">${context}/temp</span></tt>,
+although it is not enforced. The container will protect those two
+directories from being accessed via HTTP. It is recommended to keep
+temporary stuff in a separate directory to ease administration tasks.</dd>
+</dl>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id5" id="managing-the-container" name="managing-the-container">Managing the container</a></h1>
+<h1><a class="toc-backref" href="#id9" id="managing-the-container" name="managing-the-container">Managing the container</a></h1>
+<p>The reference Billets container daemon, <tt class="docutils literal"><span class="pre">billetd</span></tt> is a pure-Bash
+implementation included with every Bill installation. It will serve
+a number of applications from a directory structure in the filesystem.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id6" id="starting-and-stopping" name="starting-and-stopping">Starting and stopping</a></h2>
+<h2><a class="toc-backref" href="#id10" id="starting-and-stopping" name="starting-and-stopping">Starting and stopping</a></h2>
+<p>For the sake of simplicity, the reference container does not need
+a configuration file. All configuration is done using command line switches.
+Note that reasonable defaults are provided for most options: for example,
+the path from where Billets are served from the current working directory
+unless otherwise specified.</p>
+<p>The usual options to <tt class="docutils literal"><span class="pre">billetd</span></tt> are the following:</p>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-p</span>, <span class="option">--port</span></kbd></td>
+<td>Set the TCP port in which requests are to be served.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-a</span>, <span class="option">--address</span></kbd></td>
+<td>Set the IP address to which the TCP socket will be bound.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-b</span>, <span class="option">--path</span></kbd></td>
+<td>Specifies from which directory Billets and their associated
+content is to be served.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-d</span>, <span class="option">--daemon</span></kbd></td>
+<td>Daemonize the Billets container. You may want to set the path
+to the PID-file and the log file.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-k</span>, <span class="option">--kill</span></kbd></td>
+<td>Kill a running daemon. Make sure you specify the PID-file of
+the instance you want to stop.</td></tr>
+</tbody>
+</table>
+<p>Let us suppose that the Billets to be served reside in <tt class="docutils literal"><span class="pre">/var/lib/billets</span></tt>,
+we can just launch the daemon by using the following command:</p>
+<div class="highlight"><pre>billetd --path /var/lib/billets
+</pre></div>
+<p>This will run the process in foreground, logging to the standard error
+output. The server can also be ran as a daemon. If we want to use standard
+Unix paths to store the PID-file and the log. We would start the container
+with:</p>
+<div class="highlight"><pre>billetd --path     /var/lib/billets     <span class="se">\</span>
+        --log-file /var/log/billetd.log <span class="se">\</span>
+        --pid-file /var/run/billetd.pid <span class="se">\</span>
+        --daemon
+</pre></div>
+<p>In order to stop the container we would need to use the following:</p>
+<div class="highlight"><pre>billetd --kill --pid-file /var/run/billetd.pid
+</pre></div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id7" id="adding-a-billet" name="adding-a-billet">Adding a billet</a></h2>
+<h2><a class="toc-backref" href="#id11" id="adding-a-billet" name="adding-a-billet">Adding a billet</a></h2>
+<p>In order to add a Billet it should suffice placing it (and its associated
+resources) inside the base directory of the container. The launcher script
+<strong>must</strong> be marked as executable (e.g. with <tt class="docutils literal"><span class="pre">chmod</span> <span class="pre">+x</span></tt>), because the
+container will refuse requests for billets not marked as executable.</p>
+<p>It <em>should not</em> be neccessary to restart the container in order for the
+change to take effect. The shipped <tt class="docutils literal"><span class="pre">billetd</span></tt> will load the billet the
+first time it is accessed.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id8" id="disabling-a-billet" name="disabling-a-billet">Disabling a billet</a></h2>
+<h2><a class="toc-backref" href="#id12" id="disabling-a-billet" name="disabling-a-billet">Disabling a billet</a></h2>
+<p>Because launchers scripts must be marked executable to work, you can disable
+a particular billet by just removing the execution bit of it, e.g. using
+<tt class="docutils literal"><span class="pre">chmod</span> <span class="pre">-x</span></tt>.</p>
+<p>Disabling a billet <em>should not</em> require a restart of the container. This is
+true for the shipped <tt class="docutils literal"><span class="pre">billetd</span></tt> container.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id9" id="removing-a-billet" name="removing-a-billet">Removing a billet</a></h2>
+<h2><a class="toc-backref" href="#id13" id="removing-a-billet" name="removing-a-billet">Removing a billet</a></h2>
+<p>In order to remove a billet it <em>should</em> suffice to remove the launcher
+script and the associated context directory from the file system. The
+container <em>might</em> need to be restarted in order to free used memory, but
+requests for the application will stop being served just after the files are
+deleted.</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id10" id="billet-development" name="billet-development">Billet development</a></h1>
+<h1><a class="toc-backref" href="#id14" id="billet-development" name="billet-development">Billet development</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id15" id="environment" name="environment">Environment</a></h2>
+<p>Along with the variables of the CGI environment which are defined by the
+<a class="reference" href="lib/www/http.html">www/http</a> module, the container defines a set of
+variables in the environment of the running billets:</p>
+<table border="1" class="modules docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Variable</th>
+<th class="head">Content</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>BILLET_BASE</td>
+<td>Base container directory where launcher scripts are
+stored.</td>
+</tr>
+<tr><td>BILLET_CONTEXT</td>
+<td>Name of the context of the active billet.</td>
+</tr>
+<tr><td>BILLET_PATH</td>
+<td>Additional URL path components given <em>after</em> the name
+of the context.</td>
+</tr>
+<tr><td>BILLET_TRAIL</td>
+<td>Array containing all the URL segments, including the
+context name.</td>
+</tr>
+<tr><td>BILLET_DATA</td>
+<td>Path to the current billet data directory.</td>
+</tr>
+<tr><td>BILLET_RSRC</td>
+<td>Path to the current billet resources directory.</td>
+</tr>
+<tr><td>BILLET_LIBS</td>
+<td>Path to the current billet local library modules
+directory.</td>
+</tr>
+<tr><td>BILLET_TEMP</td>
+<td>Path to the current billet temporary data storage
+directory.</td>
+</tr>
+</tbody>
+</table>
 <!-- vim: filetype=rst expandtab tabstop=2 shiftwidth=2 -->
+</div>
 </div>
 </div>
 </body>

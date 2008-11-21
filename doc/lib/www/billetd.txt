@@ -1,0 +1,83 @@
+=============
+Billet Engine
+=============
+:Author: Adrian Perez <aperez@igalia.com>
+:Copyright: 2008 Igalia S.L.
+:License: GPL v2
+:Abstract: Billet container implementation.
+
+
+
+
+billetd_map_context
+-------------------
+
+::
+
+  billetd_map_context [ path ]
+
+
+If a *path* is not supplied, then ``$PATH_INFO`` will be used instead.
+The function defines the ``$BILLET_CONTEXT`` and ``$BILLET_PATH``
+variables, with the obvious meaning.
+
+
+
+
+billetd_set_stdvars
+-------------------
+
+::
+
+  billetd_set_stdvars
+
+
+Defines the standard set of variables. Note that ``$BILLET_CONTEXT``
+**must** be defined in order for this to work. You can map an URI/path
+to its context name using billetd_map_context_.
+
+
+
+
+billet_send_resource
+--------------------
+
+::
+
+  billet_send_resource
+
+
+
+
+
+billetd_handle_http_GET
+-----------------------
+
+::
+
+  billetd_handle_http_GET
+
+
+
+
+
+billetd_handle_http_POST
+------------------------
+
+::
+
+  billetd_handle_http_POST
+
+
+
+
+
+billet_server_run
+-----------------
+
+::
+
+  billet_server_run handlers
+
+
+

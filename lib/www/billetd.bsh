@@ -1,0 +1,202 @@
+#! /usr/bin/env bill
+#++
+#   =============
+#   Billet Engine
+#   =============
+#   :Author: Adrian Perez <aperez@igalia.com>
+#   :Copyright: 2008 Igalia S.L.
+#   :License: GPL v2
+#   :Abstract: Billet container implementation.
+#--
+
+need stat || "Program 'stat' was not found, install coreutils"
+
+
+use text/string
+use www/http
+
+
+declare    BILLET_CONTEXT="."
+declare -a BILLET_TRAIL=( )
+declare    BILLET_PATH=''
+declare    BILLET_BASE=''
+declare    BILLET_DATA=''
+declare    BILLET_TEMP=''
+declare    BILLET_RSRC=''
+declare    BILLET_LIBS=''
+
+
+billetd_debug () {
+    if [ "$BILLETD_DEBUG" ] ; then
+        local -r format="(billetd) $1\n"
+        shift
+        printf "$format" "$@"
+    fi
+} 1>&2
+
+
+#++ billetd_map_context [ path ]
+#
+#   If a *path* is not supplied, then ``$PATH_INFO`` will be used instead.
+#   The function defines the ``$BILLET_CONTEXT`` and ``$BILLET_PATH``
+#   variables, with the obvious meaning.
+#--
+billetd_map_context ()
+{
+    billetd_debug "PWD=$(pwd)"
+    local path=${1:-"$PATH_INFO"}
+    while string_startswith "$path" / ; do
+        path=${path#/}
+    done
+
+    # Use 1st URL component as context name
+    BILLET_CONTEXT=${path%%/*}
+
+    # If no context name is given, but a default one exists, use the default
+    if ( [ -z "$BILLET_CONTEXT" ] || [ ! -x "$BILLET_CONTEXT" ] ) && \
+         [ -r "$BILLET_BASE/default" ]
+    then
+        BILLET_CONTEXT=$(< "$BILLET_BASE/default" )
+    fi
+
+    # If the chosen context does *not* have a launcher script, or the
+    # launcher script is not executable, just exit with a 404 (Not
+    # found) HTTP status.
+    if [ ! -x "${BILLET_BASE}/${BILLET_CONTEXT}.b" ] ; then
+        http_error 404 'Billet context not found'
+        return 1
+    fi
+
+    BILLET_TRAIL=( "$BILLET_CONTEXT" )
+    BILLET_PATH=${path#*/}
+
+    local npath=${path#*/}
+    while [ "$path" != "$npath" ] ; do
+        path=${npath}
+        BILLET_TRAIL=( "${BILLET_TRAIL[@]}" "${path%%/*}" )
+        npath=${path#*/}
+    done
+
+    if [ ! -x "${BILLET_BASE}/${BILLET_CONTEXT}.b" ] ; then
+        http_error 404 'Billet context not found'
+        return 1
+    fi
+}
+
+
+#++ billetd_set_stdvars
+#
+#   Defines the standard set of variables. Note that ``$BILLET_CONTEXT``
+#   **must** be defined in order for this to work. You can map an URI/path
+#   to its context name using billetd_map_context_.
+#--
+billetd_set_stdvars ()
+{
+    if [ -z "$BILLET_CONTEXT" ] ; then
+        http_error 500
+        return 1
+    fi
+
+    BILLET_DATA="${BILLET_BASE}/${BILLET_CONTEXT}/data"
+    BILLET_TEMP="${BILLET_BASE}/${BILLET_CONTEXT}/temp"
+    BILLET_RSRC="${BILLET_BASE}/${BILLET_CONTEXT}/rsrc"
+    BILLET_LIBS="${BILLET_BASE}/${BILLET_CONTEXT}/libs"
+}
+
+
+#++ billet_send_resource
+#--
+billetd_send_resource ()
+{
+    local -r method=${1:-GET}
+
+    if [ "$method" != GET ] && [ "$method" != HEAD ] ; then
+        http_error 501
+        return 3
+    fi
+
+    # XXX Using PATH_INFO is a reasonable shortcut.
+    local -r path="${BILLET_BASE}/${PATH_INFO}"
+
+    if [ ! -r "$path" ] || [ ! -f "$path" ] ; then
+        http_error 404
+        return 3
+    fi
+
+    # TODO Add support for If-Modified-Since
+
+    mtime=$(date --reference="$path" --utc '+%a, %d %b %Y %T GMT')
+
+    # File attributes:
+    #       file size (bytes)
+    #
+    finfo=( $(stat --dereference --format='%s %Z:%Y:%X-%d:%i' "$path") )
+
+    http_header Content-Type   "$(http_mimetype_guess "$path")"
+    http_header Content-Length "${finfo[0]}"
+    http_header ETag           "${finfo[1]}"
+    http_header Last-Modified  "$mtime"
+    http_body
+
+    [ "$method" = GET ] && cat "$path"
+}
+
+
+billetd_handle_http_HEAD ()
+{
+    billetd_map_context || return 1
+    billetd_set_stdvars || return 2
+
+    # Handle static content, trail have "rsrc" as second component:
+    #
+    #    BILLET_TRAIL=( context rsrc foo bar... )
+    #                           ^^^^
+    if [[ ${#BILLET_TRAIL[@]} -gt 2 ]] && [[ ${BILLET_TRAIL[1]} = rsrc ]]
+    then
+        billetd_send_resource HEAD
+    else
+        http_response
+        http_body
+    fi
+}
+
+
+#++ billetd_handle_http_GET
+#--
+billetd_handle_http_GET ()
+{
+    billetd_map_context || return
+    billetd_set_stdvars || return
+
+    # Handle static content, trail have "rsrc" as second component:
+    #
+    #    BILLET_TRAIL=( context rsrc foo bar... )
+    #                           ^^^^
+    if [[ ${#BILLET_TRAIL[@]} -gt 2 ]] && [[ ${BILLET_TRAIL[1]} = rsrc ]]
+    then
+        billetd_send_resource GET
+    else
+        http_response
+        http_body
+    fi
+}
+
+
+#++ billetd_handle_http_POST
+#--
+billetd_handle_http_POST ()
+{
+    billetd_map_context || return
+    billetd_set_stdvars || return
+}
+
+
+#++ billet_server_run handlers
+#--
+billetd_handle_request ()
+{
+    declare -x BILLET_BASE=$(pwd)
+    billetd_debug "BASE=%s" "$BILLET_BASE"
+    http_handle_request billetd_handle_http
+}
+

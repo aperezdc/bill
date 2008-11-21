@@ -1,36 +1,26 @@
 #! /usr/bin/env bill
 #++
-#   =============
-#   Billet Engine
-#   =============
-#   :Author: Adrian Perez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
+#   =================
+#   Billet client API
+#   =================
+#   :Author: Adrian Perez de Castro <aperez@igalia.com>
+#   :Copyright: Igalia, 2008
 #   :License: GPL v2
+#   :Abstract: Provides support functions for implementing Billets.
+#
+#   .. contents::
+#
+#   Functions
+#   =========
 #--
 
-
-use www/http
-
-
-#++ billet_handle_http_GET
+#++ billet_url relative_uri
 #--
-billet_handle_http_GET ()
+billet_url ()
 {
-    [[ $__BILLET_HANDLERS ]] || die "__BILLET_HANDLERS undefined"
-}
-
-
-#++ billet_handle_http_POST
-#--
-billet_handle_http_POST ()
-{
-    [[ $__BILLET_HANDLERS ]] || die "__BILLET_HANDLERS undefined"
-}
-
-
-#++ billet_server_run handlers
-#--
-billet_handle_request ()
-{
-    __BILLET_HANDLERS=$1 http_handle_request billet_handle_http
+    if [[ $# -eq 1 ]] ; then
+        echo "$prefix/${BILLET_CONTEXT}/$1"
+    else
+        echo "$prefix/$1/$2"
+    fi
 }

@@ -17,8 +17,9 @@
 use text/string
 use text/template
 
-need sed || die "The 'sed' program was not found"
-need cat || die "The 'cat' program was not found"
+need date || die "The 'date' program was not found"
+need sed  || die "The 'sed' program was not found"
+need cat  || die "The 'cat' program was not found"
 
 #++
 #   Running a webserver
@@ -72,12 +73,21 @@ need cat || die "The 'cat' program was not found"
 #   =========
 #--
 
+http_debug () {
+    if [ "$HTTP_DEBUG" ] ; then
+        local -r format="(http) $1\n"
+        shift
+        printf "$format" "$@"
+    fi
+} 1>&2
+
 
 http_response_by_code ()
 {
     local C='Unknown HTTP code'
     case $1 in
         200) C='Ok - Transceiver and a coke, please' ;;
+        304) C='Not modified - for sure!'            ;;
         403) C='Forbidden'                           ;;
         404) C='Not Found'                           ;;
         500) C='Internal Server Error'               ;;
@@ -179,7 +189,9 @@ http_error_document ()
 
 
 __HTTP_HEADER_SENT=true
+__HTTP_DATE_HEADER=false
 __HTTP_SERVER_HEADER=false
+__HTTP_CONTENT_LENGTH='-'
 __HTTP_CONNECTION_HEADER=false
 
 
@@ -191,7 +203,10 @@ http_header ()
 {
     $__HTTP_HEADER_SENT && die "HTTP headers already sent"
 
+    [[ $1 = [Cc]ontent\ [Ll]ength ]] && __HTTP_CONTENT_LENGTH=$2
     [[ $1 = [Cc]onnection ]] && __HTTP_CONNECTION_HEADER=true
+    [[ $1 = [Ss]erver ]] && __HTTP_SERVER_HEADER=true
+    [[ $1 = [Dd]ate ]] && __HTTP_DATE_HEADER=true
 
     printf "%s: %s\r\n" "$1" "$2"
 }
@@ -210,16 +225,30 @@ http_response ()
 }
 
 
+#++ http_date_now
+#
+#   Returns the current GMT time in RFC 1123 format, as needed for
+#   response HTTP headers.
+#--
+http_date_now ()
+{
+    LANG='' LC_ALL='' date --utc '+%a, %d %b %Y %T GMT'
+}
+
+
 http_body ()
 {
     $__HTTP_HEADER_SENT && die "Cannot reinit an HTTP response"
+    $__HTTP_DATE_HEADER || http_header Date "$(http_date_now)"
     $__HTTP_SERVER_HEADER || http_header Server "${__http_server}"
     $__HTTP_CONNECTION_HEADER || http_header Connection close
     printf "\r\n"
 
     # Restore to initial values:
     __HTTP_HEADER_SENT=true
+    __HTTP_DATE_HEADER=false
     __HTTP_SERVER_HEADER=false
+    __HTTP_CONTENT_LENGTH='-'
     __HTTP_CONNECTION_HEADER=false
 }
 
@@ -232,7 +261,7 @@ http_body ()
 #--
 http_error ()
 {
-    http_log_stderr "$@"
+    http_log_stderr "$1"
 
     http_response "$1"
     http_header Content-Type text/html
@@ -261,22 +290,27 @@ http_redirect ()
 }
 
 
-#++ http_log_stderr [ arg1 [ arg2 ... [ argN ] ] ]
+#++ http_log_stderr status
 #
-#   Logs a line of output to standard error. Log format is as follows::
+#   Logs a line of output to standard error in CLF__ format::
 #
-#       <method> <path> HTTP/<version> - arg1 arg2 ... argN
+#      host ident authuser date request status bytes
 #
-#   Note that timestamps are not added to output. This is left as is
-#   intentionally: it is nicer to add a filter in standard output which
-#   does further formatting of logged text, and we do not have to mess
-#   with date formatting.
+#   __ http://en.wikipedia.org/wiki/Common_Log_Format
+#
+#   Note that the “ident” field will always be empty. The field
+#   “address” will be empty when the remote IP cannot be guessed.
+#   The field “bytes” will be empty as well unless the
+#   ``Content-Length`` is set with http_header_.
 #--
 http_log_stderr ()
 {
-    local -r mess=$(string_join ' ' "$@")
-    echo "$REQUEST_METHOD $PATH_INFO $HTTP_VERSION - $mess" 1>&2
-}
+    printf '%s - %s [%s] "%s %s %s" - %s %s\n'      \
+        "${REMOTE_ADDR:--}" "${REMOTE_USER:--}"  \
+        "$(LC_ALL='' LANG='' date '+%d/%b/%Y:%T %z')" \
+        "$REQUEST_METHOD" "$PATH_INFO" "$HTTP_VERSION" \
+        "$1" "${__HTTP_CONTENT_LENGTH:--}"
+} 1>&2
 
 
 
@@ -379,6 +413,8 @@ http_handle_request ()
 {
     local -r prefix=${1:-'http_handle'}
 
+    http_debug 'Handler prefix: %s' "$prefix"
+
     # Use CGI variables as log as possible, so interfacing with external
     # CGIs will be easier.
     #
@@ -393,7 +429,33 @@ http_handle_request ()
     QUERY_STRING=${PATH_INFO#*\?}
     PATH_INFO=${PATH_INFO%%\?*}
 
+    [ "$PATH_INFO" = "$QUERY_STRING" ] && QUERY_STRING=""
+
     declare -x REQUEST_METHOD PATH_INFO HTTP_VERSION QUERY_STRING
+    declare -x SERVER_PORT=80
+
+    # Those are provided by UCSPI-compliant TCP socket wrappers,
+    # see http://cr.yp.to/ucspi-tcp/environment.html
+    #
+    if [ -n "$TCPREMOTEIP" ]
+    then
+        http_debug 'Running under UCSPI-compatible TCP wrapper'
+        declare -x REMOTE_ADDR=${TCPREMOTEIP}
+        if [ "$TCPREMOTEHOST" != "$TCPREMOTEIP" ] ; then
+            declare -x REMOTE_HOST=${TCPREMOTEHOST}
+        fi
+        [ -n "$TCPREMOTEINFO" ] && declare -x REMOTE_IDENT=${TCPREMOTEINFO}
+    elif string_endswith "$BILL_FROM" /faucet && [ -x "${BILL_FROM%faucet}/getpeername" ]
+    then
+        # It looks like we are being run under control of netpipes
+        http_debug 'Running under netpipes/faucet TCP wrapper'
+        local -ar info=( $(getpeername) )
+        declare -x REMOTE_ADDR=${info[1]}
+    else
+        http_debug 'TCP wrapper not detected'
+    fi
+    # TODO Add support for internal sockets
+
 
     case $HTTP_VERSION in
         HTTP/1.0 | HTTP/1.1)
@@ -433,7 +495,7 @@ http_handle_request ()
         eval "export HTTP_${key//-/_}=${val}"
     done
 
-    $handler && http_log_stderr 200 "$handler"
+    $handler && http_log_stderr 200
 }
 
 

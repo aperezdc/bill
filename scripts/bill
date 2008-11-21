@@ -11,6 +11,15 @@
 #   :Abstract: Wrapper which launches the bash_ shell adding the Bill
 #       built-in functions.
 #--
+
+# XXX This must be done *first*. Because any command executed will set $_,
+# and if we catch its value here, we are effectively storing from which
+# program (called by the shell, of course!) are we being called. It will be
+# empty if we are being invoked directly from a binary without any kind of
+# intervention.
+declare -x BILL_FROM=$_
+
+# We want errors to be catched earlier.
 set -e
 
 [ "$BILL_DEBUG" ] && set -x
@@ -77,10 +86,10 @@ use bill/builtins
 
 if [ "$1" ]
 then
-    SCRIPT=$1
+    export BILL_SCRIPT=$1
     shift
-    BILLPATH="$(dirname "$SCRIPT"):$BILLPATH"
-    source "$SCRIPT"
+    BILLPATH="$(dirname "$BILL_SCRIPT"):$BILLPATH"
+    source "$BILL_SCRIPT"
 else
     unset PROMPT_COMMAND
     PS1='\[\033[1;1m\](bill)\[\033[0;0m\] '
