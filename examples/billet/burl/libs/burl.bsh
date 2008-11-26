@@ -62,7 +62,7 @@ burl_add ()
 burl_find ()
 {
     [ -r "$1/$2" ] || return 0
-    cat "$1/$2"
+    printf '%s\n' "$(< "$1/$2")"
 }
 
 

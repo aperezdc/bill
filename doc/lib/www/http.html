@@ -39,16 +39,18 @@ output and logging is done the standard error stream.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#functions" id="id6">Functions</a><ul>
-<li><a class="reference internal" href="#http-mimetype-guess" id="id7">http_mimetype_guess</a></li>
-<li><a class="reference internal" href="#http-error-document" id="id8">http_error_document</a></li>
-<li><a class="reference internal" href="#http-header" id="id9">http_header</a></li>
-<li><a class="reference internal" href="#http-header-start" id="id10">http_header_start</a></li>
-<li><a class="reference internal" href="#http-date-now" id="id11">http_date_now</a></li>
-<li><a class="reference internal" href="#http-error" id="id12">http_error</a></li>
-<li><a class="reference internal" href="#http-redirect" id="id13">http_redirect</a></li>
-<li><a class="reference internal" href="#http-log-stderr" id="id14">http_log_stderr</a></li>
-<li><a class="reference internal" href="#http-handle-get" id="id15">http_handle_GET</a></li>
-<li><a class="reference internal" href="#http-handle-request" id="id16">http_handle_request</a></li>
+<li><a class="reference internal" href="#http-response-by-code" id="id7">http_response_by_code</a></li>
+<li><a class="reference internal" href="#http-mimetype-guess" id="id8">http_mimetype_guess</a></li>
+<li><a class="reference internal" href="#http-error-document" id="id9">http_error_document</a></li>
+<li><a class="reference internal" href="#http-header" id="id10">http_header</a></li>
+<li><a class="reference internal" href="#http-header-start" id="id11">http_header_start</a></li>
+<li><a class="reference internal" href="#http-date-now" id="id12">http_date_now</a></li>
+<li><a class="reference internal" href="#http-body" id="id13">http_body</a></li>
+<li><a class="reference internal" href="#http-error" id="id14">http_error</a></li>
+<li><a class="reference internal" href="#http-redirect" id="id15">http_redirect</a></li>
+<li><a class="reference internal" href="#http-log-clf" id="id16">http_log_clf</a></li>
+<li><a class="reference internal" href="#http-handle-get" id="id17">http_handle_GET</a></li>
+<li><a class="reference internal" href="#http-handle-request" id="id18">http_handle_request</a></li>
 </ul>
 </li>
 </ul>
@@ -114,8 +116,17 @@ concurrent connections, and in general will perform poorly.</p>
 </div>
 <div class="section" id="functions">
 <h1><a class="toc-backref" href="#id6">Functions</a></h1>
+<div class="section" id="http-response-by-code">
+<h2><a class="toc-backref" href="#id7">http_response_by_code</a></h2>
+<pre class="literal-block">
+http_response_by_code code
+</pre>
+<p>Obtains the descriptive text for the given HTTP response status code.
+The strings returned are those specified in the code list contained in
+<a class="reference external" href="http://www.ietf.org/rfcs/rfc2068">RFC 2068</a>.</p>
+</div>
 <div class="section" id="http-mimetype-guess">
-<h2><a class="toc-backref" href="#id7">http_mimetype_guess</a></h2>
+<h2><a class="toc-backref" href="#id8">http_mimetype_guess</a></h2>
 <pre class="literal-block">
 http_mimetype_guess path
 </pre>
@@ -129,7 +140,7 @@ text/plain
 </pre></div>
 </div>
 <div class="section" id="http-error-document">
-<h2><a class="toc-backref" href="#id8">http_error_document</a></h2>
+<h2><a class="toc-backref" href="#id9">http_error_document</a></h2>
 <pre class="literal-block">
 http_error_document [ code [ description ... ] ]
 </pre>
@@ -141,28 +152,35 @@ pre-formatted in the output.</li>
 </ul>
 </div>
 <div class="section" id="http-header">
-<h2><a class="toc-backref" href="#id9">http_header</a></h2>
+<h2><a class="toc-backref" href="#id10">http_header</a></h2>
 <pre class="literal-block">
 http_header name value
 </pre>
 <p>Sends an HTTP header.</p>
 </div>
 <div class="section" id="http-header-start">
-<h2><a class="toc-backref" href="#id10">http_header_start</a></h2>
+<h2><a class="toc-backref" href="#id11">http_header_start</a></h2>
 <pre class="literal-block">
 http_header_start [ code [ description ] ]
 </pre>
 </div>
 <div class="section" id="http-date-now">
-<h2><a class="toc-backref" href="#id11">http_date_now</a></h2>
+<h2><a class="toc-backref" href="#id12">http_date_now</a></h2>
 <pre class="literal-block">
 http_date_now
 </pre>
 <p>Returns the current GMT time in RFC 1123 format, as needed for
 response HTTP headers.</p>
 </div>
+<div class="section" id="http-body">
+<h2><a class="toc-backref" href="#id13">http_body</a></h2>
+<pre class="literal-block">
+http_body
+</pre>
+<p>Prepares the HTTP connection to send content body.</p>
+</div>
 <div class="section" id="http-error">
-<h2><a class="toc-backref" href="#id12">http_error</a></h2>
+<h2><a class="toc-backref" href="#id14">http_error</a></h2>
 <pre class="literal-block">
 http_error [ code [ description ... ] ]
 </pre>
@@ -171,7 +189,7 @@ explaining the error. Error document is formatted using
 <a class="reference internal" href="#http-error-document">http_error_document</a>.</p>
 </div>
 <div class="section" id="http-redirect">
-<h2><a class="toc-backref" href="#id13">http_redirect</a></h2>
+<h2><a class="toc-backref" href="#id15">http_redirect</a></h2>
 <pre class="literal-block">
 http_redirect uri [ code ]
 </pre>
@@ -180,10 +198,10 @@ http_redirect uri [ code ]
 for temporary redirects. Keep in mind that using absolute paths in
 redirects is recommended.</p>
 </div>
-<div class="section" id="http-log-stderr">
-<h2><a class="toc-backref" href="#id14">http_log_stderr</a></h2>
+<div class="section" id="http-log-clf">
+<h2><a class="toc-backref" href="#id16">http_log_clf</a></h2>
 <pre class="literal-block">
-http_log_stderr status
+http_log_clf [ status ]
 </pre>
 <p>Logs a line of output to standard error in <a class="reference external" href="http://en.wikipedia.org/wiki/Common_Log_Format">CLF</a> format:</p>
 <pre class="literal-block">
@@ -195,7 +213,7 @@ The field “bytes” will be empty as well unless the
 <tt class="docutils literal"><span class="pre">Content-Length</span></tt> is set with <a class="reference internal" href="#http-header">http_header</a>.</p>
 </div>
 <div class="section" id="http-handle-get">
-<h2><a class="toc-backref" href="#id15">http_handle_GET</a></h2>
+<h2><a class="toc-backref" href="#id17">http_handle_GET</a></h2>
 <pre class="literal-block">
 http_handle_GET
 </pre>
@@ -205,7 +223,7 @@ resolves to a directory which contains a file named <tt class="docutils literal"
 will be served instead.</p>
 </div>
 <div class="section" id="http-handle-request">
-<h2><a class="toc-backref" href="#id16">http_handle_request</a></h2>
+<h2><a class="toc-backref" href="#id18">http_handle_request</a></h2>
 <pre class="literal-block">
 http_handle_request [ handler_prefix ]
 </pre>

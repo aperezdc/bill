@@ -66,6 +66,9 @@ declare -ar cmdline=(
     s:simple-server
         false
         'Run as plain HTTP server (no Billets container)'
+    1:oneshot
+        false
+        'Serve a single HTTP request using stdout/stderr'
 )
 
 
@@ -229,9 +232,11 @@ billetd_start_daemon ()
 }
 
 
-if [ -n "$__BILLETD_MASTER" ]
+if [ -n "$__BILLETD_MASTER" ] || $(hash_get $options oneshot)
 then
-    if [ "$__BILLETD_SIMPLE" = true ] ; then
+    if [ "$__BILLETD_SIMPLE" = true ] || $(hash_get $options simple-server)
+    then
+        use www/http
         http_handle_request
     else
         use www/billetd

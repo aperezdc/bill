@@ -67,6 +67,11 @@ copy_files ()
 
     mkdir -p "$deb_name/usr/share/doc/bill"
     cp -R examples doc/* "$deb_name/usr/share/doc/bill"
+
+    # Remove garbage left out from running the bURL example
+    rm -f  "$deb_name/usr/share/doc/bill/examples/billet/burl/.setup"
+    rm -fr "$deb_name/usr/share/doc/bill/examples/billet/burl/data"
+
     cp README debian/copyright "$deb_name/usr/share/doc/bill"
     cp debian/changelog "$deb_name/usr/share/doc/bill/changelog.Debian"
     for name in "${gzip_files[@]}" ; do

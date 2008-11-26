@@ -19,8 +19,8 @@
 billet_url ()
 {
     if [[ $# -eq 1 ]] ; then
-        echo "$prefix/${BILLET_CONTEXT}/$1"
+        echo "/${BILLET_CONTEXT}/$1"
     else
-        echo "$prefix/$1/$2"
+        echo "/$1/$2"
     fi
 }

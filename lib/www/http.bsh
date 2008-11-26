@@ -15,7 +15,6 @@
 #--
 
 use text/string
-use text/template
 
 need date || die "The 'date' program was not found"
 need sed  || die "The 'sed' program was not found"
@@ -82,39 +81,57 @@ http_debug () {
 } 1>&2
 
 
+#++ http_response_by_code code
+#
+#   Obtains the descriptive text for the given HTTP response status code.
+#   The strings returned are those specified in the code list contained in
+#   `RFC 2068 <http://www.ietf.org/rfcs/rfc2068>`_.
+#--
 http_response_by_code ()
 {
+    # HTTP/1.1 response code listing from RFC 2068
     local C='Unknown HTTP code'
     case $1 in
-        200) C='Ok - Transceiver and a coke, please' ;;
-        304) C='Not modified - for sure!'            ;;
-        403) C='Forbidden'                           ;;
-        404) C='Not Found'                           ;;
-        500) C='Internal Server Error'               ;;
-        501) C='Not Implemented'                     ;;
+        100) C='Continue'                      ;;
+        101) C='Switching Protocols'           ;;
+        200) C='OK'                            ;;
+        201) C='Created'                       ;;
+        202) C='Accepted'                      ;;
+        203) C='Non-Authoritative Information' ;;
+        204) C='No Content'                    ;;
+        205) C='Reset Content'                 ;;
+        206) C='Partial Content'               ;;
+        300) C='Multiple Choices'              ;;
+        301) C='Moved Permanently'             ;;
+        302) C='Moved Temporarily'             ;;
+        303) C='See Other'                     ;;
+        304) C='Not Modified'                  ;;
+        400) C='Bad Request'                   ;;
+        401) C='Unauthorized'                  ;;
+        402) C='Payment Required'              ;;
+        403) C='Forbidden'                     ;;
+        404) C='Not Found'                     ;;
+        405) C='Method Not Allowed'            ;;
+        406) C='Not Acceptable'                ;;
+        407) C='Proxy Authentication Required' ;;
+        408) C='Request Time-out'              ;;
+        409) C='Conflict'                      ;;
+        410) C='Gone'                          ;;
+        411) C='Length Required'               ;;
+        412) C='Precondition Failed'           ;;
+        413) C='Request Entity Too Large'      ;;
+        414) C='Request-URI Too Large'         ;;
+        415) C='Unsupported Media Type'        ;;
+        500) C='Internal Server Error'         ;;
+        501) C='Not Implemented'               ;;
+        502) C='Bad Gateway'                   ;;
+        503) C='Service Unavailable'           ;;
+        504) C='Gateway Timeout'               ;;
+        505) C='HTTP Version Not Supported'    ;;
     esac
     echo "$C"
 }
 
-
-declare -r http_error_document_template='<html>
-  <head>
-    <title>Error: ${err_text}</title>
-    <style type="text/css">
-    pre {
-        font-family: monospace;
-        background: #f8f8f8;
-        border: 1px solid #eee;
-        padding: 1em;
-    }
-    </style>
-  </head>
-  <body>
-    <h1>${err_text}</h1>
-    <p>Additional information:</p>
-    <pre>${err_description}</pre>
-  </body>
-</html>'
 
 
 __http_CR=$(printf "\015")
@@ -177,22 +194,40 @@ http_error_document ()
 {
     local -r mess=$(http_response_by_code $1)
     shift
-    local -r desc=$(string_join $'\n' "$@")
+    local desc=$(string_join $'\n' "$@")
     [[ -z $desc ]] && desc='No additional information supplied'
 
-    var_err_number=$1       \
-    var_err_text=$mess       \
-    var_err_description=$desc \
-        template_expand <<< "$http_error_document_template"
+    # XXX Warning, tab-indented lines follow for the here-document
+    cat <<-EOF
+	<html>
+	  <head>
+		<title>Error: ${mess}</title>
+		<style type="text/css">
+		pre {
+			font-family: monospace;
+			background: #f8f8f8;
+			border: 1px solid #eee;
+			padding: 1em;
+		}
+		</style>
+	  </head>
+	  <body>
+		<h1>${mess}</h1>
+		<p>Additional information:</p>
+		<pre>${desc}</pre>
+	  </body>
+	</html>
+	EOF
 }
 
 
 
-__HTTP_HEADER_SENT=true
-__HTTP_DATE_HEADER=false
-__HTTP_SERVER_HEADER=false
-__HTTP_CONTENT_LENGTH='-'
-__HTTP_CONNECTION_HEADER=false
+declare -i __HTTP_RESPONSE=666
+declare    __HTTP_HEADER_SENT=true
+declare    __HTTP_DATE_HEADER=false
+declare    __HTTP_SERVER_HEADER=false
+declare    __HTTP_CONTENT_LENGTH='-'
+declare    __HTTP_CONNECTION_HEADER=false
 
 
 #++ http_header name value
@@ -218,9 +253,10 @@ http_response ()
 {
     $__HTTP_HEADER_SENT || die "Cannot reinit an HTTP reponse"
 
-    local -r code=${1:-200}
-    local -r mess=${2:-$(http_response_by_code "$code")}
-    printf "HTTP/1.1 %s %s\r\n" "$code" "$mess"
+    __HTTP_RESPONSE=${1:-200}
+    local -r mess=${2:-$(http_response_by_code "$__HTTP_RESPONSE")}
+    # FIXME Currently responses are only HTTP 1.0
+    printf "HTTP/1.0 %s %s\r\n" "$__HTTP_RESPONSE" "$mess"
     __HTTP_HEADER_SENT=false
 }
 
@@ -236,6 +272,10 @@ http_date_now ()
 }
 
 
+#++ http_body
+#
+#   Prepares the HTTP connection to send content body.
+#--
 http_body ()
 {
     $__HTTP_HEADER_SENT && die "Cannot reinit an HTTP response"
@@ -243,6 +283,11 @@ http_body ()
     $__HTTP_SERVER_HEADER || http_header Server "${__http_server}"
     $__HTTP_CONNECTION_HEADER || http_header Connection close
     printf "\r\n"
+
+    # For 1xx, 204 & 304 codes: do not allow sending further output.
+    case $__HTTP_RESPONSE in
+        1?? | 204 | 304) exec 1>&- ;;
+    esac
 
     # Restore to initial values:
     __HTTP_HEADER_SENT=true
@@ -261,13 +306,10 @@ http_body ()
 #--
 http_error ()
 {
-    http_log_stderr "$1"
-
     http_response "$1"
     http_header Content-Type text/html
     http_header Connection close
     http_body
-
     http_error_document "$@"
 }
 
@@ -281,16 +323,13 @@ http_error ()
 #--
 http_redirect ()
 {
-    local -r code=${2:-302}
-    http_log_stderr "$code"
-
-    http_response "$code"
+    http_response "${2:-302}"
     http_header Location "$1"
     http_body
 }
 
 
-#++ http_log_stderr status
+#++ http_log_clf [ status ]
 #
 #   Logs a line of output to standard error in CLF__ format::
 #
@@ -303,13 +342,13 @@ http_redirect ()
 #   The field “bytes” will be empty as well unless the
 #   ``Content-Length`` is set with http_header_.
 #--
-http_log_stderr ()
+http_log_clf ()
 {
     printf '%s - %s [%s] "%s %s %s" - %s %s\n'      \
-        "${REMOTE_ADDR:--}" "${REMOTE_USER:--}"  \
+        "${REMOTE_ADDR:--}" "${REMOTE_USER:--}"      \
         "$(LC_ALL='' LANG='' date '+%d/%b/%Y:%T %z')" \
         "$REQUEST_METHOD" "$PATH_INFO" "$HTTP_VERSION" \
-        "$1" "${__HTTP_CONTENT_LENGTH:--}"
+        "${__HTTP_RESPONSE:--}" "${__HTTP_CONTENT_LENGTH:--}"
 } 1>&2
 
 
@@ -367,6 +406,7 @@ http_handle_GET ()
     http_response
     if $isdir
     then
+        use text/template # This is loaded on-demand the first time
         http_header Content-Type "text/html; encoding=utf-8"
         http_body
         var_path=$PATH_INFO template_expand <<< "$http_directory_template"
@@ -490,12 +530,11 @@ http_handle_request ()
         # TODO: Handle multi-line HTTP headers (check RFC for details)
         line=${line%${__http_CR}}
         key=$(string_lower "${line%%:*}")
-        val=$(echo "${val#*:}" | sed -e 's:^[[:space:]]*::')
-        printf -v val %q "$val"
+        printf -v val %q "$(string_lstrip <<< "${line#*:}")"
         eval "export HTTP_${key//-/_}=${val}"
     done
 
-    $handler && http_log_stderr 200
+    $handler ; http_log_clf
 }
 
 

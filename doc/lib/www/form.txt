@@ -19,7 +19,7 @@ form_urldecode
 
 ::
 
-  form_urldecode
+  form_urldecode hash
 
 
 Reads data in a line-by-line basis from standard input, performs
@@ -68,14 +68,14 @@ form_handle
 
 ::
 
-  form_handle qs_var [ tmpdir ]
+  form_handle hash [ tmpdir ]
 
 
 Handles input if a HTML form, either from a ``POST`` or ``GET`` request.
-In both cases the query string will be stored in the hash map
-``qs_var``. When handling ``POST`` requests you may also want to
+In both cases the query string will be stored in the *hash* table.
+When handling ``POST`` requests you may also want to
 provide a temporary directory ``tmpdir``, otherwise ``/tmp`` will be
-always used. Data stored in ``qs_var`` can be accessed using the
+always used. Data stored in ``hash`` can be accessed using the
 functions in the `data/hash <../data/hash.html>`_ module.
 
 
