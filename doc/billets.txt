@@ -212,4 +212,62 @@ BILLET_TEMP     Path to the current billet temporary data storage
                 directory.
 =============== =======================================================
 
+
+Hooks
+-----
+
+The container will look for the existence of certain functions in the loaded
+billets every time a request is served to a billet. If they exist, they will
+be called by the container on certain events. Hooks must all be functions
+named with the ``hook.`` prefix. The following are currently defined:
+
+billet.setup
+  Will be called the first time the billet is accessed. It is meant for
+  one-time setup of an application. If the hook returns a non-zero status,
+  execution of the request will be stopped and the connection to the client
+  will be forcibly closed, unless you send an HTTP response by yourself in
+  the hook.
+
+billet.before_request
+  Called before a request is handed out to `URL handlers`_, it is meant
+  for making operations needed for attending every request. If the hook
+  returns a non-zero status, connection to the client will be forcibly
+  closed, unless you send an HTTP response by yourself.
+
+billet.after_request
+  Called after the request was completed by the `URL handlers`_. You can use
+  this hook for clean-up tasks. The *exit status of the hook is ignored*, so
+  make sure your code can live with that behaviour.
+
+
+URL handlers
+------------
+
+The container does its best for easing handling of requests, and one of the
+most common source of code rewriting is the login used to determine which
+action must be carried out depending on the requested URL. Handlers are
+functions which implement the behaviour of applications.
+
+The *main* handler is the *empty handler*, which is given that name because
+it handles the «empty» URL:
+
+.. sourcecode:: bash
+
+  function billet:
+  {
+    # Do something when "/" is accessed:
+    http_reponse
+    http_header Content-Type text/plain
+    http_body
+
+    echo "Hello, world!"
+  }
+
+The above code would serve for a basic “Hello, world” example. Any URL
+pointing to this minimal billet would be handled by it. This is because
+URLs are matched against the most specific handler available. If we had
+a ``billet:handle:foo`` it would catch all URLs starting with the
+``/handle/foo/`` string.
+
+
 .. vim: filetype=rst expandtab tabstop=2 shiftwidth=2

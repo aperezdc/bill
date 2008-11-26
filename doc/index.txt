@@ -8,12 +8,17 @@ The Bash Improved Leveraging Library
 :Author: Adrián Pérez <aperez@igalia.com>
 :Version: `0.1 <#get-billed>`__
 :License: `GPL v2 <http://opensource.org/licenses/gpl-2.0.php>`__
-:Abstract: Bill builds a module system on top of the GNU Bash_ shell,
-    providing a *customized interactive interpreter* a *standard module
-    library* to be used in shell code. The main goal is making easier to
-    write shell scripts and provide a framework for reusing them.
-    Tools for documenting, unit-testing and deploying shell code are
-    available as well.
+:Abstract: Bill strives to be a solution for developing applications which
+    can be run on platforms with limited resources (e.g. embedded systems)
+    on top of the GNU Bash_ shell, with a focus on quality and reusability
+    of shell code.
+
+    It does so by providing module system with its standard library, which
+    you can leverage in your own scripts, both by using existing modules
+    and splitting your program in reusable components.
+
+    Additionally, tools for documenting and testing modules, and serving web
+    applications are provided as part of the package.
 
 .. _bash: http://www.gnu.org/software/bash
 .. _debian: http://debian.org
@@ -32,16 +37,24 @@ Features
 
 As a quick summary, Bill brings to you:
 
+* Ability of running on small, embedded systems with scarce resources.
+* Bash_ as the only dependency. Choose one of netpipes_, ipsvd_ or
+  ucspi-tcp_ for TCP sockets support.
 * Module system for shell code.
 * Standard `library <module-index.html>`__ (batteries included!)
 * `Billets <billets.html>`_ container.
 * Creation of `standalone <deploy.html>`__ scripts.
 * Tools for documentation_ generation.
+* Tools for writing unit tests.
 
 Last, but not least Bill also has the following:
 
 * Catchy name.
 * “Stolen” `logo <http://xbill.org>`__.
+
+.. _netpipes: http://web.purplefrog.com/~thoth/netpipes/netpipes.html
+.. _ucspi-tcp: http://cr.yp.to/ucspi-tcp.html
+.. _ipsvd: http://smarden.org/ipsvd/
 
 
 Get Billed!
@@ -50,15 +63,15 @@ Get Billed!
 Packages for the latest release (0.1) are available here:
 
 * Source code:
-  `bill-0.1.tar.gz <bill-0.1.tar.gz>`__ /
-  `bill-0.1.tar.bz2 <bill-0.1.tar.bz2>`__
+  `bill-0.1.tar.bz2 <releases/bill-0.1.tar.bz2>`__
 
 * Debian_ package (all platforms):
-  `bill_0.1-1_all.deb <bill_0.1-1_all.deb>`__
+  `bill_0.1-1_all.deb <releases/bill_0.1-1_all.deb>`__
 
-The code can also be from the GIT_ repository::
+Development code can also obtained from from the GIT_ `repository hosted at
+Gitorious <http://gitorious.org/projects/bill>`__::
 
-    git clone git://we.are.not/there.yet
+    git clone git://gitorious.org/bill/mainline.git
 
 
 
@@ -66,7 +79,7 @@ Documentation
 =============
 
 * The `tutorial <tutorial.html>`__ is a quick reading to get started with
-  the Bill framework.
+  Bill.
 
 * `How to write documentation <documenting.html>`__ in shell code using the
   included tools.

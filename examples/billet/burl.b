@@ -6,7 +6,7 @@ use www/billet
 use data/hash
 
 
-function billet.hook.setup
+function billet.setup
 {
     burl_init "$BILLET_DATA"
 }

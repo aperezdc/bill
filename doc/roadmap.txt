@@ -7,47 +7,55 @@
 .. contents::
 
 
-Releases
-========
+Planned releases
+================
 
   Release early, release often.
 
   -- Eric S. Raymond
 
+
+The following table summarizes what is planned for next releases, which will
+be done every two months. **It is not a matter of truth**: priority of
+things included in Bill releases may change, depending on where the
+community decides to focus, but it is good to have at least an initial plan.
+
 .. class:: tabular
 
-+-------+----------+-----------------------------------+
-|Release| Date     | Features                          |
-+=======+==========+===================================+
-|  0.1  |15/10/2008| HTTP 1.1 server library           |
-|       |          +-----------------------------------+
-|       |          | Billets container                 |
-|       |          +-----------------------------------+
-|       |          | Billets API specification         |
-+-------+----------+-----------------------------------+
-|  0.2  |05/11/2008| Full compliant HTTP 1.1 support   |
-|       |          +-----------------------------------+
-|       |          | Administration tools for Billets, |
-|       |          | to help with enabling, disabling, |
-|       |          | deploying, removing billets, etc. |
-|       |          +-----------------------------------+
-|       |          | Support for usage of internal Bash|
-|       |          | ``/dev/tcp`` redirections         |
-+-------+----------+-----------------------------------+
-|  0.3  |20/12/2008| Localization / gettext support    |
-|       |          +-----------------------------------+
-|       |          | Safe [#]_ template engine         |
-+-------+----------+-----------------------------------+
-|  0.4  |24/12/2008| Easter egg as christmas present   |
-|       |          +-----------------------------------+
-|       |          | Speed-ups in C for speed critical |
-|       |          | code (``data/hash``, builtins,    |
-|       |          | and ``text/string`` look like     |
-|       |          | they are good candidates).        |
-+-------+----------+-----------------------------------+
-|  0.5  |06/01/2009| Maintenance release, mostly bug   |
-|       |          | fixes and code clean-ups          |
-+-------+----------+-----------------------------------+
++-------+---------+-----------------------------------+
+|Release| Date    | Features                          |
++=======+=========+===================================+
+|  0.1  | 11/2008 | Module system                     |
+|       |         +-----------------------------------+
+|       |         | Base standard library             |
+|       |         +-----------------------------------+
+|       |         | Tools for unit testing, script    |
+|       |         | deployment and documentation      |
+|       |         +-----------------------------------+
+|       |         | Billets container                 |
+|       |         +-----------------------------------+
+|       |         | Billets API specification         |
++-------+---------+-----------------------------------+
+|  0.2  | 01/2009 | Christmas present                 |
+|       |         +-----------------------------------+
+|       |         | Speed-ups in C for speed critical |
+|       |         | code (``data/hash``, builtins,    |
+|       |         | and ``text/string`` look like     |
+|       |         | they are good candidates).        |
++-------+---------+-----------------------------------+
+|  0.3  | 03/2009 | Use C speedups in standard library|
+|       |         +-----------------------------------+
+|       |         | Administration tools for Billets, |
+|       |         | to help with enabling, disabling, |
+|       |         | deploying, removing billets, etc. |
++-------+---------+-----------------------------------+
+|  0.4  | 05/2009 | Localization / gettext support    |
+|       |         +-----------------------------------+
+|       |         | Safe [#]_ template engine         |
++-------+---------+-----------------------------------+
+|  0.5  | 07/2009 | Maintenance release, mostly bug   |
+|       |         | fixes and code clean-ups          |
++-------+---------+-----------------------------------+
 
 
 .. [#] Here “safe” means that it does not allow arbitrary execution

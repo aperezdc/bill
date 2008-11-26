@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Billets Manual</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <meta name="copyright" content="2008 Igalia S.L." />
@@ -17,7 +17,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>2008 Igalia S.L.</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
@@ -30,42 +30,44 @@
 administrate the <em>billets container</em>, as well as a quick introduction
 to <em>billet development</em> suitable for new developers.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#background" id="id5" name="id5">Background</a><ul>
-<li><a class="reference" href="#architecture" id="id6" name="id6">Architecture</a></li>
-<li><a class="reference" href="#container" id="id7" name="id7">Container</a></li>
-<li><a class="reference" href="#billets" id="id8" name="id8">Billets</a></li>
+<li><a class="reference internal" href="#background" id="id5">Background</a><ul>
+<li><a class="reference internal" href="#architecture" id="id6">Architecture</a></li>
+<li><a class="reference internal" href="#container" id="id7">Container</a></li>
+<li><a class="reference internal" href="#billets" id="id8">Billets</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#managing-the-container" id="id9" name="id9">Managing the container</a><ul>
-<li><a class="reference" href="#starting-and-stopping" id="id10" name="id10">Starting and stopping</a></li>
-<li><a class="reference" href="#adding-a-billet" id="id11" name="id11">Adding a billet</a></li>
-<li><a class="reference" href="#disabling-a-billet" id="id12" name="id12">Disabling a billet</a></li>
-<li><a class="reference" href="#removing-a-billet" id="id13" name="id13">Removing a billet</a></li>
+<li><a class="reference internal" href="#managing-the-container" id="id9">Managing the container</a><ul>
+<li><a class="reference internal" href="#starting-and-stopping" id="id10">Starting and stopping</a></li>
+<li><a class="reference internal" href="#adding-a-billet" id="id11">Adding a billet</a></li>
+<li><a class="reference internal" href="#disabling-a-billet" id="id12">Disabling a billet</a></li>
+<li><a class="reference internal" href="#removing-a-billet" id="id13">Removing a billet</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#billet-development" id="id14" name="id14">Billet development</a><ul>
-<li><a class="reference" href="#environment" id="id15" name="id15">Environment</a></li>
+<li><a class="reference internal" href="#billet-development" id="id14">Billet development</a><ul>
+<li><a class="reference internal" href="#environment" id="id15">Environment</a></li>
+<li><a class="reference internal" href="#hooks" id="id16">Hooks</a></li>
+<li><a class="reference internal" href="#url-handlers" id="id17">URL handlers</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id5" id="background" name="background">Background</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id6" id="architecture" name="architecture">Architecture</a></h2>
+<div class="section" id="background">
+<h1><a class="toc-backref" href="#id5">Background</a></h1>
+<div class="section" id="architecture">
+<h2><a class="toc-backref" href="#id6">Architecture</a></h2>
 <div class="align-right figure">
 <img alt="img/architecture.png" src="img/architecture.png" />
 <p class="caption">Billets architecture</p>
 </div>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id7" id="container" name="container">Container</a></h2>
+<div class="section" id="container">
+<h2><a class="toc-backref" href="#id7">Container</a></h2>
 <p>The billets container is responsible for providing a suitable environment
 for a number of billets to run. It <em>must</em> have a fairly complete HTTP 1.0
-<a class="footnote-reference" href="#id3" id="id1" name="id1">[1]</a>, although some HTTP 1.1 <a class="footnote-reference" href="#id4" id="id2" name="id2">[2]</a> features are desirable to have.</p>
+<a class="footnote-reference" href="#id3" id="id1">[1]</a>, although some HTTP 1.1 <a class="footnote-reference" href="#id4" id="id2">[2]</a> features are desirable to have.</p>
 <p>Mandatory features:</p>
 <ul class="simple">
 <li>HTTP methods: <tt class="docutils literal"><span class="pre">GET</span></tt>, <tt class="docutils literal"><span class="pre">POST</span></tt>.</li>
@@ -83,18 +85,18 @@ for a number of billets to run. It <em>must</em> have a fairly complete HTTP 1.0
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1" name="id3">[1]</a></td><td>As specified in <a class="reference" href="http://www.ietf.org/rfc/rfc1945">RFC 1945</a>.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>As specified in <a class="reference external" href="http://www.ietf.org/rfc/rfc1945">RFC 1945</a>.</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2" name="id4">[2]</a></td><td>As specified in <a class="reference" href="http://www.ietf.org/rfc/rfc2616">RFC 2616</a>.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>As specified in <a class="reference external" href="http://www.ietf.org/rfc/rfc2616">RFC 2616</a>.</td></tr>
 </tbody>
 </table>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id8" id="billets" name="billets">Billets</a></h2>
+<div class="section" id="billets">
+<h2><a class="toc-backref" href="#id8">Billets</a></h2>
 <p>Billets are composed of a mandatory launcher script, which can contain:</p>
 <ul class="simple">
 <li>The full application. This is useful for simple ones.</li>
@@ -128,13 +130,13 @@ temporary stuff in a separate directory to ease administration tasks.</dd>
 </dl>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id9" id="managing-the-container" name="managing-the-container">Managing the container</a></h1>
+<div class="section" id="managing-the-container">
+<h1><a class="toc-backref" href="#id9">Managing the container</a></h1>
 <p>The reference Billets container daemon, <tt class="docutils literal"><span class="pre">billetd</span></tt> is a pure-Bash
 implementation included with every Bill installation. It will serve
 a number of applications from a directory structure in the filesystem.</p>
-<div class="section">
-<h2><a class="toc-backref" href="#id10" id="starting-and-stopping" name="starting-and-stopping">Starting and stopping</a></h2>
+<div class="section" id="starting-and-stopping">
+<h2><a class="toc-backref" href="#id10">Starting and stopping</a></h2>
 <p>For the sake of simplicity, the reference container does not need
 a configuration file. All configuration is done using command line switches.
 Note that reasonable defaults are provided for most options: for example,
@@ -182,8 +184,8 @@ with:</p>
 <div class="highlight"><pre>billetd --kill --pid-file /var/run/billetd.pid
 </pre></div>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id11" id="adding-a-billet" name="adding-a-billet">Adding a billet</a></h2>
+<div class="section" id="adding-a-billet">
+<h2><a class="toc-backref" href="#id11">Adding a billet</a></h2>
 <p>In order to add a Billet it should suffice placing it (and its associated
 resources) inside the base directory of the container. The launcher script
 <strong>must</strong> be marked as executable (e.g. with <tt class="docutils literal"><span class="pre">chmod</span> <span class="pre">+x</span></tt>), because the
@@ -192,16 +194,16 @@ container will refuse requests for billets not marked as executable.</p>
 change to take effect. The shipped <tt class="docutils literal"><span class="pre">billetd</span></tt> will load the billet the
 first time it is accessed.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id12" id="disabling-a-billet" name="disabling-a-billet">Disabling a billet</a></h2>
+<div class="section" id="disabling-a-billet">
+<h2><a class="toc-backref" href="#id12">Disabling a billet</a></h2>
 <p>Because launchers scripts must be marked executable to work, you can disable
 a particular billet by just removing the execution bit of it, e.g. using
 <tt class="docutils literal"><span class="pre">chmod</span> <span class="pre">-x</span></tt>.</p>
 <p>Disabling a billet <em>should not</em> require a restart of the container. This is
 true for the shipped <tt class="docutils literal"><span class="pre">billetd</span></tt> container.</p>
 </div>
-<div class="section">
-<h2><a class="toc-backref" href="#id13" id="removing-a-billet" name="removing-a-billet">Removing a billet</a></h2>
+<div class="section" id="removing-a-billet">
+<h2><a class="toc-backref" href="#id13">Removing a billet</a></h2>
 <p>In order to remove a billet it <em>should</em> suffice to remove the launcher
 script and the associated context directory from the file system. The
 container <em>might</em> need to be restarted in order to free used memory, but
@@ -209,12 +211,12 @@ requests for the application will stop being served just after the files are
 deleted.</p>
 </div>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id14" id="billet-development" name="billet-development">Billet development</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id15" id="environment" name="environment">Environment</a></h2>
+<div class="section" id="billet-development">
+<h1><a class="toc-backref" href="#id14">Billet development</a></h1>
+<div class="section" id="environment">
+<h2><a class="toc-backref" href="#id15">Environment</a></h2>
 <p>Along with the variables of the CGI environment which are defined by the
-<a class="reference" href="lib/www/http.html">www/http</a> module, the container defines a set of
+<a class="reference external" href="lib/www/http.html">www/http</a> module, the container defines a set of
 variables in the environment of the running billets:</p>
 <table border="1" class="modules docutils">
 <colgroup>
@@ -258,6 +260,54 @@ directory.</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="hooks">
+<h2><a class="toc-backref" href="#id16">Hooks</a></h2>
+<p>The container will look for the existence of certain functions in the loaded
+billets every time a request is served to a billet. If they exist, they will
+be called by the container on certain events. Hooks must all be functions
+named with the <tt class="docutils literal"><span class="pre">hook.</span></tt> prefix. The following are currently defined:</p>
+<dl class="docutils">
+<dt>billet.setup</dt>
+<dd>Will be called the first time the billet is accessed. It is meant for
+one-time setup of an application. If the hook returns a non-zero status,
+execution of the request will be stopped and the connection to the client
+will be forcibly closed, unless you send an HTTP response by yourself in
+the hook.</dd>
+<dt>billet.before_request</dt>
+<dd>Called before a request is handed out to <a class="reference internal" href="#url-handlers">URL handlers</a>, it is meant
+for making operations needed for attending every request. If the hook
+returns a non-zero status, connection to the client will be forcibly
+closed, unless you send an HTTP response by yourself.</dd>
+<dt>billet.after_request</dt>
+<dd>Called after the request was completed by the <a class="reference internal" href="#url-handlers">URL handlers</a>. You can use
+this hook for clean-up tasks. The <em>exit status of the hook is ignored</em>, so
+make sure your code can live with that behaviour.</dd>
+</dl>
+</div>
+<div class="section" id="url-handlers">
+<h2><a class="toc-backref" href="#id17">URL handlers</a></h2>
+<p>The container does its best for easing handling of requests, and one of the
+most common source of code rewriting is the login used to determine which
+action must be carried out depending on the requested URL. Handlers are
+functions which implement the behaviour of applications.</p>
+<p>The <em>main</em> handler is the <em>empty handler</em>, which is given that name because
+it handles the «empty» URL:</p>
+<div class="highlight"><pre><span class="k">function </span>billet:
+<span class="o">{</span>
+  <span class="c"># Do something when &quot;/&quot; is accessed:</span>
+  http_reponse
+  http_header Content-Type text/plain
+  http_body
+
+  <span class="nb">echo</span> <span class="s2">&quot;Hello, world!&quot;</span>
+<span class="o">}</span>
+</pre></div>
+<p>The above code would serve for a basic “Hello, world” example. Any URL
+pointing to this minimal billet would be handled by it. This is because
+URLs are matched against the most specific handler available. If we had
+a <tt class="docutils literal"><span class="pre">billet:handle:foo</span></tt> it would catch all URLs starting with the
+<tt class="docutils literal"><span class="pre">/handle/foo/</span></tt> string.</p>
 <!-- vim: filetype=rst expandtab tabstop=2 shiftwidth=2 -->
 </div>
 </div>

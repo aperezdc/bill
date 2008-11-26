@@ -5,8 +5,7 @@
 :License: GPL v2
 :Abstract: Instructs how to contribute with the Bill project by sending
     patches and implementing new features using the Git_ version control
-    system. To know which tasks can be done take a look at the `to-do list
-    <to-do.html>`__.
+    system.
 
 .. _git: http://git.or.gz
 .. _vim: http://www.vim.org
