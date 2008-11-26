@@ -40,7 +40,11 @@ clean:
 deb: doc
 	./scripts/bill scripts/gen-debian-package
 
-.PHONY: deb
+tarball:
+	git archive --prefix=bill-$$(./scripts/bill --version)/ HEAD \
+		| bzip2 -c > bill-$$(./scripts/bill --version).tar.bz2
+
+.PHONY: deb tarball
 
 
 test:
