@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Contributing to Bill</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -16,7 +16,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
 </tr>
 </tbody>
@@ -24,21 +24,21 @@
 <div class="abstract topic">
 <p class="topic-title first">Abstract</p>
 <p>Instructs how to contribute with the Bill project by sending
-patches and implementing new features using the <a class="reference" href="http://git.or.gz">Git</a> version control
-system. To know which tasks can be done take a look at the <a class="reference" href="to-do.html">to-do list</a>.</p>
+patches and implementing new features using the <a class="reference external" href="http://git.or.gz">Git</a> version control
+system.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#first-steps" id="id1" name="id1">First steps</a></li>
-<li><a class="reference" href="#branching-and-commiting" id="id2" name="id2">Branching and commiting</a></li>
-<li><a class="reference" href="#updating-to-the-latest-version" id="id3" name="id3">Updating to the latest version</a></li>
-<li><a class="reference" href="#submitting-a-patch" id="id4" name="id4">Submitting a patch</a></li>
-<li><a class="reference" href="#common-tasks" id="id5" name="id5">Common tasks</a></li>
+<li><a class="reference internal" href="#first-steps" id="id1">First steps</a></li>
+<li><a class="reference internal" href="#branching-and-commiting" id="id2">Branching and commiting</a></li>
+<li><a class="reference internal" href="#updating-to-the-latest-version" id="id3">Updating to the latest version</a></li>
+<li><a class="reference internal" href="#submitting-a-patch" id="id4">Submitting a patch</a></li>
+<li><a class="reference internal" href="#common-tasks" id="id5">Common tasks</a></li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id1" id="first-steps" name="first-steps">First steps</a></h1>
+<div class="section" id="first-steps">
+<h1><a class="toc-backref" href="#id1">First steps</a></h1>
 <p>When you eventually submit a patch it helps if you have told Git your name
 and email address: they will show up in the commit history, so that other
 people may know that you wrote the patch and how to contact you. To do this,
@@ -50,8 +50,8 @@ git config --global user.email <span class="s2">&quot;eric@fin.net&quot;</span>
 step only needs to be carried out once; the <tt class="docutils literal"><span class="pre">--global</span></tt> switch ensures that
 all Git repositories you have from now on will know your name and email.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id2" id="branching-and-commiting" name="branching-and-commiting">Branching and commiting</a></h1>
+<div class="section" id="branching-and-commiting">
+<h1><a class="toc-backref" href="#id2">Branching and commiting</a></h1>
 <p>Lets say you want to add a new feature to Bill. The first thing to do is to
 create a new branch to work on and leave the <tt class="docutils literal"><span class="pre">master</span></tt> branch untouched.
 Lets call the new branch <tt class="docutils literal"><span class="pre">feature</span></tt>:</p>
@@ -84,10 +84,10 @@ it three times in function foo().
 commit (required), and a blank line followed by a more verbose description
 of the commit (optional). To ensure these messages look good, please make sure
 each line is not longer than 72 characters (<tt class="docutils literal"><span class="pre">:set</span> <span class="pre">tw=72</span></tt> and <tt class="docutils literal"><span class="pre">gq</span></tt> are your
-friends when using <a class="reference" href="http://www.vim.org">Vim</a>).</p>
+friends when using <a class="reference external" href="http://www.vim.org">Vim</a>).</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id3" id="updating-to-the-latest-version" name="updating-to-the-latest-version">Updating to the latest version</a></h1>
+<div class="section" id="updating-to-the-latest-version">
+<h1><a class="toc-backref" href="#id3">Updating to the latest version</a></h1>
 <p>While you are working on your feature it is not entirely unlikely that commits
 are made to the public Git repository. In this situation you will probably want
 to update your <tt class="docutils literal"><span class="pre">master</span></tt> branch to be up-to-date with the public repository.
@@ -108,11 +108,11 @@ the commits you just pulled in front of your own commits that you have made
 in the <tt class="docutils literal"><span class="pre">feature</span></tt> branch. (Don't worry if this makes no sense to you; check
 the Git documentation if you are curious as to what <tt class="docutils literal"><span class="pre">git</span> <span class="pre">rebase</span></tt> does.)</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id4" id="submitting-a-patch" name="submitting-a-patch">Submitting a patch</a></h1>
+<div class="section" id="submitting-a-patch">
+<h1><a class="toc-backref" href="#id4">Submitting a patch</a></h1>
 <p>When you have finished implementing your new feature you are ready to create
 a patch series to be submitted. But before doing so, make sure you have
-updated your repository to the latest version as described in the <a class="reference" href="#updating-to-the-lastest">previous
+updated your repository to the latest version as described in the <a class="reference external" href="#updating-to-the-lastest">previous
 section</a>. Once you have updated the <tt class="docutils literal"><span class="pre">master</span></tt>
 branch, you create a patch series with the following command:</p>
 <div class="highlight"><pre>git format-patch master
@@ -120,16 +120,16 @@ branch, you create a patch series with the following command:</p>
 <p>This will make a diff between your branch and the <tt class="docutils literal"><span class="pre">master</span></tt> branch, and
 output a series of <tt class="docutils literal"><span class="pre">.patch</span></tt> files in the current directory. One patch
 file is created for each commit that you have made in your branch.</p>
-<p>Once you have created the patch files, simply submit them to the <a class="reference" href="mailto:aperez&#64;igalia.com">author</a>. If there are more than one file in the
+<p>Once you have created the patch files, simply submit them to the <a class="reference external" href="mailto:aperez&#64;igalia.com">author</a>. If there are more than one file in the
 patch series you should archive it first. For example:</p>
 <div class="highlight"><pre>tar cjf my-feature.tar.bz2 *.patch
 </pre></div>
 <p>This command will create an archive called <tt class="docutils literal"><span class="pre">my-feature.tar.bz2</span></tt> containing
 all the patch files.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id5" id="common-tasks" name="common-tasks">Common tasks</a></h1>
-<p>The first stop for general Git information is the <a class="reference" href="git_">Git Home Page</a>.
+<div class="section" id="common-tasks">
+<h1><a class="toc-backref" href="#id5">Common tasks</a></h1>
+<p>The first stop for general Git information is the <a class="reference external" href="git_">Git Home Page</a>.
 However, here is a quick summary of the features people use everyday.</p>
 <p>Typically, when one starts working wants to see how things are going:</p>
 <pre class="literal-block">

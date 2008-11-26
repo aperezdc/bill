@@ -1,5 +1,5 @@
 This category contains Bill's internal functions and support code. In
 general new modules should not be added here, unless the functionality they
-provide is directly related to the framework and is not directly reusable in
+provide is directly related to the library and is not directly reusable in
 third-party code. Note that the `bill/builtins`_ module is always available,
 so it does not need to be imported by the user.
