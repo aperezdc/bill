@@ -1,0 +1,65 @@
+/*
+ * Default CSS styles for Bill bURL example application
+ * Copyright © 2008, Adrian Perez de Castro <aperez@igalia.com>
+ */
+
+html, body, p, ol, ul, dl, h1, h2, h3, h4, h5, h6 {
+	font-family: "Droid Sans", "Lucida Grande", "Bitstream Vera Sans",
+		"Verdana", "Trebuchet MS", sans-serif;
+}
+
+html, body, p, ol, ul, dl {
+	font-size: 14px;
+}
+
+tt, pre, code {
+	font-family: monospace;
+}
+
+a {
+	color: #666;
+}
+
+a:hover {
+	color: #888;
+}
+
+html {
+	background: url(back.png);
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background: #fff;
+	border: 1px solid #fff;
+	margin: 3em 5em;
+	padding: 2em;
+	-moz-border-radius: 11px;
+}
+
+h1 {
+	color: #444;
+	border-bottom: 1px solid #aaa;
+}
+
+fieldset {
+	border: 1px solid #ccc;
+	-moz-border-radius: 6px;
+	text-align: center;
+	padding: 1.5em 1em;
+}
+
+fieldset input {
+	font-size: 140%;
+	padding-left: 0.1em;
+	padding-right: 0.1em;
+}
+
+legend {
+	border: 1px solid #ccc;
+	font-size: 85%;
+	padding: 0.1em 0.35em;
+	color: #555;
+}
+

@@ -169,6 +169,16 @@ test_has ()
 }
 
 
+test_colon_in_value ()
+{
+    local h=$(hash_new)
+
+    hash_set $h key 'http://www.igalia.com'
+    assertSame 'http://www.igalia.com' "$(hash_get $h key)"
+    hash_clear $h
+}
+
+
 test_set_twice ()
 {
     local h=$(hash_new)

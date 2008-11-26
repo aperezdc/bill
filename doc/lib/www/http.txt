@@ -64,6 +64,21 @@ Functions
 
 
 
+http_response_by_code
+---------------------
+
+::
+
+  http_response_by_code code
+
+
+Obtains the descriptive text for the given HTTP response status code.
+The strings returned are those specified in the code list contained in
+`RFC 2068 <http://www.ietf.org/rfcs/rfc2068>`_.
+
+
+
+
 http_mimetype_guess
 -------------------
 
@@ -144,6 +159,19 @@ response HTTP headers.
 
 
 
+http_body
+---------
+
+::
+
+  http_body
+
+
+Prepares the HTTP connection to send content body.
+
+
+
+
 http_error
 ----------
 
@@ -175,12 +203,12 @@ redirects is recommended.
 
 
 
-http_log_stderr
----------------
+http_log_clf
+------------
 
 ::
 
-  http_log_stderr status
+  http_log_clf [ status ]
 
 
 Logs a line of output to standard error in CLF__ format::

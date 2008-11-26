@@ -16,11 +16,12 @@
 
 use text/mime
 use text/string
+use data/hash
 
 need csplit head mkdir || die "One of csplit, head, or mkdir is missing"
 
 
-#++ form_urldecode
+#++ form_urldecode hash
 #
 #   Reads data in a line-by-line basis from standard input, performs
 #   URL-like decoding as defined in `RFC 1945
@@ -34,16 +35,16 @@ form_urldecode ()
 
     while read line
     do
-        line=${line//\\/\\\\}
-        line=${line//\%/\\x}
-        printf -v line "$line"
-
         IFS='&'
         for item in $line
         do
-            key=${item%=*}
+            key=${item%%=*}
             val=${item#*=}
-            echo "'$key' '$val'"
+            key=${key//\\/\\\\}
+            val=${val//\\/\\\\}
+            printf -v key "${key//\%/\\x}"
+            printf -v val "${val//\%/\\x}"
+            hash_set $1 "$key" "$val"
         done
         IFS=$saved_IFS
     done
@@ -102,13 +103,13 @@ form_multipart_handle ()
 
 
 
-#++ form_handle qs_var [ tmpdir ]
+#++ form_handle hash [ tmpdir ]
 #
 #   Handles input if a HTML form, either from a ``POST`` or ``GET`` request.
-#   In both cases the query string will be stored in the hash map
-#   ``qs_var``. When handling ``POST`` requests you may also want to
+#   In both cases the query string will be stored in the *hash* table.
+#   When handling ``POST`` requests you may also want to
 #   provide a temporary directory ``tmpdir``, otherwise ``/tmp`` will be
-#   always used. Data stored in ``qs_var`` can be accessed using the
+#   always used. Data stored in ``hash`` can be accessed using the
 #   functions in the `data/hash <../data/hash.html>`_ module.
 #--
 form_handle ()
@@ -120,7 +121,7 @@ form_handle ()
 
     # Always parse the query string into a hash map.
     #
-    eval "$1=( $(form_urldecode <<< "$QUERY_STRING") )"
+    form_urldecode $1 <<< "$QUERY_STRING"
 
     # When
     case ${REQUEST_METHOD} in
@@ -134,7 +135,7 @@ form_handle ()
             #
             case ${CONTENT_TYPE} in
                 application/x-www-form-urlencoded)
-                    eval "$1=( \"\${$1[@]}\" $(form_urldecode) )"
+                    form_urldecode $1
                     ;;
                 multipart/form-data)
                     form_multipart_handle "${2:-'/tmp'}"

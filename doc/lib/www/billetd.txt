@@ -5,6 +5,24 @@ Billet Engine
 :Copyright: 2008 Igalia S.L.
 :License: GPL v2
 :Abstract: Billet container implementation.
+    This module is used by the ``billetd`` daemon included with Bill.
+
+.. contents::
+
+
+
+
+billetd_debug
+-------------
+
+::
+
+  billetd_debug format [ arg1 [ arg2 ... [ argN ] ] ]
+
+
+When the ``BILLETD_DEBUG`` variable is set, prints a message to standard
+error. Otherwise does nothing. The *format* string works the same as for
+the ``printf`` builtin.
 
 
 
@@ -16,6 +34,10 @@ billetd_map_context
 
   billetd_map_context [ path ]
 
+
+Maps an URL to an existing Billet context. Contexts are searched in the
+directory referenced by the ``BILLET_BASE`` variable which, by default,
+points to the current working directory.
 
 If a *path* is not supplied, then ``$PATH_INFO`` will be used instead.
 The function defines the ``$BILLET_CONTEXT`` and ``$BILLET_PATH``
@@ -67,6 +89,17 @@ billetd_handle_http_POST
 ::
 
   billetd_handle_http_POST
+
+
+
+
+
+billetd_run_hook
+----------------
+
+::
+
+  billetd_run_hook name [ condition-file ]
 
 
 

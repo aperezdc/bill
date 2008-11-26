@@ -84,6 +84,34 @@ use ()
 
 use bill/builtins
 
+bill_help_text='usage: bill [ options ] [ script ]
+  -v, --version  Show Bill version.
+  --             Stop processing command line options.
+  -h, --help     This help screen.
+'
+
+while [[ ${1:0:1} = - ]] ; do
+    case $1 in
+        -v | --version)
+            echo "$BILL_VERSION"
+            exit 0
+            ;;
+        -h | --help)
+            printf "$bill_help_text"
+            exit 0
+            ;;
+        --) # Stop processing options.
+            break
+            ;;
+        -*) # Unrecognized option
+            printf "$bill_help_text"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+
 if [ "$1" ]
 then
     export BILL_SCRIPT=$1
