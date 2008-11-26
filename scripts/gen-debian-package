@@ -102,20 +102,6 @@ adjust_shebang ()
         sed -i -e "1s,.*,#! $bash_path," "$deb_name/usr/bin/$name"
         echo "  $deb_name/usr/bin/$name"
     done
-
-    echo "Setting interpreter '/usr/bin/bill'..."
-    for name in "${bill_scripts[@]}"
-    do
-        sed -i -e "1s,.*,#! /usr/bin/bill," "$deb_name/usr/bin/$name"
-        echo "  $deb_name/usr/bin/$name"
-    done
-
-    echo "Adjusting interpreter for modules..."
-    for name in $(find "$deb_name/usr/lib/bill" -name '*.bsh')
-    do
-        sed -i -e '1s,.*,#! /usr/bin/bill,' "$name"
-        echo "  $name"
-    done
 }
 
 
