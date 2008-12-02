@@ -97,7 +97,7 @@ Documentation
 Development
 ===========
 
-* How to `contribute with Bill <contribute.html>`__.
+* How to `contribute to Bill <contribute.html>`__.
 
 * Development `road map <roadmap.html>`__.
 

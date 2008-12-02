@@ -113,6 +113,22 @@ the nested structure as the ones created by config_ini_.
 
 
 
+config_ini_get_chained
+----------------------
+
+::
+
+  config_ini_get_chained hash section fallback key default
+
+
+Obtains a value associated with the given *key* of a *section*. If the
+key does not exist in the *section*, it will be looked up in the
+alternative *fallback* section, and if not given then the *default*
+value is printed out.
+
+
+
+
 config_ini_clear
 ----------------
 

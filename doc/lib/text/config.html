@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>Config file parsing</title>
 <meta name="author" content="Adrian Perez &lt;aperez&#64;igalia.com&gt;" />
 <meta name="copyright" content="2008 Igalia S.L." />
@@ -17,7 +17,7 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
-<td>Adrian Perez &lt;<a class="reference" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
+<td>Adrian Perez &lt;<a class="reference external" href="mailto:aperez&#64;igalia.com">aperez&#64;igalia.com</a>&gt;</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>2008 Igalia S.L.</td></tr>
 <tr class="field"><th class="docinfo-name">License:</th><td class="field-body">GPL v2</td>
@@ -28,18 +28,19 @@
 <p class="topic-title first">Abstract</p>
 <p>Parse configuration files in key-value pairs and INI-style.</p>
 </div>
-<div class="contents topic">
-<p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#config-filter-uneeded" id="id2" name="id2">config_filter_uneeded</a></li>
-<li><a class="reference" href="#config-keyval" id="id3" name="id3">config_keyval</a></li>
-<li><a class="reference" href="#config-ini" id="id4" name="id4">config_ini</a></li>
-<li><a class="reference" href="#config-ini-get" id="id5" name="id5">config_ini_get</a></li>
-<li><a class="reference" href="#config-ini-clear" id="id6" name="id6">config_ini_clear</a></li>
+<li><a class="reference internal" href="#config-filter-uneeded" id="id2">config_filter_uneeded</a></li>
+<li><a class="reference internal" href="#config-keyval" id="id3">config_keyval</a></li>
+<li><a class="reference internal" href="#config-ini" id="id4">config_ini</a></li>
+<li><a class="reference internal" href="#config-ini-get" id="id5">config_ini_get</a></li>
+<li><a class="reference internal" href="#config-ini-get-chained" id="id6">config_ini_get_chained</a></li>
+<li><a class="reference internal" href="#config-ini-clear" id="id7">config_ini_clear</a></li>
 </ul>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id2" id="config-filter-uneeded" name="config-filter-uneeded">config_filter_uneeded</a></h1>
+<div class="section" id="config-filter-uneeded">
+<h1><a class="toc-backref" href="#id2">config_filter_uneeded</a></h1>
 <pre class="literal-block">
 config_filter_uneeded [ commentchar ]
 </pre>
@@ -47,8 +48,8 @@ config_filter_uneeded [ commentchar ]
 <tt class="docutils literal"><span class="pre">commentchar</span></tt>, and blank lines as well. By default the command
 character is <tt class="docutils literal"><span class="pre">#</span></tt> (hash), but can be changed to any other string.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id3" id="config-keyval" name="config-keyval">config_keyval</a></h1>
+<div class="section" id="config-keyval">
+<h1><a class="toc-backref" href="#id3">config_keyval</a></h1>
 <pre class="literal-block">
 config_keyval destination [ separator [ commentchar ] ]
 </pre>
@@ -70,15 +71,15 @@ is set to <tt class="docutils literal"><span class="pre">#</span></tt> (hash).</
 </pre></div>
 <p>Note that spaces around <em>both</em> keys and values will be strippped.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id4" id="config-ini" name="config-ini">config_ini</a></h1>
+<div class="section" id="config-ini">
+<h1><a class="toc-backref" href="#id4">config_ini</a></h1>
 <pre class="literal-block">
 config_ini destination [ separator [ commentchar ] ]
 </pre>
-<p>Parses text from standard in a <a class="reference" href="http://en.wikipedia.org/wiki/INI_file">INI-like</a> fashion. Read values are
+<p>Parses text from standard in a <a class="reference external" href="http://en.wikipedia.org/wiki/INI_file">INI-like</a> fashion. Read values are
 stored into a hash table which has a nested hash table for each section
 found. Helper functions for getting values and full sections
-(<a class="reference" href="#config-ini-get">config_ini_get</a>). Arguments:</p>
+(<a class="reference internal" href="#config-ini-get">config_ini_get</a>). Arguments:</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">destination</span></tt>: Hash table where parsed values will be stored.</li>
 <li><tt class="docutils literal"><span class="pre">separator</span></tt>: Character used to split key-value pairs. By default
@@ -99,22 +100,32 @@ is set to <tt class="docutils literal"><span class="pre">#</span></tt> (hash).</
 </pre></div>
 <p>Note that spaces around <em>both</em> keys and values will be strippped.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id5" id="config-ini-get" name="config-ini-get">config_ini_get</a></h1>
+<div class="section" id="config-ini-get">
+<h1><a class="toc-backref" href="#id5">config_ini_get</a></h1>
 <pre class="literal-block">
 config_ini_get hash section [ key ]
 </pre>
 <p>Obtains a full section if <tt class="docutils literal"><span class="pre">key</span></tt> is not specified, or the value of
 a given key of the section otherwise. The given <tt class="docutils literal"><span class="pre">hash</span></tt> table must have
-the nested structure as the ones created by <a class="reference" href="#config-ini">config_ini</a>.</p>
+the nested structure as the ones created by <a class="reference internal" href="#config-ini">config_ini</a>.</p>
 </div>
-<div class="section">
-<h1><a class="toc-backref" href="#id6" id="config-ini-clear" name="config-ini-clear">config_ini_clear</a></h1>
+<div class="section" id="config-ini-get-chained">
+<h1><a class="toc-backref" href="#id6">config_ini_get_chained</a></h1>
+<pre class="literal-block">
+config_ini_get_chained hash section fallback key default
+</pre>
+<p>Obtains a value associated with the given <em>key</em> of a <em>section</em>. If the
+key does not exist in the <em>section</em>, it will be looked up in the
+alternative <em>fallback</em> section, and if not given then the <em>default</em>
+value is printed out.</p>
+</div>
+<div class="section" id="config-ini-clear">
+<h1><a class="toc-backref" href="#id7">config_ini_clear</a></h1>
 <pre class="literal-block">
 config_ini_clear hash
 </pre>
 <p>Disposes keys and values in a hash table hierarchy as created by
-<a class="reference" href="#config-ini">config_ini</a>.</p>
+<a class="reference internal" href="#config-ini">config_ini</a>.</p>
 </div>
 </div>
 </body>

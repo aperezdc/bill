@@ -91,6 +91,25 @@ test_keyval_sep_cchr ()
 }
 
 
+chained_input='[ALL]
+foo=Fallback Foo
+[barsect]
+bar=Section Bar
+[foosect]
+foo=Section Foo
+'
+
+test_ini_chained ()
+{
+    local h=$(hash_new)
+    config_ini $h <<< "$chained_input"
+    assertSame 'Fallback Foo' "$(config_ini_get_chained $h barsect ALL foo '-')"
+    assertSame 'Section Bar'  "$(config_ini_get_chained $h barsect ALL bar '-')"
+    assertSame 'Section Foo'  "$(config_ini_get_chained $h foosect ALL foo '-')"
+    assertSame '-'            "$(config_ini_get_chained $h foosect ALL bar '-')"
+    config_ini_clear $h
+}
+
 ini_input='[s1]
 one=1
 two=2
