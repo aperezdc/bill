@@ -453,6 +453,40 @@ or third party applications:
     eval "foo='$(printf %q "$line")'"
 
 
+[[-regexp
+~~~~~~~~~
+It is wise to know that the ``[[`` built-in can be used to match regular
+expressions using the ``=~`` operator. This is specially handy to avoid
+usage of external tools like ``sed`` or ``grep``. Note that if you are
+processing huge amounts of input and you want to extract some lines, using
+``grep`` can still be faster; but if you need to do line-by-line processing
+it is advised to use ``[[``.
+
+Take the following example where a string is checked against a regular
+expression using ``grep``:
+
+.. sourcecode:: bash
+
+    read line
+    # Check whether the line is a MIME-like header
+    if grep -E '^[^:]:' <<< "$line ; then
+        echo "You entered a MIME header"
+    fi
+
+It can be rewritten the following way:
+
+.. sourcecode:: bash
+
+    read line
+    # Check whether the line is a MIME-like header
+    if [[ $line =~ ^[^:]: ]] ; then
+        echo "You entered a MIME header"
+    fi
+
+Code written this way will be faster, especially in tight loops which do
+process input in a line-by-line basis.
+
+
 caller
 ~~~~~~
 This will output the line number and file name from which the current
