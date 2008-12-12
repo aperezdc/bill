@@ -18,6 +18,8 @@ need sed grep cat || die "grep, sed or cat are missing"
 
 use text/string
 
+declare -r __mime_CR=$'\015'
+
 
 #++ mime_decode [ headersfile ]
 #
@@ -72,11 +74,9 @@ mime_decode ()
 
     while read line
     do
-        # FIXME: Use a trick like __http_CR in www/http to strip trailing CR
-        # charcters
-        line=$(sed -e 's:\r::g' <<< "$line")
+        line=${line%${__mime_CR}}
 
-        if "$line" | grep -E '^[^:]+:' <<< "$line" > /dev/null
+        if [[ $line =~ ^[^:]+: ]]
         then
             # Line has a header name. If this is not the first one, print
             # the previous one to the metafile.
@@ -87,6 +87,8 @@ mime_decode ()
             headersfound=true
             key=${line%:*}
             key=$(string_lower "${key//[^A-Za-z_]/_}")
+
+            # TODO Change this to avoid piping through sed
             value=$(echo "${line#*:}" | sed -e 's:^[[:space:]]*::')
         elif [ -z "$line" ]
         then
@@ -102,7 +104,6 @@ mime_decode ()
             # we must remove trailing whitespace.
             value="${value}$(sed -e 's:^[[:space:]]*: :' <<< "$line")"
         fi
-
     done
 
     # Dump remaining input to standard output.

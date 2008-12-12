@@ -3,7 +3,6 @@
 need patch || die "Sorry, 'patch' is not installed"
 
 cmdline=(
-    S:suffix  'patch.bz2'  'Patch suffix'
     x:exclude ''           'List of patches to exclude'
     f:force   false        'Force applying of bulk patches'
     p:max-p   5            'Maximum for -p argument to patch'
@@ -32,10 +31,10 @@ WORKDIR=$(pwd)
 T=$WORKDIR
 
 # Default directory where patches are located
-EPATCH_SOURCE="patch"
+EPATCH_SOURCE="patches"
 
 # Default extension for patches
-EPATCH_SUFFIX=$(hash_get $CFG suffix)
+EPATCH_SUFFIX="patch"
 
 # Default options for patch
 # Set -g0 to keep RCS, ClearCase, Perforce and SCCS happy. Bug #24571
@@ -120,7 +119,7 @@ epatch() {
 		SINGLE_PATCH="yes"
 
 		local EPATCH_SOURCE="$1"
-		local EPATCH_SUFFIX="${1##*\.}"
+		local PATCH_SUFFIX="${1##*\.}"
 
 	elif [ -n "$1" -a -d "$1" ]
 	then
@@ -313,6 +312,6 @@ epatch() {
 }
 
 
-shift $(( $# - CLI_LAST_ARG ))
+shift $CLI_LAST_ARG
 main epatch "$@"
 

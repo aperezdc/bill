@@ -134,7 +134,7 @@ http_response_by_code ()
 
 
 
-__http_CR=$(printf "\015")
+__http_CR=$'\015'
 __http_server="bash/${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}"
 __http_server="${__http_server} bill-www-http/$BILL_VERSION"
 

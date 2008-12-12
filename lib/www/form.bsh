@@ -94,7 +94,7 @@ form_multipart_handle ()
 
     for name in "$1/raw"/*
     do
-        local -r cook=${name##*/}
+        local cook=${name##*/}
         # XXX The head invocation is needed to remove the trailing "\r\n" of
         # the input as given in the multipart form data.
         head -c -2 "$name" | mime_decode "$1/headers/$cook" > "$1/body/$cook"
