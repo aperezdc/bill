@@ -2,44 +2,44 @@
 
 use data/map
 
-lookup_data=(
+_test_map_lookup_data=(
     one   1
     two   2
     three 3
 )
 
 
-test_lookup ()
+test_map_lookup ()
 {
-    assertSame 1 "$(map_get lookup_data one)"
-    assertSame 2 "$(map_get lookup_data two)"
-    assertSame 3 "$(map_get lookup_data three)"
+    assertSame 1 "$(map_get _test_map_lookup_data one)"
+    assertSame 2 "$(map_get _test_map_lookup_data two)"
+    assertSame 3 "$(map_get _test_map_lookup_data three)"
 }
 
 
-test_lookup_key ()
+test_map_lookup_key ()
 {
-    assertSame one "$(map_key lookup_data 1)"
-    assertSame two "$(map_key lookup_data 2)"
-    assertSame three "$(map_key lookup_data 3)"
+    assertSame one "$(map_key _test_map_lookup_data 1)"
+    assertSame two "$(map_key _test_map_lookup_data 2)"
+    assertSame three "$(map_key _test_map_lookup_data 3)"
 }
 
 
-test_values ()
+test_map_values ()
 {
-    assertSame "1:2:3" "$(IFS=':' map_values lookup_data)"
+    assertSame "1:2:3" "$(IFS=':' map_values _test_map_lookup_data)"
 }
 
 
-test_keys ()
+test_map_keys ()
 {
-    assertSame "one:two:three" "$(IFS=':' map_keys lookup_data)"
+    assertSame "one:two:three" "$(IFS=':' map_keys _test_map_lookup_data)"
 }
 
 
-test_size ()
+test_map_size ()
 {
     local empty=( )
     assertSame 0 $(map_size empty)
-    assertSame 6 $(map_size lookup_data)
+    assertSame 6 $(map_size _test_map_lookup_data)
 }

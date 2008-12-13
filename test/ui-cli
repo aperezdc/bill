@@ -3,7 +3,7 @@
 use ui/cli
 
 
-test_optparse_short ()
+test_cli_optparse_short ()
 {
     local args=$(hash_new)
     local opts=( q:quiet false 'Be quiet' )
@@ -13,7 +13,7 @@ test_optparse_short ()
 }
 
 
-test_optparse_long ()
+test_cli_optparse_long ()
 {
     local args=$(hash_new)
     local opts=( q:quiet false 'Be quiet' )
@@ -23,7 +23,7 @@ test_optparse_long ()
 }
 
 
-test_optparse_long_only ()
+test_cli_optparse_long_only ()
 {
     local args=$(hash_new)
     local opts=( :quiet false 'Be quiet' )
@@ -33,7 +33,7 @@ test_optparse_long_only ()
 }
 
 
-test_optparse_assign_short ()
+test_cli_optparse_assign_short ()
 {
     local args=$(hash_new)
     local opts=(
@@ -52,7 +52,7 @@ test_optparse_assign_short ()
 }
 
 
-test_optparse_assign_long ()
+test_cli_optparse_assign_long ()
 {
     local args=$(hash_new)
     local opts=(
@@ -70,7 +70,7 @@ test_optparse_assign_long ()
 }
 
 
-test_optparse_files ()
+test_cli_optparse_files ()
 {
     local args=$(hash_new)
     local opts=( q:quiet false 'Be Quiet' )

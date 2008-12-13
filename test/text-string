@@ -3,7 +3,7 @@
 use text/string
 
 
-test_upper ()
+test_string_upper ()
 {
     assertSame A $(string_upper a)
     assertSame ABCDEF $(string_upper abcdef)
@@ -13,7 +13,7 @@ test_upper ()
 }
 
 
-test_lower ()
+test_string_lower ()
 {
     assertSame a $(string_lower A)
     assertSame abcdef $(string_lower ABCDEF)
@@ -23,7 +23,7 @@ test_lower ()
 }
 
 
-test_length ()
+test_string_length ()
 {
     assertSame 0 $(string_length "")
     assertSame 1 $(string_length a)
@@ -31,7 +31,7 @@ test_length ()
 }
 
 
-test_starts ()
+test_string_starts ()
 {
     string_startswith "the answer is 42" "" || fail
     string_startswith "the answer is 42" "the" || fail
@@ -40,7 +40,7 @@ test_starts ()
 }
 
 
-test_ends ()
+test_string_ends ()
 {
     string_endswith "the answer is 42" "" || fail
     string_endswith "the answer is 42" "42" || fail
@@ -49,7 +49,7 @@ test_ends ()
 }
 
 
-test_ascii_code ()
+test_string_ascii_code ()
 {
     assertSame 65  $(string_ascii_code "A")
     assertSame 41  $(string_ascii_code "A" x)
@@ -59,7 +59,7 @@ test_ascii_code ()
 }
 
 
-test_ascii ()
+test_string_ascii ()
 {
     assertSame 65:79 $(string_ascii AO : d)
     assertSame 41:4F $(string_ascii AO : X)
@@ -67,7 +67,7 @@ test_ascii ()
 }
 
 
-test_join ()
+test_string_join ()
 {
     assertSame abcdefg $(string_join "" a b c d e f g)
     assertSame a:b:c:d $(string_join : a b c d)
@@ -76,7 +76,7 @@ test_join ()
 }
 
 
-test_strip ()
+test_string_strip ()
 {
     assertSame "abc" "$(string_strip <<< "abc")"
     assertSame "abc" "$(string_strip <<< "abc ")"
@@ -88,7 +88,7 @@ test_strip ()
 }
 
 
-test_lstrip ()
+test_string_lstrip ()
 {
     assertSame "abc" "$(string_lstrip <<< "abc")"
     assertSame "abc " "$(string_lstrip <<< "abc ")"
@@ -98,7 +98,7 @@ test_lstrip ()
 }
 
 
-test_rstrip ()
+test_string_rstrip ()
 {
     assertSame "abc" "$(string_rstrip <<< "abc")"
     assertSame " abc" "$(string_rstrip <<< " abc")"

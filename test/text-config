@@ -4,34 +4,36 @@ use text/config
 use data/hash
 
 
-filter_sample_input='# A comment
+_test_config_filter_input='# A comment
 
 # An empty line above and an empty comment below.
 #
 # An empty line *with* a space below
  '
 
-test_filter () {
-    assertSame "" "$(config_filter_unneeded <<< "$filter_sample_input")"
+test_config_filter () {
+    assertSame "" "$(config_filter_unneeded \
+        <<< "$_test_config_filter_input")"
 }
 
 
-filter_cchar_input='; Semicolons as delimiters'
+_test_config_filter_cchar_input='; Semicolons as delimiters'
 
-test_filter_commentchar () {
-    assertSame "" "$(config_filter_unneeded ";" <<< "$filter_cchar_input")"
+test_config_filter_commentchar () {
+    assertSame "" "$(config_filter_unneeded ";" \
+        <<< "$_test_config_filter_cchar_input")"
 }
 
 
 
-keyval_input='one=1
+_test_config_keyval_input='one=1
 two = 2
   three  = 3  '
 
-test_keyval ()
+test_config_keyval ()
 {
     local h=$(hash_new)
-    config_keyval $h <<< "$keyval_input"
+    config_keyval $h <<< "$_test_config_keyval_input"
     assertSame 1 $(hash_get $h one)
     assertSame 2 $(hash_get $h two)
     assertSame 3 $(hash_get $h three)
@@ -40,7 +42,7 @@ test_keyval ()
 
 
 
-keyval_cchar_input='; A comments
+_test_config_keyval_cchar_input='; A comments
 one = 1
  two= 2
   ; This is another comment
@@ -48,10 +50,10 @@ three =3
 four = 4
 '
 
-test_keyval_commentchar ()
+test_config_keyval_commentchar ()
 {
     local h=$(hash_new)
-    config_keyval $h '=' ';' <<< "$keyval_cchar_input"
+    config_keyval $h '=' ';' <<< "$_test_config_keyval_cchar_input"
     assertSame 1 $(hash_get $h one)
     assertSame 2 $(hash_get $h two)
     assertSame 3 $(hash_get $h three)
@@ -60,14 +62,14 @@ test_keyval_commentchar ()
 }
 
 
-keyval_sep_input='one: 1
+_test_config_keyval_sep_input='one: 1
 two  : 2
 three :3'
 
-test_keyval_separator ()
+test_config_keyval_separator ()
 {
     local h=$(hash_new)
-    config_keyval $h ':' <<< "$keyval_sep_input"
+    config_keyval $h ':' <<< "$_test_config_keyval_sep_input"
     assertSame 1 $(hash_get $h one)
     assertSame 2 $(hash_get $h two)
     assertSame 3 $(hash_get $h three)
@@ -75,15 +77,15 @@ test_keyval_separator ()
 }
 
 
-keyval_sep_cchar_input='; Comment
+_test_config_keyval_sep_cchar_input='; Comment
 one/1
 two/2
 three/3'
 
-test_keyval_sep_cchr ()
+test_config_keyval_sep_cchr ()
 {
     local h=$(hash_new)
-    config_keyval $h '/' ';' <<< "$keyval_sep_cchar_input"
+    config_keyval $h '/' ';' <<< "$_test_config_keyval_sep_cchar_input"
     assertSame 1 $(hash_get $h one)
     assertSame 2 $(hash_get $h two)
     assertSame 3 $(hash_get $h three)
@@ -91,7 +93,7 @@ test_keyval_sep_cchr ()
 }
 
 
-chained_input='[ALL]
+_test_config_chained_input='[ALL]
 foo=Fallback Foo
 [barsect]
 bar=Section Bar
@@ -99,10 +101,10 @@ bar=Section Bar
 foo=Section Foo
 '
 
-test_ini_chained ()
+test_config_ini_chained ()
 {
     local h=$(hash_new)
-    config_ini $h <<< "$chained_input"
+    config_ini $h <<< "$_test_config_chained_input"
     assertSame 'Fallback Foo' "$(config_ini_get_chained $h barsect ALL foo '-')"
     assertSame 'Section Bar'  "$(config_ini_get_chained $h barsect ALL bar '-')"
     assertSame 'Section Foo'  "$(config_ini_get_chained $h foosect ALL foo '-')"
@@ -110,7 +112,7 @@ test_ini_chained ()
     config_ini_clear $h
 }
 
-ini_input='[s1]
+_test_config_ini_input='[s1]
 one=1
 two=2
 [s2]
@@ -118,10 +120,10 @@ one=a
 two=b
 '
 
-test_ini ()
+test_config_ini ()
 {
     local h=$(hash_new)
-    config_ini $h <<< "$ini_input"
+    config_ini $h <<< "$_test_config_ini_input"
     assertSame 1 $(config_ini_get $h s1 one)
     assertSame 2 $(config_ini_get $h s1 two)
     assertSame a $(config_ini_get $h s2 one)

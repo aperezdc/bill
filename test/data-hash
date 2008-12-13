@@ -2,7 +2,7 @@
 
 use data/hash
 
-test_create ()
+test_hash_create ()
 {
     local h1=$(hash_new)
     assertNotNull $h1
@@ -12,7 +12,7 @@ test_create ()
 }
 
 
-test_empty_key ()
+test_hash_empty_key ()
 {
     local h=$(hash_new)
     hash_set $h "" value
@@ -22,7 +22,16 @@ test_empty_key ()
 }
 
 
-test_empty_value ()
+test_hash_spaces_in_key ()
+{
+    local h=$(hash_new)
+    hash_set $h ' ' 'empty key'
+    assertSame 'empty key' "$(hash_get $h ' ')"
+    hash_clear $h
+}
+
+
+test_hash_empty_value ()
 {
     local h=$(hash_new)
     hash_set $h key ""
@@ -32,7 +41,7 @@ test_empty_value ()
 }
 
 
-test_empty_value_iter ()
+test_hash_empty_value_iter ()
 {
     local h=$(hash_new)
     hash_set $h key1 ''
@@ -43,7 +52,7 @@ test_empty_value_iter ()
 }
 
 
-test_set_one ()
+test_hash_set_one ()
 {
     local h=$(hash_new)
     hash_set $h one 1
@@ -52,7 +61,7 @@ test_set_one ()
 }
 
 
-test_set_some ()
+test_hash_set_some ()
 {
     local i h=$(hash_new)
     for i in $(seq 10) ; do
@@ -65,7 +74,7 @@ test_set_some ()
 }
 
 
-test_clear ()
+test_hash_clear ()
 {
     local h=$(hash_new)
     hash_set $h one 1
@@ -76,7 +85,7 @@ test_clear ()
 }
 
 
-test_nest ()
+test_hash_nest ()
 {
     local h=$(hash_new)
     hash_set $h nested $(hash_new)
@@ -88,22 +97,22 @@ test_nest ()
 
 
 
-pass_ref_helper ()
+_test_hash_ref_helper ()
 {
     hash_set $1 one 1
 }
 
 
-test_pass_ref ()
+_test_hash_pass_ref ()
 {
     local h=$(hash_new)
-    pass_ref_helper $h
+    _test_hash_pass_ref_helper $h
     assertSame $(hash_get $h one) 1
     hash_clear $h
 }
 
 
-test_del ()
+test_hash_del ()
 {
     local h=$(hash_new)
     hash_set $h one 1
@@ -115,25 +124,25 @@ test_del ()
 }
 
 
-hash_iter_helper ()
+_test_hash_iter_helper ()
 {
     hash_iter_helper_keys=$2
 }
 
 
-test_iter ()
+test_hash_iter ()
 {
     local i h=$(hash_new)
     local hash_iter_helper_keys
 
     hash_set $h one 1
-    hash_keys_iter $h hash_iter_helper
+    hash_keys_iter $h _test_hash_iter_helper
     assertSame one "$hash_iter_helper_keys"
     hash_clear $h
 }
 
 
-test_iter2 ()
+test_hash_iter2 ()
 {
     local h=$(hash_new)
     hash_set $h k1 v1
@@ -145,7 +154,7 @@ test_iter2 ()
 }
 
 
-test_iter3 ()
+test_hash_iter3 ()
 {
     local h=$(hash_new)
     hash_set $h k1 v1
@@ -158,7 +167,7 @@ test_iter3 ()
 }
 
 
-test_has ()
+test_hash_has ()
 {
     local h=$(hash_new)
 
@@ -169,7 +178,7 @@ test_has ()
 }
 
 
-test_colon_in_value ()
+test_hash_colon_in_value ()
 {
     local h=$(hash_new)
 
@@ -179,7 +188,7 @@ test_colon_in_value ()
 }
 
 
-test_set_twice ()
+test_hash_set_twice ()
 {
     local h=$(hash_new)
 

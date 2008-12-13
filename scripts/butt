@@ -38,7 +38,7 @@ F="bill-shunit-$$-$RANDOM"
 
 ( echo "BILLPATH='$BILLPATH'"
   echo "source '$B/builtins.bsh'"
-  cat  "$1"
+  cat  "$@"
   echo "source '$B/shunit2'"
 ) > "$F"
 

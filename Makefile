@@ -47,11 +47,13 @@ tarball:
 .PHONY: deb tarball
 
 
+ifeq ($(strip $T),)
 test:
-	@for i in test/* ; do \
-		echo "[1;1m*** $$i[0;0m" ; \
-		./scripts/bill scripts/butt "$$i" ; \
-	done
+	@./scripts/bill scripts/butt test/*
+else
+test:
+	@./scripts/bill scripts/butt test/$T
+endif
 
 .PHONY: test
 
