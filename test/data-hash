@@ -31,6 +31,46 @@ test_hash_spaces_in_key ()
 }
 
 
+test_hash_spaces_in_value ()
+{
+    local h=$(hash_new)
+    hash_set $h key ' '
+    assertSame ' ' "$(hash_get $h key)"
+    hash_clear $h
+}
+
+
+test_hash_backslash_in_key ()
+{
+    local h=$(hash_new)
+    hash_set $h '\\' 'backslash'
+    hash_set $h '\n' 'newline'
+    assertSame 'backslash' "$(hash_get $h '\\')"
+    assertSame 'newline' "$(hash_get $h '\n')"
+    hash_clear $h
+}
+
+
+test_hash_funnychars ()
+{
+    local h=$(hash_new)
+    hash_set $h '[1;32m' funny
+    hash_set $h funny '[1;33m'
+    assertSame funny "$(hash_get $h '[1;32m')"
+    assertSame '[1;33m' "$(hash_get $h funny)"
+    hash_clear $h
+}
+
+
+test_hash_backslash_in_value ()
+{
+    local h=$(hash_new)
+    hash_set $h key '\\'
+    assertSame '\\' "$(hash_get $h key)"
+    hash_clear $h
+}
+
+
 test_hash_empty_value ()
 {
     local h=$(hash_new)
