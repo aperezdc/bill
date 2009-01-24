@@ -57,6 +57,9 @@ declare -ar cmdline=(
     a:address
         '0.0.0.0'
         'Host address on which to listen for connections'
+    n:server-name
+        ''
+        'Specify the server name, i.e. if it cannot be resolved'
     l:log-file
         billetd.log
         'Location of log file when running as daemon'
@@ -89,7 +92,8 @@ guess_tcp_wrapper ()
     hash_get $options port    &> /dev/null || die 'No port to bind to given'
     hash_get $options address &> /dev/null || die 'No address to bind to given'
 
-    local which
+    local which sname
+    sname=$(hash_get $options server-name)
     which=$(hash_get $options tcp-sockets)
 
     if [[ $? != 0 ]] || [ "$which" = auto ] ; then
@@ -102,6 +106,7 @@ guess_tcp_wrapper ()
     ipsvd | tcpsvd)
         tcp_wrapper=( tcpsvd )
         $__verbose && tcp_wrapper=( "${tcp_wrapper[@]}" -vv )
+        [ "$sname" ] && tcp_wrapper=( "${tcp_wrapper[@]}" -l "$sname" )
         tcp_wrapper=( "${tcp_wrapper[@]}"
             $(hash_get $options address)
             $(hash_get $options port)
@@ -113,6 +118,7 @@ guess_tcp_wrapper ()
         else
             tcp_wrapper=( tcpserver -q )
         fi
+        [ "$name" ] && tcp_wrapper=( "${tcp_wrapper[@]}" -l "$sname" )
         tcp_wrapper=( "${tcp_wrapper[@]}"
             $(hash_get $options address)
             $(hash_get $options port)
