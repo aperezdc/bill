@@ -60,13 +60,13 @@ Last, but not least Bill also has the following:
 Get Billed!
 ===========
 
-Packages for the latest release (0.1) are available here:
+Packages for the latest release (0.1-2) are available here:
 
 * Source code:
-  `bill-0.1.tar.bz2 <releases/bill-0.1.tar.bz2>`__
+  `bill-0.1-2.tar.bz2 <releases/bill-0.1-2.tar.bz2>`__
 
 * Debian_ package (all platforms):
-  `bill_0.1-1_all.deb <releases/bill_0.1-1_all.deb>`__
+  `bill_0.1-2_all.deb <releases/bill_0.1-2_all.deb>`__
 
 Development code can also obtained from from the GIT_ `repository hosted at
 Gitorious <http://gitorious.org/projects/bill>`__::
