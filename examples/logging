@@ -1,0 +1,38 @@
+#! /usr/bin/env bill
+#
+# Demonstrates usage of logging functions. You can pass a log level as first
+# argument, e.g.: ./logging LOG_INFO
+
+use text/log
+
+if [ "$1" ] ; then
+    level=$1
+    log_warn "Setting log level to ${level} (${!level})"
+    log_enable "${!level}"
+fi
+
+# Use the default logger
+log_trace 'Starting up, and using the default logger'
+log_info  "Log level is $LOG_LEVEL"
+echo 'This is a normal print-me statement'
+log_trace 'Ending execution'
+
+
+# Now create a custom logger and replace the root logger
+log_replace default console date ttycolor
+log_error 'This error will go to the console, even redirected' &> /dev/null
+
+# Crate another logger, but assign it a new name, use it temporarily
+# and then go back to the existing root logger.
+log_create filelog file date addlevel
+log_config filelog file-path example.log
+log_config filelog date-format '%s'
+
+log_root filelog
+log_warn 'This warning will go into the file'
+log_root default
+log_warn 'This warning will go to the console'
+
+log_warn ! filelog 'This is also for the file'
+log_destroy filelog
+
