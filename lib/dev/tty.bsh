@@ -53,7 +53,6 @@
 
 use data/map
 
-declare -ar \
 __tty_color_fg=(
     reset       0
     bold        1
@@ -74,7 +73,6 @@ __tty_color_fg=(
     white      37
 )
 
-declare -ar \
 __tty_color_bg=(
     reset       0
     bold        1
@@ -96,7 +94,6 @@ __tty_color_bg=(
     default    49
 )
 
-declare -ar \
 __tty_color_alias=(
     yellow  brown
     fucsia  magenta
@@ -105,6 +102,8 @@ __tty_color_alias=(
     aqua    cyan
     silver  white
 )
+
+declare -ar __tty_color_alias __tty_color_bg __tty_color_fg
 
 
 #++ tty_color_alias colorname
@@ -135,7 +134,7 @@ tty_color_fg ()
     while [ "$1" ]
     do
         attr=$(map_get __tty_color_fg "$(tty_color_alias "$1")")
-        [ "$attr" ] && echo -n $'\e['"${attr}m"
+        [ "$attr" ] && printf '[%sm' "${attr}"
         shift
     done
 }
