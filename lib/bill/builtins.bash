@@ -103,9 +103,9 @@ use ()
         IFS=':'
         for path in $BILLPATH
         do
-            if [ -r "$path/$1.bsh" ]
+            if [ -r "$path/$1.bash" ]
             then
-                __bill_use__=true source "$path/$1.bsh"
+                __bill_use__=true source "$path/$1.bash"
                 found=true
                 break
             fi

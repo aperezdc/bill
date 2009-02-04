@@ -49,10 +49,10 @@ need cat  || die "The 'cat' program was not found"
 #   ========== =============================================================
 #   Package    Command
 #   ========== =============================================================
-#   ipsvd_     ``tcpsvd 127.0.0.1 8000 ./scripts/bill lib/www/http.bsh``
-#   ucspi-tcp_ ``tcpserver -q 127.0.0.1 8000 ./scripts/bill lib/www/http.bsh``
-#   netcat_    ``(while true ; do nc -l -p 8000 -c './scripts/bill lib/www/http.bsh'; done)``
-#   netpipes_  ``faucet 8000 -H 127.0.0.1 -i -o ./scripts/bill lib/www/http.bsh``
+#   ipsvd_     ``tcpsvd 127.0.0.1 8000 ./scripts/bill lib/www/http.bash``
+#   ucspi-tcp_ ``tcpserver -q 127.0.0.1 8000 ./scripts/bill lib/www/http.bash``
+#   netcat_    ``(while true ; do nc -l -p 8000 -c './scripts/bill lib/www/http.bash'; done)``
+#   netpipes_  ``faucet 8000 -H 127.0.0.1 -i -o ./scripts/bill lib/www/http.bash``
 #   ========== =============================================================
 #
 #   .. _ipsvd: http://smarden.org/ipsvd/
@@ -169,7 +169,7 @@ else
     {
         local m='application/octet-stream'
         case ${1##*.} in
-            bsh | txt | rst | conf ) m='text/plain' ;;
+            bash | txt | rst | conf ) m='text/plain' ;;
             jpg | jpe | jpeg) m='image/jpeg' ;;
             png) m='image/png' ;;
             html) m='text/html' ;;

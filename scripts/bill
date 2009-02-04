@@ -63,9 +63,9 @@ use ()
     IFS=':'
     for path in $BILLPATH
     do
-        if [ -r "$path/$1.bsh" ]
+        if [ -r "$path/$1.bash" ]
         then
-            source "$path/$1.bsh"
+            source "$path/$1.bash"
             found=true
             break
         fi

@@ -3,23 +3,23 @@
 # Adrián Pérez, 2008-08-14 20:29
 #
 
-module_readmes  := $(wildcard lib/*/README)
-all_txt_docs    := $(wildcard doc/*.txt)
-all_bsh_modules := $(shell find lib -name '*.bsh')
-all_html_pages  := $(patsubst %.bsh,doc/%.html,$(all_bsh_modules)) \
-                   $(patsubst %.txt,%.html,$(all_txt_docs)) \
-                   doc/module-index.html
+module_readmes   := $(wildcard lib/*/README)
+all_text_docs    := $(wildcard doc/*.txt)
+all_bash_modules := $(shell find lib -name '*.bash')
+all_html_pages   := $(patsubst %.bash,doc/%.html,$(all_bash_modules)) \
+                    $(patsubst %.txt,%.html,$(all_txt_docs)) \
+                    doc/module-index.html
 
 
 doc: $(all_html_pages)
 
-doc/%.txt: %.bsh
+doc/%.txt: %.bash
 	mkdir -p $(dir $@)
 	awk -f scripts/docextract.awk $< > $@
 
 .SECONDARY:
 
-doc/module-index.html: $(all_bsh_modules) $(module_readmes)
+doc/module-index.html: $(all_bash_modules) $(module_readmes)
 	./scripts/bill scripts/gen-module-index lib | $(rst2html) - $@
 
 %.html: %.txt

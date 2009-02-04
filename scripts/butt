@@ -37,7 +37,7 @@ B=$(find_shunit)
 F="bill-shunit-$$-$RANDOM"
 
 ( echo "BILLPATH='$BILLPATH'"
-  echo "source '$B/builtins.bsh'"
+  echo "source '$B/builtins.bash'"
   cat  "$@"
   echo "source '$B/shunit2'"
 ) > "$F"
