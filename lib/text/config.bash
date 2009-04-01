@@ -172,7 +172,7 @@ config_ini_get_chained ()
         fi
     fi
 
-    echo "${v:-${5:-''}}"
+    echo "${v:-${5:-}}"
 }
 
 

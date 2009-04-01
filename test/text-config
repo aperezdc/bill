@@ -93,6 +93,16 @@ test_config_keyval_sep_cchr ()
 }
 
 
+test_config_ini_chained_nokey ()
+{
+    local h=$(hash_new)
+    config_keyval $h <<< "[foo]"
+    assertSame "" "$(config_ini_get_chained $h nosection ALL nokey)"
+    assertSame "" "$(config_ini_get_chained $h foo ALL nokey)"
+    hash_clear $h
+}
+
+
 _test_config_chained_input='[ALL]
 foo=Fallback Foo
 [barsect]
