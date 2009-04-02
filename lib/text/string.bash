@@ -4,8 +4,8 @@
 #   String manipulation
 #   ===================
 #   :Author: Adrián Pérez <aperez@udc.es>
-#   :Copyright: Igalia S.L., 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Provides common functions used to manipulate text strings.
 #
 #   .. contents::

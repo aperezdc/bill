@@ -2,7 +2,8 @@
  Bill Tutorial
 ===============
 :Author: Adrian Perez <aperez@igalia.com>
-:License: GPL v2
+:License: GPL3
+:Copyright: 2008-2009 Igalia S.L.
 :Abstract: This step-by-step tutorial is a quick introduction to Bill, and
     covers using the usage of the interactive interpreter, usage of already
     available modules, and creating new ones.

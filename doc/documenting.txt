@@ -3,7 +3,8 @@
 ==========================
 
 :Author: Adrian Perez <aperez@igalia.com>
-:License: GPL v2
+:License: GPL3
+:Copyright: 2008-2009 Igalia S.L.
 :Abstract: Explains how to document Bill modules used the tools bundled with
     Bill itself.
 

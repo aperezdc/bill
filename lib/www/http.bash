@@ -4,8 +4,8 @@
 #   Simple HTTP server
 #   ==================
 #   :Author: Adrian Perez <aperez@igalia.com>
-#   :License: GPL v2
-#   :Copyright: 2008 Igalia S.L.
+#   :License: GPL3
+#   :Copyright: 2008-2009 Igalia S.L.
 #   :Abstract: Provides a not-so-basic standalone web server.
 #       Socket functionality is **not** provided. Requests are
 #       read from standard input, responses are sent to standard

@@ -4,8 +4,8 @@
 #   Command Line Interface
 #   ======================
 #   :Author: Adrian Perez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: User interaction using a command, line-oriented interface.
 #
 #   .. contents::

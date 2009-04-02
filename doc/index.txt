@@ -7,7 +7,8 @@ The Bash Improved Leveraging Library
 
 :Author: Adrián Pérez <aperez@igalia.com>
 :Version: `0.1 <#get-billed>`__
-:License: `GPL v2 <http://opensource.org/licenses/gpl-2.0.php>`__
+:License: `GPL3 <http://opensource.org/licenses/gpl-3.0.html>`__
+:Copyright: 2008-2009 Igalia S.L.
 :Abstract: Bill strives to be a solution for developing applications which
     can be run on platforms with limited resources (e.g. embedded systems)
     on top of the GNU Bash_ shell, with a focus on quality and reusability

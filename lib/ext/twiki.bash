@@ -4,8 +4,8 @@
 #   Utilities for the TWiki wiki
 #   ============================
 #   :Author: Adrian Perez <aperez@igalia.com>
-#   :License: GPL v2
-#   :Copyright: 2008 Igalia S.L.
+#   :License: GPL3
+#   :Copyright: 2008-2009 Igalia S.L.
 #   :Abstract: Functions for performing operations on TWiki instances.
 #
 #   .. contents::

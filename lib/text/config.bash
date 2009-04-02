@@ -4,8 +4,8 @@
 #   Config file parsing
 #   ===================
 #   :Author: Adrian Perez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Parse configuration files in key-value pairs and INI-style.
 #
 #   .. contents::

@@ -4,8 +4,8 @@
 #   Time module
 #   ===========
 #   :Author: Adrián Pérez de Castro <aperez@igalia.com>
-#   :Copyright: Igalia, 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Provides functions for dealing with date and time values.
 #
 #   .. contents::

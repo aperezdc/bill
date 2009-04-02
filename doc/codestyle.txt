@@ -3,7 +3,8 @@
 =======================
 
 :Author: Adrian Perez <aperez@igalia.com>
-:License: GPL v2
+:License: GPL3
+:Copyright: 2008-2009 Igalia S.L.
 :Abstract: Provides general guidelines on how to write and organize shell
     code in general and when using the Bill library in particular.
 

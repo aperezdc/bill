@@ -4,8 +4,8 @@
 #   Module for filesystem-based spools
 #   ==================================
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Provides mechanism for having a directory with spooled items.
 #       Items may be files or subdirectories which can be created, listed and
 #       removed. All the operations are done at the filesystem level and

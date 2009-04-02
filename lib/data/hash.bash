@@ -4,8 +4,8 @@
 #   Hash tables
 #   ===========
 #   :Author: Adrian Perez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Efficient dictionary-like structures i.e. a hash table.
 #
 #   .. contents::

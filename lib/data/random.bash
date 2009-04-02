@@ -3,9 +3,9 @@
 #   ======================
 #   Random data generation
 #   ======================
-#   :License: GPL v2
+#   :License: GPL3
 #   :Author: Adrian Perez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
+#   :Copyright: 2008-2009 Igalia S.L.
 #   :Abstract: Helpful functions for random data generation.
 #       Functions whose name starts with ``random_pseudo_`` generate
 #       pseudo-random data, and those starting with ``random_`` do

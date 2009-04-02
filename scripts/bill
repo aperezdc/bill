@@ -6,8 +6,8 @@
 #   Wrapper script
 #   ==============
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: Igalia S.L., 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Wrapper which launches the bash_ shell adding the Bill
 #       built-in functions.
 #--

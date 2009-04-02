@@ -4,8 +4,8 @@
 #   bURL - TinyURL clone as a Billet
 #   ================================
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: Igalia, 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Simple implementation of a TinyURL-like service.
 #       This is an example of how to write a Billet, and it is used as
 #       reference in the Billets tutorial.

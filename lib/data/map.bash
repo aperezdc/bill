@@ -5,8 +5,8 @@
 #   ====
 #
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: Igalia S.L., 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Provides a dictionary-like data structure for use in shell code.
 #
 #   .. contents::

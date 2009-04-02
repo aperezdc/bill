@@ -4,8 +4,8 @@
 #   Handles HTML form submissions
 #   =============================
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Handles input in the formats provided by HTML forms.
 #       This includes submissions in the ``multipart/form-data`` and
 #       ``application/x-www-form-urlencoded`` encodings. This functionality

@@ -6,8 +6,8 @@
 #   :Author: Adrian Perez <aperez@igalia.com>, initial concept and
 #       implementation by Andrés J. Díaz <ajdiaz@mundo-r.com>. This
 #       implementation shares no code with the original one.
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Miminalistic template engine to be used from shell scripts.
 #       Can be used to dynamically generate any kind of text-based content,
 #       including (but not limited to) HTML.

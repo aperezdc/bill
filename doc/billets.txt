@@ -2,8 +2,8 @@
  Billets Manual
 ================
 :Author: Adrian Perez <aperez@igalia.com>
-:Copyright: 2008 Igalia S.L.
-:License: GPL v2
+:Copyright: 2008-2009 Igalia S.L.
+:License: GPL3
 :Abstract: Documents how to run *billets* over the HTTP protocol and
   administrate the *billets container*, as well as a quick introduction
   to *billet development* suitable for new developers.

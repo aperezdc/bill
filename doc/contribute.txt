@@ -2,7 +2,8 @@
  Contributing to Bill
 ======================
 :Author: Adrian Perez <aperez@igalia.com>
-:License: GPL v2
+:License: GPL3
+:Copyright: 2008-2009 Igalia S.L.
 :Abstract: Instructs how to contribute with the Bill project by sending
     patches and implementing new features using the Git_ version control
     system.

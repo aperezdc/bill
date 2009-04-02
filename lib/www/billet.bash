@@ -4,8 +4,8 @@
 #   Billet client API
 #   =================
 #   :Author: Adrian Perez de Castro <aperez@igalia.com>
-#   :Copyright: Igalia, 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia
+#   :License: GPL3
 #   :Abstract: Provides support functions for implementing Billets.
 #
 #   .. contents::

@@ -4,8 +4,8 @@
 #   BILL built-ins
 #   ==============
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: Igalia S.L. 2008
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Provides functions of common usage in shell code.
 #       This module is always imported by the Bill interpreter at startup.
 #

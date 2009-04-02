@@ -3,6 +3,8 @@
 ========================
 
 :Author: Adrián Pérez <aperez@igalia.com>
+:License: GPL3
+:Copyright: 2008-2009 Igalia S.L.
 :Abstract: Explains how to produce standalone shell scripts which do not
     need the Bill runtime to be installed in order to work. The only
     requirement will be a recent enough installation of Bash.

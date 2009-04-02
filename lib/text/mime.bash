@@ -4,8 +4,8 @@
 #   Handling MIME data
 #   ==================
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: 2008 Igalia S.L.
-#   :License: GPL v2
+#   :Copyright: 2008-2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Provides tools for handling MIME-encoded data.
 #       The format is defined in RFCs number
 #       `822 <http://www.ietf.org/rfc/rfc822.txt>`__ and

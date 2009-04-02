@@ -4,8 +4,8 @@
 #   Logging
 #   =======
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :Copyright: Igalia, 2009
-#   :License: GPL v2
+#   :Copyright: 2009 Igalia S.L.
+#   :License: GPL3
 #   :Abstract: Logging module for use in Bill shell scripts.
 #       Vaguely inspired by Python's “logging” module, which in turn is
 #       based upon Apache's “log4j” system.

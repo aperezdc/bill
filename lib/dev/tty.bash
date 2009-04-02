@@ -4,8 +4,8 @@
 #   Handling of terminal consoles
 #   =============================
 #   :Author: Adrián Pérez <aperez@igalia.com>
-#   :License: GPL v2
-#   :Copyright: Igalia S.L., 2008
+#   :License: GPL3
+#   :Copyright: 2008-2009 Igalia S.L.
 #   :Abstract: Handles settings of standard Unix terminal console devices.
 #       Provides support for nicer handling of features like ECMA-48 (ANSI)
 #       color codes.
