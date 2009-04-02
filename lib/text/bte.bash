@@ -99,8 +99,11 @@ bte_dotted_var ()
 bte_template ()
 {
     local line xpn item val
+    local old_ifs=${IFS}
 
+    IFS=''
     while read -r line ; do
+        IFS=${old_ifs}
         # Expand variables and stuff... one at a time
         while [[ ${line} =~ (.*)(\$\{[a-zA-Z0-9\.:_-]+\})(.*) ]] ; do
             xpn=${BASH_REMATCH[2]}
@@ -125,6 +128,7 @@ bte_template ()
             line="${BASH_REMATCH[1]}${val}${BASH_REMATCH[3]}"
         done
         echo "${line}"
+        IFS=''
     done
 }
 
