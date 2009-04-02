@@ -135,6 +135,7 @@ bte_template ()
         echo "${line}"
         IFS=''
     done
+    IFS=${old_ifs}
 }
 
 
