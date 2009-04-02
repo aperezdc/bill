@@ -142,7 +142,7 @@ config_ini_get ()
         hash_get $(hash_get "$1" "[$2]") "$3"
     else
         hash_get "$1" "[$2]"
-    fi
+    fi || true
 }
 
 
