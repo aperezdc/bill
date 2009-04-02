@@ -26,11 +26,8 @@ config_filter_unneeded ()
     local -r cchr=${1:-'#'}
     local line
 
-    while read line
-    do
-        if [[ -z $line ]] || \
-            string_startswith "$(string_lstrip <<< "$line")" "$cchr"
-        then
+    while read -r line ; do
+        if [[ -z $line || $(string_lstrip <<< "${line}") = ${cchr}* ]] ; then
             continue
         else
             echo "$line"
