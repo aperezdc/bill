@@ -11,6 +11,8 @@
 #   .. contents::
 #--
 
+use data/time
+
 need ci co || die "Need RCS commands not found"
 need stat  || die "Utility 'stat' not found"
 
@@ -86,5 +88,59 @@ twiki_attach ()
      ci -q -m"Add $a_name" "$twiki/data/$page.txt"
      co -q -l              "$twiki/data/$page.txt"
 }
+
+
+#++ twiki_page_checkout twiki pagename
+#--
+twiki_page_checkout ()
+{
+    local path="$1/data/$2.txt"
+    rm -f    "${path}"
+    co -q -l "${path}"
+}
+
+
+#++ twiki_page_new twiki pagename [comment]
+#
+#   Fails with non-zero exit status if page already exists.
+#--
+twiki_page_new ()
+{
+    local path="$1/data/$2.txt"
+    if [[ -r ${path},v ]] ; then
+        return 1
+    fi
+
+    # Touch the page and add minimum amount of meta-data.
+    ( printf '%%META:TOPICINFO{author="admin" date="%i"' $(time_format %s)
+      printf ' format="1.1" reprev="1.1" version="1.1"}%%\n' ) > "${path}"
+
+    # Save initial revision
+    twiki_page_commit "$@"
+}
+
+
+#++ twiki_page_commit twiki pagename [comment]
+#--
+twiki_page_commit ()
+{
+    local path="$1/data/$2.txt"
+
+    if [[ ! -r ${path},v ]] ; then
+        ci -q -m"${3:-$(date)}" -t-'Twiterator Iteration' "${path}"
+    else
+        ci -q -m"${3:-$(date)}" "${path}"
+    fi
+    co -q -l "${path}"
+}
+
+
+#++ twiki_page_path twiki pagename
+#--
+twiki_page_path ()
+{
+    echo "$1/data/$2.txt"
+}
+
 
 main twiki_attach "$@"
