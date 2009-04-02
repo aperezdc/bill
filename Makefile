@@ -7,7 +7,7 @@ module_readmes   := $(wildcard lib/*/README)
 all_text_docs    := $(wildcard doc/*.txt)
 all_bash_modules := $(shell find lib -name '*.bash')
 all_html_pages   := $(patsubst %.bash,doc/%.html,$(all_bash_modules)) \
-                    $(patsubst %.txt,%.html,$(all_txt_docs)) \
+                    $(patsubst %.txt,%.html,$(all_text_docs)) \
                     doc/module-index.html
 
 
