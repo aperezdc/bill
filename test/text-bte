@@ -1,0 +1,143 @@
+#! /usr/bin/env butt
+
+use text/bte
+use data/hash
+
+H=''
+
+
+setUp () {
+    H=$(hash_new)
+}
+tearDown () {
+    hash_clear $H
+}
+
+
+test_bte_no_expansion ()
+{
+    assertEquals "" "$(bte_template $H <<< "")"
+    assertEquals " " "$(bte_template $H <<< " ")"
+    assertEquals "\t" "$(bte_template $H <<< "\t")"
+    assertEquals "foo\nbar" "$(bte_template $H <<< "foo\nbar")"
+}
+
+
+test_bte_expand_one ()
+{
+    hash_set $H x foo
+    assertEquals "foo" "$(bte_template $H <<< '${x}')"
+    # Check for space preservation as well
+    assertEquals " foo" "$(bte_template $H <<< ' ${x}')"
+    assertEquals "foo " "$(bte_template $H <<< '${x} ')"
+    assertEquals " foo " "$(bte_template $H <<< ' ${x} ')"
+    # Check for expanding a non-existant variable
+    assertEquals "y" "$(bte_template $H <<< '${y}')"
+}
+
+
+test_bte_expand_some ()
+{
+    hash_set $H x foo
+    hash_set $H y bar
+    assertEquals 'foobar' "$(bte_template $H <<< '${x}${y}')"
+    # Check for space preservation as well
+    assertEquals 'foo bar' "$(bte_template $H <<< '${x} ${y}')"
+    assertEquals ' foo bar' "$(bte_template $H <<< ' ${x} ${y}')"
+    assertEquals 'foo bar ' "$(bte_template $H <<< '${x} ${y} ')"
+    assertEquals ' foobar' "$(bte_template $H <<< ' ${x}${y}')"
+    assertEquals 'foobar ' "$(bte_template $H <<< '${x}${y} ')"
+    assertEquals ' foobar ' "$(bte_template $H <<< ' ${x}${y} ')"
+    # Check for expanding a non-existant variable
+    assertEquals 'foozbar' "$(bte_template $H <<< '${x}${z}${y}')"
+    # Expand same variable more than once
+    assertEquals 'foofoo' "$(bte_template $H <<< '${x}${x}')"
+}
+
+
+test_bte_expand_env ()
+{
+    assertEquals "${EDITOR}" "$(bte_template $H <<< '${ENV.EDITOR}')"
+    declare -x X=foo
+    assertEquals foo "$(bte_template $H <<< '${ENV.X}')"
+    assertEquals ENV "$(bte_template $H <<< '${ENV}')"
+    assertEquals ENV.I_DO_NOT_EXIST \
+        "$(bte_template $H <<< '${ENV.I_DO_NOT_EXIST}')"
+}
+
+
+test_bte_expand_nested ()
+{
+    local J=$(hash_new)
+    local K=$(hash_new)
+    hash_set $H f $J
+    hash_set $J o $K
+    hash_set $K o foo
+
+    assertEquals foo "$(bte_template $H <<< '${f.o.o}')"
+    assertEquals a "$(bte_template $H <<< '${a}')"
+    assertEquals f.a "$(bte_template $H <<< '${f.a}')"
+    assertEquals f.o.a "$(bte_template $H <<< '${f.o.a}')"
+    assertEquals f.o.o.a "$(bte_template $H <<< '${f.o.o.a}')"
+
+    hash_clear $K
+    hash_clear $J
+}
+
+
+test_bte_expand_filter ()
+{
+    hash_set $H escape-me '<&foobar;>'
+    assertEquals '&lt;&amp;foobar;&gt;' \
+        "$(bte_template $H <<< '${escape-me:xmlescape}')"
+
+    # Now defining a custom function
+    bte_format_date () {
+        local line
+        while read -r line ; do
+            date --date='1 apr 1983' "+%${line}"
+        done
+    }
+
+    assertEquals 1983 "$(bte_template $H <<< '${Y:date}')"
+
+    hash_set $H datefmt 'Y/%m/%d'
+    assertEquals '1983/04/01' "$(bte_template $H  <<< '${datefmt:date}')"
+}
+
+
+test_bte_expand_filter_some ()
+{
+    bte_format_vowelsup () {
+        local line
+        while read -r line ; do
+            line=${line//a/A}
+            line=${line//e/E}
+            line=${line//i/I}
+            line=${line//o/O}
+            line=${line//u/U}
+            echo "${line}"
+        done
+    }
+    bte_format_dupx () {
+        local line
+        while read -r line ; do
+            line=${line//x/xx}
+            line=${line//X/XX}
+            echo "${line}"
+        done
+    }
+
+    assertEquals 'xxOxxO' "$(bte_template $H <<< '${xoxo:vowelsup:dupx}')"
+    assertEquals 'xxOxxO' "$(bte_template $H <<< '${xoxo:dupx:vowelsup}')"
+    assertEquals 'xxxxxxxx' "$(bte_template $H <<< '${x:dupx:dupx:dupx}')"
+    assertEquals 'xOxO' "$(bte_template $H <<< '${xoxo:vowelsup:vowelsup}')"
+
+    local I=$(hash_new)
+    hash_set $H foo $I
+    hash_set $I bar baz
+    assertEquals 'bAz' "$(bte_template $H <<< '${foo.bar:vowelsup}')"
+    assertEquals 'bAz' "$(bte_template $H <<< '${foo.bar:vowelsup:dupx}')"
+    hash_clear $I
+}
+
