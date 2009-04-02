@@ -77,15 +77,17 @@ bte_dotted_var ()
     else
         if hash_has $1 ${trail[0]} ; then
             value=$(hash_get $1 ${trail[0]})
-            unset trail[0]
-            for item in "${trail[@]}" ; do
-                if hash_has ${value} ${item} ; then
-                    value=$(hash_get ${value} ${item})
-                else
-                    value=$2
-                    break
-                fi
-            done
+            if [[ ${#trail[@]} -gt 1 ]] ; then
+                unset trail[0]
+                for item in "${trail[@]}" ; do
+                    if hash_has ${value} ${item} ; then
+                        value=$(hash_get ${value} ${item})
+                    else
+                        value=$2
+                        break
+                    fi
+                done
+            fi
         else
             value=$2
         fi
@@ -116,13 +118,16 @@ bte_template ()
             else
                 val=''
             fi
-            unset xpn[0]
 
-            # Run filter pipeline
-            for item in "${xpn[@]}" ; do
-                [[ $(type -t bte_format_${item}) = function ]] || return 1
-                val=$(bte_format_${item} $1 <<< "${val}")
-            done
+            if [[ ${#xpn[@]} -gt 1 ]] ; then
+                # Run filter pipeline
+                unset xpn[0]
+                for item in "${xpn[@]}" ; do
+                    if [[ $(type -t bte_format_${item}) = function ]] ; then
+                        val=$(bte_format_${item} $1 <<< "${val}")
+                    fi
+                done
+            fi
 
             # Save line with item expanded, and reprocess
             line="${BASH_REMATCH[1]}${val}${BASH_REMATCH[3]}"
