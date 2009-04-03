@@ -81,8 +81,9 @@ cli_optparse ()
     fi
     declare -r applydefaults
 
-    local all="$1[@]"
-    local -ar all=( "${!all}" )
+    # XXX This hacky way of obtaining array items is needed for proper
+    #     operation in Bash versions prior to 3.2 -- expect more below.
+    local -ar all="( \"\${$1[@]}\" )"
 
     local -r opt=$2
     local arg index k v
@@ -141,9 +142,9 @@ __cli_optparse_help ()
         d=${all[$((i+1))]}
         t=${all[$((i+2))]}
         if [ -n "${o%%:*}" ] ; then
-            printf "  -%1s,  --%-20s  %s [default: %s]\n" ${o%%:*} ${o#*:} "$t" "$d"
+            printf "  -%1s,  --%-20s  %s [%s]\n" ${o%%:*} ${o#*:} "$t" "$d"
         else
-            printf "       --%-20s  %s [default: %s]\n" ${o#*:} "$t" "$d"
+            printf "       --%-20s  %s [%s]\n" ${o#*:} "$t" "$d"
         fi
     done
 }
