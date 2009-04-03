@@ -240,7 +240,15 @@ hash_keys_escaped ()
         if [[ -z $key ]] && [[ -n $_d ]] ; then
             key=$_d
         fi
-        [[ ${key::$hl} = $1 ]] && printf "%q\n" "${key:$hl}"
+        if [[ ${key::$hl} = $1 ]] ; then
+            key=${key:${hl}}
+            # If the key is empty, we need to signal it in some way
+            if [[ ${#key} -eq 0 ]] ; then
+                printf "''\n"
+            else
+                printf "%q\n" "${key}"
+            fi
+        fi
     done < <(builtin hash -l)
 }
 

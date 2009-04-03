@@ -100,14 +100,20 @@ bte_dotted_var ()
 #--
 bte_template ()
 {
+    local xpn_re='(.*)(\$\{[a-zA-Z0-9\.:_-]+\})(.*)'
     local line xpn item val
     local old_ifs=${IFS}
+
+    if [[ ${BASH_VERSINFO[0]} -le 3 && ${BASH_VERSINFO[1]} -le 1 ]] ; then
+        # Change regex syntax for bash older than 3.2
+        xpn_re="'${xpn_re}'"
+    fi
 
     IFS=''
     while read -r line ; do
         IFS=${old_ifs}
         # Expand variables and stuff... one at a time
-        while [[ ${line} =~ (.*)(\$\{[a-zA-Z0-9\.:_-]+\})(.*) ]] ; do
+        while eval "[[ \${line} =~ ${xpn_re} ]]" ; do
             xpn=${BASH_REMATCH[2]}
             xpn=${xpn:2:$(( ${#xpn} - 3 ))}
             xpn=( ${xpn//:/ } )
