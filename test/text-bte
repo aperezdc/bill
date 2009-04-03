@@ -57,7 +57,7 @@ test_bte_expand_some ()
 
 test_bte_expand_env ()
 {
-    assertEquals "${EDITOR}" "$(bte_template $H <<< '${ENV.EDITOR}')"
+    assertEquals "${PATH}" "$(bte_template $H <<< '${ENV.PATH}')"
     declare -x X=foo
     assertEquals foo "$(bte_template $H <<< '${ENV.X}')"
     assertEquals ENV "$(bte_template $H <<< '${ENV}')"
