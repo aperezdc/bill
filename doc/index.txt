@@ -6,7 +6,7 @@ The Bash Improved Leveraging Library
 ------------------------------------
 
 :Author: Adrián Pérez <aperez@igalia.com>
-:Version: `0.1 <#get-billed>`__
+:Version: `0.2 <#get-billed>`__
 :License: `GPL3 <http://opensource.org/licenses/gpl-3.0.html>`__
 :Copyright: 2008-2009 Igalia S.L.
 :Abstract: Bill strives to be a solution for developing applications which
@@ -61,13 +61,13 @@ Last, but not least Bill also has the following:
 Get Billed!
 ===========
 
-Packages for the latest release (0.1-2) are available here:
+Packages for the latest release (0.2-1) are available here:
 
 * Source code:
-  `bill-0.1-2.tar.bz2 <releases/bill-0.1-2.tar.bz2>`__
+  `bill-0.2.tar.bz2 <releases/bill-0.2.tar.bz2>`__
 
 * Debian_ package (all platforms):
-  `bill_0.1-2_all.deb <releases/bill_0.1-2_all.deb>`__
+  `bill_0.1-2_all.deb <releases/bill_0.2-1_all.deb>`__
 
 Development code can also obtained from from the GIT_ `repository hosted at
 Gitorious <http://gitorious.org/projects/bill>`__::

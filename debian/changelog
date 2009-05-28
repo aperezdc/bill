@@ -1,3 +1,13 @@
+
+bill (0.2-1) unstable; urgency=medium
+
+  * Package for new version 0.2 which includes fixes to make the standard
+  library work well with Bash 3.2 and 3.1, and some new modules (logging,
+  bte)
+
+ -- Adrian Perez <aperez@igalia.com>  Thu, 28 May 2009 23:00:00 +0200
+
+
 bill (0.1-1) unstable; urgency=medium
 
   * Initial revision

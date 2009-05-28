@@ -12,7 +12,7 @@
 #   .. contents::
 #--
 
-export BILL_VERSION='0.1'
+export BILL_VERSION='0.2'
 
 #++ warn message
 #
