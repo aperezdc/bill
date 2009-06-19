@@ -152,7 +152,7 @@ config_ini_get ()
 #--
 config_ini_get_chained ()
 {
-    local v
+    local v=""
 
     if hash_has "$1" "[$2]" ; then
         local h=$(hash_get "$1" "[$2]")
