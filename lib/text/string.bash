@@ -145,7 +145,12 @@ string_join ()
 #--
 string_lstrip ()
 {
-    sed -e 's,^[[:space:]]*,,'
+    local line old_ifs=${IFS}
+    IFS=''
+    while read -r line ; do
+        echo "${line#${line%%[![:space:]]*}}"
+    done
+    IFS=${old_ifs}
 }
 
 
@@ -157,7 +162,12 @@ string_lstrip ()
 #--
 string_rstrip ()
 {
-    sed -e 's,[[:space:]]*$,,'
+    local line old_ifs=${IFS}
+    IFS=''
+    while read -r line ; do
+        echo "${line%${line##*[![:space:]]}}"
+    done
+    IFS=${old_ifs}
 }
 
 
@@ -168,7 +178,12 @@ string_rstrip ()
 #--
 string_strip ()
 {
-    sed -e 's,^[[:space:]]*,,' \
-        -e 's,[[:space:]]*$,,'
+    local line old_ifs=${IFS}
+    IFS=''
+    while read -r line ; do
+        line=${line%${line##*[![:space:]]}}
+        line=${line#${line%%[![:space:]]*}}
+        echo "${line}"
+    done
 }
 
