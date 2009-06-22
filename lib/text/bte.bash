@@ -30,7 +30,20 @@ use data/hash
 
 #++ bte_format_xmlescape state < input > output
 #
-#   Formatter which escapes characters into X(HT)ML entities.
+#   Formatter which escapes characters into X(HT)ML entities. Currently the
+#   following characters are escaped:
+#
+#   .. class:: modules
+#
+#   ========= ==========
+#   Character Entity
+#   ========= ==========
+#   <         &lt;
+#   >         &gt;
+#   &         &amp;
+#   '         &apos;
+#   "         &quot;
+#   ========= ==========
 #--
 bte_format_xmlescape ()
 {
@@ -42,6 +55,31 @@ bte_format_xmlescape ()
         line=${line//\'/&apos;}
         line=${line//\"/&quot;}
         echo "${line}"
+    done
+}
+
+
+#++ bte_format_calc state < input > output
+#
+#   Performs simple arithmetic evaluations using a Bash built-in ``$((...))``
+#   expression. This allows for some degree of simple calculations. The
+#   usual ``+``, ``-``, ``*`` and ``/`` operands are allowed. Referring to
+#   Bash special variables like ``$RANDOM`` must be done without the dollar
+#   sign, and variables from the current state must be enclosed into square
+#   brackets. Spaces in the expression are not allowed, but grouping
+#   parentheses are. Example::
+#
+#       ${(RANDOM+$[x])/3:calc}
+#
+#--
+bte_format_calc ()
+{
+    local line
+    while read -r line ; do
+        line=${line//\[/\{}
+        line=${line//\]/\}}
+        line=$(bte_template $1 <<< "${line}")
+        echo "$(( ${line} ))"
     done
 }
 
@@ -100,7 +138,8 @@ bte_dotted_var ()
 #--
 bte_template ()
 {
-    local xpn_re='(.*)(\$\{[a-zA-Z0-9\.:_-]+\})(.*)'
+    local xpn_re='(.*)(\$\{[]\[()a-zA-Z0-9\.+/*:_\ \$-]+\})(.*)'
+
     local line xpn item val
     local old_ifs=${IFS}
 

@@ -66,6 +66,21 @@ test_bte_expand_env ()
 }
 
 
+test_bte_format_calc ()
+{
+    hash_set $H x 3
+    hash_set $H y 4
+    assertEquals 7  "$(bte_template $H <<< '${$[x]+$[y]:calc}')"
+    assertEquals 1  "$(bte_template $H <<< '${$[y]-$[x]:calc}')"
+    assertEquals 10 "$(bte_template $H <<< '${(2+3)*2:calc}')"
+    assertEquals 18 "$(bte_template $H <<< '${($[y]+2)*$[x]:calc}')"
+    assertEquals 2  "$(bte_template $H <<< '${$[y]/2:calc}')"
+    assertEquals 8  "$(bte_template $H <<< '${$[y]*2:calc}')"
+    assertNotSame 0 "$(bte_template $H <<< '${RANDOM+1:calc}')"
+    assertNotSame 3 "$(bte_template $H <<< '${RANDOM+$[x]+1:calc}')"
+}
+
+
 test_bte_expand_nested ()
 {
     local J=$(hash_new)
