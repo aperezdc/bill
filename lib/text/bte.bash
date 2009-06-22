@@ -78,8 +78,23 @@ bte_format_calc ()
     while read -r line ; do
         line=${line//\[/\{}
         line=${line//\]/\}}
+        line=${line//\|/:}
         line=$(bte_template $1 <<< "${line}")
         echo "$(( ${line} ))"
+    done
+}
+
+
+#++ bte_format_expand state < input > output
+#--
+bte_format_expand ()
+{
+    local line
+    while read -r line ; do
+        line=${line//\[/\{}
+        line=${line//\]/\}}
+        line=${line//\|/:}
+        bte_template $1 <<< "${line}"
     done
 }
 
@@ -138,7 +153,7 @@ bte_dotted_var ()
 #--
 bte_template ()
 {
-    local xpn_re='(.*)(\$\{[]\[()a-zA-Z0-9\.+/*:_\ \$-]+\})(.*)'
+    local xpn_re='(.*)(\$\{[]\[\|()a-zA-Z0-9\.+/*:_\ \$-]+\})(.*)'
 
     local line xpn item val
     local old_ifs=${IFS}

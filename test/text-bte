@@ -81,6 +81,20 @@ test_bte_format_calc ()
 }
 
 
+test_bte_format_expand ()
+{
+    bte_format_twodigit () {
+        local line
+        while read -r line ; do
+            printf "%02i\n" "$line"
+        done
+    }
+    hash_set $H x FooBar
+    hash_set $H y 3
+    assertEquals 'FooBar-03' "$(bte_template $H <<< '${$[x]-$[y|twodigit]:expand}')"
+}
+
+
 test_bte_expand_nested ()
 {
     local J=$(hash_new)
