@@ -1,0 +1,53 @@
+#! /usr/bin/env butt
+
+use text/mime
+use data/hash
+
+H=''
+
+setUp () {
+    H=$(hash_new)
+}
+
+tearDown () {
+    hash_clear $H
+}
+
+
+test_headers_single ()
+{
+    mime_decode $H > /dev/null <<< $'X-Foo: Foo-content'
+    assertSame 'Foo-content' "$(hash_get $H x-foo)"
+    mime_decode $H > /dev/null <<< $'X-Bar:Bar-content'
+    assertSame 'Bar-content' "$(hash_get $H x-bar)"
+    mime_decode $H > /dev/null <<< $'X-Baz:     Baz-content   '
+    assertSame 'Baz-content' "$(hash_get $H x-baz)"
+    mime_decode $H > /dev/null <<< $'X-Lol:Lol-content   '
+    assertSame 'Lol-content' "$(hash_get $H x-lol)"
+    mime_decode $H > /dev/null <<< $'X-Wtf: WTF content'
+    assertSame 'WTF content' "$(hash_get $H x-wtf)"
+}
+
+
+test_headers_multi ()
+{
+    mime_decode $H > /dev/null <<< $'X: X-Foo\nY: Y-Foo \nZ:Z-Foo'
+    assertSame X-Foo "$(hash_get $H x)"
+    assertSame Y-Foo "$(hash_get $H y)"
+    assertSame Z-Foo "$(hash_get $H z)"
+}
+
+
+test_headers_multiline ()
+{
+    mime_decode $H > /dev/null <<< $'X: X-Line1\n X-Line2'
+    assertSame 'X-Line1 X-Line2' "$(hash_get $H x)"
+}
+
+
+test_headers_dup ()
+{
+    mime_decode $H > /dev/null <<< $'Dup: 1\nDup: 2'
+    assertSame '1, 2' "$(hash_get $H dup)"
+}
+

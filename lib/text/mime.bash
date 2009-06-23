@@ -18,98 +18,89 @@ need sed grep cat || die "grep, sed or cat are missing"
 
 use text/string
 
-declare -r __mime_CR=$'\015'
+__mime_CR=$'\015'
+declare -r __mime_CR
+
+# Define the regular expressions we will be using:
+#
+__mime_header_re='[[:space:]]*([a-zA-Z_ -]+):[[:space:]]*(.*)'
+__mime_continuation_re='[[:space:]]+(.*)'
+
+if [[ ${BASH_VERSINFO[0]} -le 3 && ${BASH_VERSINFO[1]} -le 1 ]] ; then
+    __mime_header_re="'${__mime_header_re}'"
+    __mime_continuation_re="'${__mime_continuation_re}'"
+fi
+
+declare -r __mime_header_re
+declare -r __mime_continuation_re
 
 
-#++ mime_decode [ headersfile ]
+#++ mime_decode hash < input > output-body
 #
-#   Takes the standard input as a MIME-formatted message. Headers are sent
-#   to the file specified as *headersfile*, or to standard error if not
-#   specified (more exactly to ``/dev/stderr``). Headers will be converted
-#   to shell variables so you can ``source`` the resulting file in your
-#   code. Header names are converted as follows:
+#   Interprets a set of MIME-like headers given as standard input and stores
+#   them parsed into a hash table. The MIME convention of stop parsing when
+#   an empty line is found is honored. Multi-line headers are properly
+#   recognized, as well as multiple header instances, which are handled
+#   somewhat gracefully: their values are stored under a single hash table
+#   key, appended with commas (this is specified in the standard, but no
+#   quoting is done, though). Header names are all converted to lowercase
+#   when storing them in the hash table.
 #
-#   1. The header name is converted to lowercase.
-#   2. Characters in the ``A-Z`` range and underscores are left as-is.
-#   3. All other characters are changed to underscrores.
-#   4. The header name is prefixed with ``H_``.
-#
-#   The header value is kept in its original form. Only trailing whitespace
-#   is removed from multiline header values.
-#
-#   The contents of the body of the MIME message are send unchanged to
-#   standard output.
-#
-#   As an exaple, consider decoding the follow e-mail content::
-#
-#       From: Adrian Perez <aperez@igalia.com>
-#       To: Ella Fitzgerald <fitzgerald@divas.net>,
-#           Maestro Manggiacapprini <m-m@capprini.com>
-#       Subject: Bash rules!
-#       Content-Type: text/plain
-#
-#       Hello pals!
-#
-#       We will be having a meeting tomorrow at 8:00 PM. Do not forget
-#       to bring your notes regarding current musical trends.
-#
-#   That would output the following in the headers file:
+#   As an example, you could extract headers from an e-mail, saving the body
+#   to another file using the following technique:
 #
 #   .. sourcecode:: bash
 #
-#       H_from='Adrian Perez <aperez@igalia.com>'
-#       H_to='Ella Fitzgerald <fitzgerald@divas.net>, Maestro Manggiacapprini <m-m@capprini.com>'
-#       H_subject='Bash rules!'
-#       H_content_type='text/plain'
+#       h=$(hash_new)
+#       mime_decode $h < input-email > output-body
 #
 #--
 mime_decode ()
 {
-    local line key value
-    local headersfound=false
-    local -r metafile=${1:-/dev/stderr}
+    local line key='' val
+    local old_ifs=${IFS}
+    IFS=''
 
-    # Empty up metafile.
-    : > "$metafile"
-
-    while read line
-    do
-        line=${line%${__mime_CR}}
-
-        if [[ $line =~ ^[^:]+: ]]
-        then
-            # Line has a header name. If this is not the first one, print
-            # the previous one to the metafile.
-            [ "$key" ] && printf "H_$key=%q\n" "$value" >> "$metafile"
-
-            # Now prepare to read the current header storing its initial
-            # value.
-            headersfound=true
-            key=${line%:*}
-            key=$(string_lower "${key//[^A-Za-z_]/_}")
-
-            # TODO Change this to avoid piping through sed
-            value=$(echo "${line#*:}" | sed -e 's:^[[:space:]]*::')
-        elif [ -z "$line" ]
-        then
-            # Skip bogus lines.
-            $headersfound || continue
-
-            # Input ended, stop the look and hand off output... but be careful
-            # to output the last read header before!
-            [ "$key" ] && printf "H_$key=%q\n" "$value" >> "$metafile"
+    while read -r line ; do
+        IFS=${old_ifs}
+        # Found a blank line: stop reading.
+        if [[ ${line} = ${__mime_CR} || -z ${line} ]] ; then
             break
-        else
-            # Line is a continuation of the previous header value. Note that
-            # we must remove trailing whitespace.
-            value="${value}$(sed -e 's:^[[:space:]]*: :' <<< "$line")"
         fi
-    done
 
-    # Dump remaining input to standard output.
+        # Strip carriage returns
+        line=${line%${__mime_CR}}
+        if eval "[[ \${line} =~ ${__mime_header_re} ]]" ; then
+            if [[ -n ${key} && ${key} != ${BASH_REMATCH[1]} ]] ; then
+                if hash_has $1 "${key}" ; then
+                    # Append value with a comma
+                    hash_set $1 "${key}" "$(hash_get $1 "${key}"), ${val}"
+                else
+                    hash_set $1 "${key}" "${val}"
+                fi
+            fi
+            key=$(string_lower "${BASH_REMATCH[1]}")
+            val=${BASH_REMATCH[2]}
+            val=${val%${val##*[![:space:]]}}
+        elif eval "[[ \${line} =~ ${__mime_continuation_re} ]]" ; then
+            val="${val} ${BASH_REMATCH[1]}"
+            val=${val%${val##*[![:space:]]}}
+        fi
+        IFS=''
+    done
+    IFS=${old_ifs}
+
+    if [[ -n ${key} ]] ; then
+        if hash_has $1 "${key}" ; then
+            # Append value with a comma
+            hash_set $1 "${key}" "$(hash_get $1 "${key}"), ${val}"
+        else
+            hash_set $1 "${key}" "${val}"
+        fi
+    fi
+
+    # This lone cat handles passing stdin->stdout
     cat
 }
 
-
-main mime_decode "$@"
 

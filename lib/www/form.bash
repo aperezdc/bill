@@ -51,6 +51,12 @@ form_urldecode ()
 }
 
 
+__form_header_iter ()
+{
+    printf "H_%s=%q\n" "${2//-/_}" "$(hash_get $1 "$2")"
+}
+
+
 #++ form_multipart_handle directory
 #
 #   Decodes standard input in ``multipart/form-data`` encoding to multiple
@@ -94,10 +100,11 @@ form_multipart_handle ()
 
     for name in "$1/raw"/*
     do
+        local hdrs=$(hash_new)
         local cook=${name##*/}
-        # XXX The head invocation is needed to remove the trailing "\r\n" of
-        # the input as given in the multipart form data.
-        head -c -2 "$name" | mime_decode "$1/headers/$cook" > "$1/body/$cook"
+        tail -n +2 "$name" | mime_decode "$1/headers/$cook" > "$1/body/$cook"
+        hash_keys_iter ${hdrs} __form_header_iter > "$1/headers/${cook}"
+        hash_clear ${hdrs}
     done
 }
 
