@@ -28,6 +28,15 @@ The Bash Improved Leveraging Library
 .. contents::
 
 
+
+News
+====
+
+Occasionally I write `news and blog posts related to Bill`__.
+
+__ http://blogs.igalia.com/aperez/?cat=5
+
+
 Features
 ========
 
